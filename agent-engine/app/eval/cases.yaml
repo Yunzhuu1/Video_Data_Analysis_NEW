@@ -1,0 +1,39 @@
+[
+  {
+    "id": "chatbi_category_trend",
+    "type": "text2sql",
+    "question": "analyze category play trends",
+    "expected_route": "complex",
+    "expected_sql_contains": ["metric_daily", "total_plays"],
+    "expected_report_fields": ["summary", "sql", "charts"]
+  },
+  {
+    "id": "chatbi_answer_structure",
+    "type": "answer_quality",
+    "question": "compare category plays",
+    "expected_report_fields": ["summary", "sql", "metrics", "charts"]
+  },
+  {
+    "id": "chatbi_hard_guard_retry",
+    "type": "hard_guard",
+    "question": "analyze play trend",
+    "mock_guard_failures": 1,
+    "expected_sql_retry_count": 1,
+    "expected_status": "SUCCESS"
+  },
+  {
+    "id": "chatbi_dq_retry",
+    "type": "dq",
+    "question": "analyze play trend",
+    "mock_dq_failures": 1,
+    "expected_sql_retry_count": 1,
+    "expected_status": "SUCCESS"
+  },
+  {
+    "id": "chatbi_dq_warning",
+    "type": "dq",
+    "question": "compare category plays",
+    "mock_dq_warning": true,
+    "expected_report_keywords": ["partial data"]
+  }
+]
