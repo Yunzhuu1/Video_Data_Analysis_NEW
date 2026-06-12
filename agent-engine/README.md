@@ -1,15 +1,15 @@
-# DataAgent LangGraph Engine
+# DataAgent Agent Engine
 
-Python Agent orchestration service for the DataAgent platform.
+Python Agent orchestration service for the ChatBI / DataAgent platform.
 
-This service owns the LangGraph-style state machine for the DataAgent platform. The default
-`/analyze` flow is the ChatBI/Text2SQL main chain; the older attribution-oriented graph is still
-available as `graphMode=full` for compatibility while the main chain is rebuilt.
+This service owns the LangGraph-style state machine. The default `/analyze` flow is the
+ChatBI/Text2SQL main chain. The older attribution-oriented graph remains available as
+`graphMode=full` only for compatibility and is not the current delivery target.
 
 ## Local Run
 
-```bash
-uvicorn app.main:app --reload --port 8090
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --host 127.0.0.1 --port 8090
 ```
 
 ## Endpoints
@@ -38,10 +38,21 @@ ROUTER -> SCHEMA -> SQL_GENERATE -> SQL_HARD_GUARD -> SQL_EXECUTE
   -> SQL_VALIDATE -> SQL_SOFT_DQ -> ANSWER
 ```
 
-`graphMode=full` keeps the legacy side branches:
+`graphMode=full` keeps legacy side branches for reference:
 
 ```text
 ROUTER -> SCHEMA -> SQL_GENERATE -> SQL_HARD_GUARD -> SQL_EXECUTE
   -> SQL_VALIDATE -> SQL_SOFT_DQ
   -> RAG -> CROSS_VALIDATE -> INSIGHT -> RECOMMENDATION -> MERGE -> DBQA
+```
+
+Use `graphMode=chatbi` for development, tests, and real smoke checks unless a task explicitly
+targets legacy attribution behavior.
+
+## Checks
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests
+.\.venv\Scripts\python.exe -m ruff check app tests
+.\.venv\Scripts\python.exe -m app.eval.runner --mode mock
 ```

@@ -1,5 +1,7 @@
 # DataAgent 总体架构与迁移路线
 
+> 文档定位：本文是中长期架构路线和迁移背景说明。当前开发验收以 `README.md`、`AGENTS.md`、`docs/ChatBI主链路开发设计.md` 和 `docs/ChatBI真实联调手册.md` 为准；RAG、归因、DBQA 等能力属于后续扩展，不作为当前 ChatBI 主链路的完成标准。
+
 ## 1. 背景
 
 当前项目已经具备一个可演示的 Spring Boot + Spring AI 多 Agent 数据分析链路：
@@ -272,3 +274,4 @@ docs/eval-report.md
 ```text
 基于 Spring Boot + LangGraph 设计并实现企业级 DataAgent 平台。Spring Boot 提供 SQL 安全执行、指标治理、权限审计、Run Trace 和运维 API；LangGraph 提供可恢复多 Agent 状态机，实现 Text2SQL 自修复、RAG 评论归因、播放行为交叉验证、Human-in-the-loop 高风险 SQL 审批和 DBQA 报告质检，并通过自动评测体系量化 SQL 正确率、RAG precision@5、端到端报告质量和 Token 成本。
 ```
+

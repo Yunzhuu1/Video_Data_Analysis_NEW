@@ -1,5 +1,7 @@
 # Spring Boot 平台层设计
 
+> 文档定位：本文描述 Spring Boot 平台层的长期能力边界。当前阶段优先完成 ChatBI 主链路所需的平台接口：SQL 硬校验、SQL Gateway、DQ 软审核、LangGraph 调用和审批恢复；权限、审计、完整 Run Trace、运维看板等能力按后续里程碑扩展。
+
 ## 1. 定位
 
 Spring Boot 平台层不是 Agent 编排层，而是企业级数据平台能力的承载层。
@@ -420,3 +422,4 @@ AnalysisController -> LangGraphClient -> agent-engine
 - 高风险 SQL 不会直接执行。
 - 所有 SQL 有审计日志。
 - 测试环境不依赖真实模型、Redis、MySQL 初始化逻辑。
+

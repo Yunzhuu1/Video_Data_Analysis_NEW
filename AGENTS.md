@@ -1,390 +1,175 @@
-# Agent 设计文档
+# Agent 拓扑说明
 
-## 概述
+本文档描述当前项目正在落地的 ChatBI Agent 主链路。历史的大而全 Multi-Agent 方案已经收敛为以 Text2SQL 为核心的可执行链路，RAG、归因和 DBQA 暂作为后续扩展。
 
-系统共 6 个 Agent + 2 个 Tool，由 CoordinatorAgent 编排。
+## 分层职责
 
-```
-流向: Schema → SQL → Validate(交叉验证) → RAG → parallel(Insight, Rec)
-```
-
----
-
-## 1. RouterAgent — 路径分类器
-
-### 职责
-
-判断用户问题是走简单路径还是复杂路径。
-
-### 执行逻辑
-
-```
-isSimple(question):
-  1. LISTING_KEYWORDS 匹配 → 返回 true（简单，<1ms）
-  2. COMPLEX_KEYWORDS 匹配 → 返回 false（复杂，<1ms）
-  3. 未命中 → cheap model 分类 → 返回结果（~2s）
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-输出:  boolean（true=简单路径）
-```
-
-### 设计要点
-
-- 关键字短路优先，只有模糊 case 才调 LLM
-- 简单路径命中时零 LLM 开销
-
----
-
-## 2. SchemaAgent — 表结构裁剪
-
-### 职责
-
-根据用户问题，从完整 Schema 中筛选出相关表和字段，减少 SQLAgent 的搜索空间。
-
-### 执行逻辑
-
-```
-identify(question):
-  1. 调用 cheap model
-  2. prompt: 给定 7 张表的紧凑描述 + 裁剪规则
-  3. model 输出只包含相关表的裁剪后 Schema
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-输出:  schemaContext: String（裁剪后的表结构描述）
-```
-
-### 设计要点
-
-- 输出格式为紧凑文本（非 JSON），减少 Token
-- 只列相关表，省略无关表
-- 用 cheap model，不需要强推理
-
----
-
-## 3. SQLGenerationAgent — SQL 生成 + 执行
-
-### 职责
-
-根据用户问题和裁剪后的 Schema，生成正确的 MySQL SQL 并执行，出错时自动修正。
-
-### 执行逻辑
-
-```
-execute(question, schemaContext, previousFeedback?):
-  1. 调用 strong model（带 Tool: SqlExecutionTool + MetricQueryTool）
-  2. model 自主决策：
-     a. 涉及指标 → 先调 getMetricFormula
-     b. 写 SQL → 调 executeSql
-     c. 报错 → 分析错误 → 修正重试 ×3
-     d. 自查 WHERE/JOIN 逻辑
-  3. 返回查询结果
-  4. 如果 previousFeedback 非空 → 注入校验反馈作为修正上下文
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-       schemaContext: String
-       previousFeedback: String?（Execution Guidance 的校验反馈）
-输出:  queryResult: String（TSV 格式数据）
-```
-
-### System Prompt 核心内容
-
-```
-SQL专家。按步骤执行：
-1. 涉及指标→先getMetricFormula
-2. 写SQL→executeSql
-3. 报错→修正重试×3
-4. 返回数据
-
-规则：SELECT only。JSON用->>。时间直接比timestamp。
-COALESCE防NULL。executeSql限100行，超限用GROUP BY+LIMIT。
-表结构见下方上下文，勿臆测字段。
-
-【自查】返回前检查SQL逻辑：
-- 聚合查询是否遗漏了WHERE/event_type过滤？
-- JOIN条件是否正确匹配了外键？
-发现问题则用executeSql重新执行修正后的SQL。
-
-【性能优化】聚合查询优先查 metric_daily 表。
-```
-
----
-
-## 4. RAGAgent — 评论检索 + 归因发现
-
-### 职责
-
-根据用户问题和 SQL 查询结果，从评论数据库中检索相关用户反馈，提取主题和情感倾向。
-
-### 执行逻辑（四阶段 + 软反思）
-
-```
-analyze(question, queryResult):
-  // 阶段1: Query Rewriting
-  searchQuery = rewriteQuery(question, queryResult)
-  // 用 cheap model 把指标问题转为体验关键词
-
-  // 阶段2: ANN 检索 + Reranker
-  candidates = vectorStore.similaritySearch(searchQuery, topK=10)
-  topComments = rerank(candidates)
-  // rerank: 用 cheap model 逐条打分 0-10，保留 >=5 的 top-5
-
-  // 阶段3: 主题提取
-  result.extractThemes(topComments)
-  // cheap model 提取 3-5 个主题词 + 总结
-
-  // 阶段4: Self-Reflection（软信号）
-  result.confidence = measureConfidence(question, result)
-  // confidence ∈ [0.0, 1.0]
-  // 不拦截结果，只给 InsightAgent 参考
-
-  return result
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-       queryResult: String
-输出:  CommentResult {
-         themes: List<String>,
-         negativeRatio: double,
-         representativeComments: List<String>,
-         summary: String,
-         confidence: double     // 软信号，0.0-1.0
-       }
-```
-
-### System Prompt 核心内容
-
-Rewrite:
-```
-指标→评论搜索关键词。体验问题(广告/卡顿/画质/内容)。
-只输入关键词空格分隔，勿解释。
-```
-
-Rerank:
-```
-评论与问题相关度 0-10。10=直接解释数据变化原因。
-问题:{question} 数据:{data}
-评论:{comment}
-只输出数字。
-```
-
-Reflection:
-```
-评论主题能否解释问题？能→true 否→false
-问题:{question} 主题:{themes} 负面占比:{negativeRatio}
-只输出true/false。
-```
-
-### 降级策略
-
-- ANN 检索为空 → 返回空结果（confidence=0.0）
-- Reranker 全部低分 → 返回空结果（confidence=0.0）
-- LLM 调用异常 → confidence=0.5（容错：未知时给中等可信度）
-
----
-
-## 5. InsightAgent — 趋势分析 + 归因报告
-
-### 职责
-
-根据 SQL 查询数据、RAG 评论证据、交叉验证数据，生成结构化的分析报告。
-
-### 执行逻辑
-
-```
-analyze(question, queryResult, schemaContext, ragResult, crossValidation):
-  1. 调用 strong model
-  2. model 分析数据：
-     a. 总结趋势
-     b. 识别异常波动
-     c. 如果有 RAG 评论 → 融入归因段落
-     d. 如果有交叉验证数据 → 验证评论指控
-     e. 生成图表配置（line/bar/pie）
-  3. 输出 AnalysisReport（JSON 结构化）
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-       queryResult: String（SQL 数据）
-       schemaContext: String
-       ragResult: CommentResult（RAG 评论证据）
-       crossValidation: String（播放跳出交叉验证数据）
-输出:  AnalysisReport {
-         summary: String,
-         metrics: List<MetricPoint>,
-         charts: List<ChartConfig>,
-         recommendations: null（由 RecAgent 填充）
-       }
-```
-
-### System Prompt 核心内容
-
-```
-数据分析师。生成结构化JSON报告。
-总结发现→异常归因→生成图表配置(line/bar/pie)。
-有【用户评论分析】时融入归因段落。confidence<0.5表示证据较弱，可选择性引用。
-不含建议(另有专家)。不含图表外的多余文字。
-```
-
----
-
-## 6. RecommendationAgent — 运营建议
-
-### 职责
-
-根据 SQL 数据和 RAG 评论证据，生成可操作的运营建议。
-
-### 执行逻辑
-
-```
-recommend(question, queryResult, schemaContext, ragResult):
-  1. 调用 cheap model
-  2. model 分析数据和评论
-  3. 输出 1-3 条建议（JSON 数组）
-```
-
-### 输入/输出
-
-```
-输入:  question: String
-       queryResult: String
-       schemaContext: String
-       ragResult: CommentResult?（RAG 上下文，可能为 null）
-输出:  recommendations: List<String>
-```
-
-### 设计要点
-
-- 与 InsightAgent 真并行，两者都持有 RAG 上下文
-- 建议基于真实评论数据而非泛泛而谈
-- 最多 3 条，每条一句话
-
----
-
-## 7. CoordinatorAgent — 编排器
-
-### 职责
-
-编排所有 Agent 的执行顺序，处理数据依赖和异常容错。
-
-### 管线拓扑
-
-```
-顺序:
-  [1] SchemaAgent.identify(question)
-      → schemaContext
-  [2] SQLGenerationAgent.execute(question, schemaContext)
-      → queryResult
-  [3] Execution Guidance.validateResult(question, queryResult)
-      → feedback（可能触发 SQLAgent 重执行）
-  [4] Cross-validation.crossValidate(queryResult)
-      → crossValidation
-  [5] RAGAgent.analyze(question, queryResult)
-      → ragResult
-
-并行（互相独立，线程池并发）:
-  [6a] InsightAgent.analyze(question, queryResult, schemaContext, ragResult, crossValidation)
-       → AnalysisReport（含 summary/metrics/charts）
-  [6b] RecommendationAgent.recommend(question, queryResult, schemaContext, ragResult)
-       → List<String>
-
-合并:
-  report.setRecommendations(recs)
-  return report
-```
-
-### 容错策略
-
-| 支路 | 超时 | 失败兜底 |
+| 层级 | 负责人 | 职责 |
 |---|---|---|
-| SchemaAgent | — | 抛出异常 |
-| SQLAgent | — | 抛出异常（含重试 ×3）|
-| Execution Guidance | — | 放行（默认 PASS）|
-| RAGAgent | 30s | 空结果 + confidence=0 |
-| InsightAgent | 60s | fallbackReport |
-| RecAgent | 30s | 空列表 |
+| 对外服务层 | Spring Boot | 接收用户请求、选择引擎、返回 `AnalysisReport` |
+| 平台工具层 | Spring Boot | SQL 校验、SQL 执行、DQ 审核、指标查询、运行记录、审批恢复 |
+| Agent 编排层 | Python Agent Engine | 状态图编排、节点跳转、SQL 生成重试、等待审批、最终回答 |
+| 模型能力层 | LLM Client | SQL 生成、回答生成、必要的轻量判断 |
 
----
+## 当前 ChatBI 主图
 
-## 8. DataAnalysisAgent — 外观层
-
-### 职责
-
-统一对外接口，处理路由、缓存、对话记忆。
-
-### 执行逻辑
-
-```
-chat(userId, message):
-  → MessageChatMemoryAdvisor 注入历史
-  → strong model + Tool（有记忆，流式输出）
-  → MessageChatMemoryAdvisor 保存历史
-
-analyze(userId, message, onProgress?, bypassCache?):
-  1. 语义缓存检查（ANN + LLM Judge）
-  2. 缓存命中 → 返回
-  3. RouterAgent 判断路径
-     a. 简单路径 → simpleAnalysisClient（cheap model + Tool）
-     b. 复杂路径 → CoordinatorAgent
-  4. 写回语义缓存
-  5. 返回 AnalysisReport
+```text
+ROUTER
+  -> SCHEMA
+  -> SQL_GENERATE
+  -> SQL_HARD_GUARD
+  -> SQL_EXECUTE
+  -> SQL_VALIDATE
+  -> SQL_SOFT_DQ
+  -> ANSWER
 ```
 
-### 输入/输出
+默认 `/analyze` 使用 `graphMode=chatbi`。历史完整图仍可通过 `graphMode=full` 保留兼容，但不作为当前主线验收目标。
 
-```
-chat:
-  输入: userId, message
-  输出: Flux<String>（SSE 流式）
+## 节点说明
 
-analyze:
-  输入: userId, message, bypassCache?
-  输出: AnalysisReport（JSON）
-```
+### ROUTER
 
----
+判断请求是否进入 ChatBI 主链路。当前阶段可以默认进入 ChatBI，后续再扩展闲聊、归因分析、报表解释等分支。
 
-## 9. Tools
+输入：
 
-### SqlExecutionTool
-
-```
-executeSql(sql):
-  1. SELECT 正则校验
-  2. SQL 结果缓存检查（Redis MD5，5 分钟 TTL）
-  3. 规则检查（sql-rules.yml，可配置，不改代码）
-     - 聚合必须过滤 event_type
-     - JOIN 必须带 ON
-     - GROUP BY 字段必须在 SELECT 中
-     - 大表查询必须带 LIMIT
-  4. EXPLAIN 编译校验 + 查询计划分析
-  5. 熔断检查（连续 3 次超时）
-  6. setQueryTimeout(15s) + setMaxRows(101)
-  7. 执行 → 格式化 TSV
-  8. 写入 SQL 结果缓存
-  8. 异常 → 返回给 LLM 修正重试
+```text
+question
 ```
 
-### MetricQueryTool
+输出：
 
+```text
+route = chatbi
 ```
-getMetricFormula(metricName):
-  SELECT formula FROM metric_def WHERE metric_name = ?
-  → 返回公式字符串或"未找到该指标定义"
+
+### SCHEMA
+
+获取或构造当前问题需要的 Schema 上下文，减少 SQL 生成的搜索空间。
+
+当前实现允许使用平台层 Schema 接口或本地 mock schema。真实联调时应优先通过 Spring Boot 获取平台侧 Schema。
+
+### SQL_GENERATE
+
+调用 SQLGenerationAgent 生成 MySQL SELECT SQL。
+
+输入：
+
+```text
+question
+schemaContext
+previousFeedback?
 ```
+
+输出：
+
+```text
+sql
+```
+
+要求：
+
+- 只生成 SELECT。
+- 不臆测不存在的表和字段。
+- 收到硬校验或执行错误反馈后，必须基于反馈重写 SQL。
+- 超过重试次数后终止并返回错误报告。
+
+### SQL_HARD_GUARD
+
+调用 Spring Boot 平台层 `/internal/sql/validate` 做硬校验。
+
+校验结果分三类：
+
+| 类型 | 行为 |
+|---|---|
+| PASS | 进入 SQL_EXECUTE |
+| retryable | 把失败原因反馈给 SQL_GENERATE 重试 |
+| approval-needed | 进入 `WAITING_APPROVAL`，等待人工审批 |
+
+典型 retryable 问题：
+
+- `SQL_EMPTY`
+- `SQL_NOT_SELECT`
+- `SQL_PARSE_ERROR`
+- `SQL_SYNTAX_ERROR`
+- `SQL_RULE_WARNING`
+
+典型 approval-needed 问题：
+
+- `DETAIL_QUERY_WITHOUT_LIMIT`
+- `DETAIL_QUERY_WITHOUT_TIME_RANGE`
+- `SQL_FULL_SCAN`
+- `SQL_LARGE_SCAN`
+- `SQL_CIRCUIT_BREAKER`
+- `SENSITIVE_FIELD_ACCESS`
+
+### SQL_EXECUTE
+
+调用 Spring Boot SQL Gateway 执行 SQL。
+
+要求：
+
+- Python 不直接连接数据库。
+- SQL 执行必须经过 Spring Boot 的统一安全入口。
+- 执行失败时错误信息回流到 SQL_GENERATE，触发重试。
+
+### SQL_VALIDATE
+
+对 SQL 执行后的结果做基础合理性检查。当前可作为轻量节点保留，后续可并入更完整的 Execution Guidance。
+
+### SQL_SOFT_DQ
+
+调用 Spring Boot `/internal/dq/sql-result/check` 做软审核。
+
+软审核不直接阻断主链路，但必须把 warnings 和 DQ 结果带入最终回答，避免模型忽略数据质量风险。
+
+### ANSWER
+
+调用 AnswerAgent 生成结构化 `AnalysisReport`。
+
+输出字段需要兼容 Spring Boot DTO：
+
+```text
+summary
+metrics
+charts
+recommendations
+sql
+warnings
+dq
+```
+
+## Human-in-the-loop
+
+当 SQL_HARD_GUARD 判定需要审批时，Agent Engine 返回等待状态：
+
+```text
+status = WAITING_APPROVAL
+runId
+sql
+approvalReasons
+```
+
+Spring Boot 审批接口：
+
+```http
+POST /api/agent/runs/{runId}/approval
+Content-Type: application/json
+
+{"approved": true}
+```
+
+审批通过后，Agent Engine 使用同一条 SQL 继续执行，并设置 `allowHighRisk=true`，避免重新生成 SQL 导致审批对象漂移。
+
+## 后续扩展节点
+
+以下节点暂不作为当前 ChatBI 主链路的完成标准：
+
+- RAGAgent：评论检索与主题归因。
+- CrossValidationAgent：播放行为交叉验证。
+- InsightAgent：复杂归因报告。
+- RecommendationAgent：运营建议专家。
+- DBQANode：报告质量自动评审。
+
+这些能力后续应作为可插拔节点接入，而不是重新打乱当前 ChatBI 主链路。

@@ -1,194 +1,128 @@
-# Agent 系统评测体系
+# ChatBI 评测体系
 
-## 概述
+本文档定义当前项目的评测口径。评测优先覆盖 ChatBI / Text2SQL 主链路，RAG、归因、DBQA 暂不作为当前主线通过标准。
 
-评测体系分三层：**Text2SQL 准确率 → RAG 检索效果 → 端到端报告质量**。每层独立运行，数据量 50000 条行为 + 500 条评论。
+## 评测目标
 
----
+评测需要回答四个问题：
 
-## 第一层：Text2SQL 准确率评测
+1. 自然语言问题能否生成可执行 SQL。
+2. SQL 是否通过平台层硬校验与安全约束。
+3. 执行结果是否能生成结构化 `AnalysisReport`。
+4. 高风险 SQL、执行失败、DQ warning 是否能被正确处理。
 
-### 评测目标
+## 评测分层
 
-衡量 Agent 将自然语言转化为正确 SQL 的能力，覆盖简单查询、聚合查询、复杂多表查询三类场景。
-
-### 评测集（10 个预设问题）
-
-| 编号 | 问题 | 类型 | 难度 | 涉及能力 |
-|---|---|---|---|---|
-| 1 | 有哪些分类的视频 | 列取 | 低 | 简单 SQL |
-| 2 | 美妆类视频有哪些 | 列取+过滤 | 低 | WHERE 条件 |
-| 3 | 完播率是多少 | 单指标聚合 | 中 | getMetricFormula + 聚合 SQL |
-| 4 | 美食类视频的总播放量 | 单指标聚合 | 中 | SUM + WHERE event_type |
-| 5 | 互动率最高的创作者 | 聚合+排序 | 中 | 公式 + GROUP BY + ORDER BY |
-| 6 | 国庆期间每天播放量趋势 | 时间趋势 | 中 | metric_daily 预聚合表 |
-| 7 | 美食类和游戏类完播率对比 | 多分类对比 | 中高 | GROUP BY + 多分类 |
-| 8 | 为什么国庆后完播率下降了 | 归因分析 | **高** | 全链路 + RAG + 交叉验证 |
-| 9 | 北京和上海播放行为差异 | 多维度分析 | 高 | 多表 JOIN + GROUP BY |
-| 10 | 查询所有数据 | 压力测试 | — | EXPLAIN 性能拦截 |
-
-### 评测指标
-
-| 指标 | 计算方式 | 合格线 | 优秀线 |
-|---|---|---|---|
-| SQL 首次通过率 | 首次 executeSql 不报错的问题数 / 10 | 70% | 85% |
-| 逻辑正确率 | SQL 语义正确（WHERE/JOIN 无误）的问题数 / 10 | 60% | 80% |
-| 平均响应时间 | 10 个问题的总耗时 / 10 | <20s | <15s |
-| Execution Guidance 触发率 | 触发校验的问题数 / 10 | — | <30% |
-| EXPLAIN 拦截率 | 全表扫描/临时表被拦截的占比 | — | 100% |
-
-### 评测流程
-
-```
-1. FLUSHALL Redis 缓存（避免缓存污染结果）
-2. 顺序跑 10 个预设问题
-3. 记录每个问题的：SQL 文本、是否报错、响应时间、Execution Guidance 是否触发
-4. 人工判定 SQL 逻辑是否正确
-5. 汇总计算指标
-```
-
----
-
-## 第二层：RAG 检索效果评测
-
-### 评测目标
-
-衡量 RAG 管线（Query Rewriting → ANN → Reranker → Self-Reflection）对评论的检索和过滤能力。
-
-### 评测用例
-
-| 编号 | 问题 | 预期主题 | 预期 confidence | 说明 |
-|---|---|---|---|---|
-| R1 | 为什么美食视频完播率下降了 | 广告太多、卡顿 | >0.5 | 应命中负面评论 |
-| R2 | 为什么国庆期间完播率上升了 | 活动、挑战赛 | >0.5 | 应命中活动相关评论 |
-| R3 | 美妆和游戏完播率对比 | — | <0.3 | 无相关评论，应低 confidence |
-| R4 | 北京用户的播放习惯 | — | <0.3 | 无相关评论，应低 confidence |
-
-### 评测指标
-
-| 指标 | 定义 | 计算方式 |
+| 层级 | 目标 | 运行方式 |
 |---|---|---|
-| 主题命中率 | 正确识别核心主题的问题数 / 总问题数 | R1-R2 应命中，R3-R4 应拒绝 |
-| Reranker 精度@5 | top-5 中相关评论的占比 | 人工判定 top-5 每条是否与问题相关 |
-| Self-Reflection 准确率 | confidence >0.5 时是否有评论可解释；<0.3 时是否无评论可解释 | R1-R2: confidence>0.5；R3-R4: confidence<0.3 |
-| 交叉验证通过率 | RAG 主题与 play_detail 跳出分布是否一致 | 美食类广告投诉应匹配 10-25s 跳出聚集 |
+| 单元测试 | 校验 Java/Python 关键服务行为 | `mvn test`, `pytest` |
+| Mock Eval | 不依赖真实 Spring Boot 和数据库，验证 Agent 图逻辑 | `python -m app.eval.runner --mode mock` |
+| Real Eval | 通过 Spring Boot 入口完成真实联调 | `python -m app.eval.runner --mode real` |
+| 人工验收 | 检查 SQL 语义、图表、回答质量 | 按用例人工复核 |
 
-### 评测流程
+## 核心指标
 
-```
-1. 执行 R1-R4 四个查询，走 CoordinatorAgent 全链路
-2. 拦截 RAGAgent 输出，记录：rewrite 结果、ANN top-10、rerank top-5、confidence
-3. 人工判定每条 top-5 评论是否与问题相关
-4. 对比 RAG 主题与 play_detail 跳出分布是否一致
-```
-
----
-
-## 第三层：端到端报告质量评测（LLM-as-Judge）
-
-### 评测目标
-
-用独立的评测模型对 Agent 产出的 `AnalysisReport` 进行自动评分，替代人工判断。
-
-### 评分维度
-
-| 维度 | 满分 | 评分标准 | 扣分项 |
-|---|---|---|---|
-| 准确性 | 3 | SQL 正确，数据与查询结果一致 | SQL 报错 -2，数据错误 -1~3 |
-| 归因逻辑 | 3 | 归因有证据支撑，交叉验证到位 | 无证据归因 -1，评论与数据矛盾 -2 |
-| 完整性 | 2 | 覆盖问题所有方面 | 遗漏核心指标 -1，缺少建议 -1 |
-| 可读性 | 2 | 指标卡 + 图表 + 建议清晰 | 格式混乱 -1，图表不匹配 -1 |
-| **总分** | **10** | — | — |
-
-### 评测方法
-
-```java
-// 评测 Agent（独立于业务管线）
-EvaluatorAgent:
-  输入: {问题, 原始数据, SQL, AnalysisReport, RAG输出}
-  
-  评分 prompt:
-  "作为数据分析报告评审专家，对以下分析报告打分。
-   问题: {question}
-   数据: {data}
-   SQL: {sql}
-   报告: {report}
-   
-   评分（每项 0-满分）：
-   - 准确性 /3:
-   - 归因逻辑 /3:
-   - 完整性 /2:
-   - 可读性 /2:
-   
-   扣分原因："
-```
-
-### 评测集
-
-取第一层的 10 个问题 + 第二层的 4 个问题，共 14 个，覆盖所有路径：
-
-| 路径 | 问题数 | 覆盖场景 |
+| 指标 | 定义 | 合格线 |
 |---|---|---|
-| 简单路径（RouterAgent 短路） | 2 | 列取类问题 |
-| 复杂路径无 RAG | 3 | 聚合/趋势类问题 |
-| 复杂路径有 RAG | 3 | 归因类问题 |
-| 复杂路径有 RAG + 交叉验证 | 2 | 广告归因类问题 |
-| 压力测试 | 1 | 全表扫描拦截 |
-| RAG 拒绝测试 | 3 | 无相关评论的问题 |
+| SQL 生成成功率 | 成功生成非空 SELECT SQL 的 case 占比 | >= 90% |
+| 硬校验通过率 | 无需人工审批且通过 `/internal/sql/validate` 的 case 占比 | >= 80% |
+| 自动修复成功率 | 首次失败后经反馈重试成功的 case 占比 | >= 60% |
+| 执行成功率 | SQL Gateway 成功返回结果的 case 占比 | >= 80% |
+| 报告结构正确率 | 返回 JSON 可映射为 `AnalysisReport` 的 case 占比 | >= 95% |
+| 高风险拦截率 | 明细大表、无限制查询等风险 SQL 被拦截或审批的比例 | 100% |
 
-### 合格标准
+## 推荐评测用例
 
-| 等级 | 总分 | 准确性 | 归因逻辑 |
+| 编号 | 问题 | 类型 | 重点 |
 |---|---|---|---|
-| 优秀 | ≥8.5 | ≥2.5 | ≥2.5 |
-| 合格 | ≥7.0 | ≥2.0 | ≥2.0 |
-| 不合格 | <7.0 | <2.0 | <2.0 |
+| C01 | 分析各分类播放量趋势 | 趋势分析 | GROUP BY、图表 |
+| C02 | 统计各分类总播放量 | 聚合查询 | SUM、排序 |
+| C03 | 最近 7 天每天播放量是多少 | 时间序列 | 日期过滤 |
+| C04 | 完播率是多少 | 指标查询 | 指标公式 |
+| C05 | 美食类视频总播放量是多少 | 条件过滤 | WHERE |
+| C06 | 播放量最高的 10 个视频 | TopN | ORDER BY、LIMIT |
+| C07 | 查询所有播放明细 | 高风险查询 | 必须拦截或审批 |
+| C08 | 不加时间范围查询用户行为明细 | 高风险查询 | 必须等待审批 |
+| C09 | 对比美食和游戏分类的播放趋势 | 多分类对比 | GROUP BY 多维 |
+| C10 | 分析各分类互动率 | 指标计算 | 派生指标 |
 
----
+后续可扩展到 20 条以上 case，并在 `agent-engine/app/eval/cases.yaml` 中维护。
 
-## 运行方式
+## 运行命令
 
-### 单次评测
+### Java 测试
 
-```bash
-# 清缓存
-docker exec redis redis-cli FLUSHALL
-
-# 跑评测问题
-curl "http://localhost:8080/api/agent/analyze?userId=evaluator&message=完播率是多少&nocache=true"
-# 记录结果
-
-# 汇总
+```powershell
+mvn test
 ```
 
-### 回归评测（计划）
+### Python 测试
 
-```bash
-# 每次代码变更后自动跑
-./eval.sh
-
-# 输出
-=============================
-  Agent 系统评测报告
-=============================
-Text2SQL 首次通过率:     8/10 (80%)
-平均响应时间:            16.2s
-Execution Guidance 触发:  2/10 (20%)
-EXPLAIN 拦截:            1/1 (100%)
-
-RAG 主题命中率:          3/4 (75%)
-Reranker 精度@5:         80%
-Self-Reflection 准确率:   75%
-
-端到端报告质量:          7.8/10
-  准确性:  2.5/3
-  归因逻辑: 2.4/3
-  完整性:  1.5/2
-  可读性:  1.4/2
-
-综合评级: 合格
-改进建议:
-  - 完整性偏低，部分报告缺少建议
-  - 可读性可通过优化图表标题提升
-=============================
+```powershell
+cd agent-engine
+.\.venv\Scripts\python.exe -m pytest tests
+.\.venv\Scripts\python.exe -m ruff check app tests
 ```
+
+### Mock Eval
+
+```powershell
+cd agent-engine
+.\.venv\Scripts\python.exe -m app.eval.runner --mode mock
+```
+
+### Real Eval
+
+运行前需要启动 MySQL、Redis、Spring Boot 和 Agent Engine，并设置 `PLATFORM_CALLS_ENABLED=true`。
+
+```powershell
+cd agent-engine
+.\.venv\Scripts\python.exe -m app.eval.runner --mode real
+```
+
+## 真实链路 Smoke Test
+
+```powershell
+$message = [uri]::EscapeDataString('分析各分类播放量趋势')
+$url = "http://127.0.0.1:8080/api/agent/analyze?userId=demo&message=$message&nocache=true&engine=langgraph"
+Invoke-RestMethod -Uri $url
+```
+
+验收点：
+
+- Spring Boot 返回 HTTP 200。
+- 返回体可以反序列化为 `AnalysisReport`。
+- `summary` 非空。
+- `sql` 非空且为 SELECT。
+- `charts` 与查询结果字段对应。
+- 如果存在 DQ warning，最终结果中必须保留 warning。
+
+## 报告输出
+
+Eval runner 的输出应写入：
+
+```text
+docs/eval-report.md
+```
+
+报告至少包含：
+
+- 执行时间。
+- 运行模式：mock / real。
+- case 总数、通过数、失败数。
+- 每个 case 的问题、状态、耗时、失败原因。
+- 聚合指标。
+
+## 失败处理规范
+
+评测失败时不要直接调低用例难度，优先定位失败层级：
+
+| 失败位置 | 优先排查 |
+|---|---|
+| SQL 为空 | Prompt、LLM 配置、schemaContext |
+| SQL 硬校验失败 | Java `SqlValidationService` 与 Python retryable 分类 |
+| SQL 执行失败 | 表字段、方言、平台接口协议 |
+| DQ warning 丢失 | `SQL_SOFT_DQ` 到 `ANSWER` 的状态传递 |
+| DTO 映射失败 | Java `AnalysisReport` 字段兼容性 |
+
+只有当业务口径变化时，才修改评测用例本身。

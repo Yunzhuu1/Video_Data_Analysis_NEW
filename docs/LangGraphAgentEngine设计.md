@@ -1,5 +1,7 @@
 # LangGraph Agent Engine 设计
 
+> 文档定位：本文描述 Agent Engine 的长期设计目标。当前默认交付链路是 ChatBI/Text2SQL 主图：`ROUTER -> SCHEMA -> SQL_GENERATE -> SQL_HARD_GUARD -> SQL_EXECUTE -> SQL_VALIDATE -> SQL_SOFT_DQ -> ANSWER`。文中 RAG、CrossValidation、DBQA 等节点为后续扩展规划。
+
 ## 1. 定位
 
 LangGraph Agent Engine 是 DataAgent 的状态机编排层。
@@ -450,3 +452,4 @@ Human-in-the-loop 必须依赖持久化 checkpoint，否则服务重启后无法
 - RAG confidence 能影响路径。
 - DBQA 能触发补充查询。
 - 评测 runner 能批量执行 cases。
+
