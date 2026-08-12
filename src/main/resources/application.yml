@@ -8,11 +8,6 @@ spring:
     password: ${DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-
   ai:
     openai:
       base-url: ${AI_BASE_URL}
@@ -39,7 +34,6 @@ app:
     similarity-threshold: 0.92
     ttl-minutes: 60
     evict-interval-minutes: 10
-    sql-ttl-minutes: 5
 
 logging:
   level:

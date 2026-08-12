@@ -35,7 +35,7 @@ User
 
 | 层级 | 技术 |
 |---|---|
-| 平台层 | Spring Boot, MySQL, Redis, JSqlParser |
+| 平台层 | Spring Boot, MySQL, JSqlParser |
 | Agent 引擎层 | Python, FastAPI, LangGraph（StateGraph + interrupt + SQLite checkpoint）, httpx |
 | LLM 接入 | OpenAI-compatible API, DeepSeek-compatible API |
 | 测试评测 | JUnit, pytest, ruff, eval harness（golden_spec/FakeLLM 回放/A-B） |

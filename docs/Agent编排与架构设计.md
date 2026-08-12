@@ -142,4 +142,4 @@ SQL_HARD_GUARD 判定 approval-needed
 - `/internal/sql/validate`、`/internal/sql/execute`、`/internal/dq/sql-result/check` 可独立调用。
 - 高风险 SQL 不会直接执行（进入审批或拦截）。
 - 所有 SQL 有审计日志。
-- 测试环境不依赖真实模型/Redis/MySQL 初始化逻辑。
+- 测试环境不依赖真实模型/MySQL 初始化逻辑。
