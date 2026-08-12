@@ -227,8 +227,15 @@ async def main() -> None:
     settings.trace_callback_enabled = args.mode == "real"
     settings.platform_calls_enabled = args.mode == "real"
 
+    from app.graph.checkpoints import create_checkpointer
+
+    db_path = ":memory:" if args.mode == "mock" else settings.checkpoint_db_path
+    checkpointer = await create_checkpointer(db_path)
+    graph_builder.init_graph(checkpointer)
+
     cases = load_cases(args.cases)
     results = [await run_case(case, args.mode) for case in cases]
+    await checkpointer.conn.close()
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(render_report(results), encoding="utf-8")
     print(f"wrote {args.report}")

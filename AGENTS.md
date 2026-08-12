@@ -166,8 +166,8 @@ Content-Type: application/json
 
 以下能力属于规划方向，不作为当前 ChatBI 主链路的完成标准：
 
-- **LangGraph 迁移**：用真 LangGraph（StateGraph + interrupt + SqliteSaver）重写编排层，审批持久化跨进程可恢复。
+- **LangGraph 迁移（已完成）**：编排层已基于 LangGraph StateGraph（条件边 + interrupt + SQLite checkpoint）重写，审批持久化跨进程可恢复。
 - **语义解析 + 确定性合成**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL。
 - **评测 harness**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁。
 
-这些方向分别由 OpenSpec change `langgraph-migration`、`semantic-resolve-node`、`agent-eval-harness` 承接，不重新打乱当前 ChatBI 主链路。
+剩余方向由 OpenSpec change `semantic-resolve-node`、`agent-eval-harness` 承接，不重新打乱当前 ChatBI 主链路。

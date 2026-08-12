@@ -48,3 +48,9 @@ docs/面试准备/
 ### Local agent/git backups ###
 .claude/
 .git_backup_*/
+
+# LangGraph checkpoint db
+checkpoints.sqlite
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal

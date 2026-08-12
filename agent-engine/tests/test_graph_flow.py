@@ -1,7 +1,20 @@
 import pytest
 
+from app.graph import graph_builder
+from app.graph.checkpoints import create_checkpointer
 from app.graph.graph_builder import resume_graph, run_chatbi_graph
 from app.settings import settings
+
+
+@pytest.fixture(autouse=True)
+def fresh_graph():
+    """Give every test an isolated in-memory checkpointer + compiled graph."""
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    settings.trace_callback_enabled = False
+    settings.platform_calls_enabled = False
+    graph_builder.init_graph(InMemorySaver())
+    yield
 
 
 @pytest.mark.asyncio
@@ -391,6 +404,115 @@ async def test_high_risk_sql_waits_for_approval_then_resumes(monkeypatch):
     resumed_state = await resume_graph("run_high_risk", approved=True)
 
     assert calls == {"execute": 1, "allow_high_risk": True}
+    assert resumed_state["approval_status"] == "approved"
+    assert resumed_state["validation_feedback"] == "PASS"
+    assert resumed_state["final_report"]["summary"].startswith("ChatBI answered")
+
+
+@pytest.mark.asyncio
+async def test_approval_rejection_returns_rejected_report(monkeypatch):
+    from app.graph import graph_builder
+
+    calls = {"execute": 0}
+
+    async def high_risk_validate_sql(*args, **kwargs):
+        return {
+            "pass": False,
+            "sql": kwargs["sql"],
+            "riskLevel": "HIGH",
+            "errorCode": "SQL_FULL_SCAN",
+            "reason": "Full table scan.",
+            "suggestion": "Approve only if necessary.",
+            "accessedTables": ["play_detail"],
+            "violations": [{"code": "SQL_FULL_SCAN", "message": "full scan"}],
+        }
+
+    async def execute_sql(*args, **kwargs):
+        calls["execute"] += 1
+        raise AssertionError("SQL must not execute after rejection")
+
+    monkeypatch.setattr(graph_builder.platform, "validate_sql", high_risk_validate_sql)
+    monkeypatch.setattr(graph_builder.platform, "execute_sql", execute_sql)
+
+    waiting_state = await run_chatbi_graph(
+        {
+            "run_id": "run_rejected",
+            "user_id": "demo",
+            "question": "query playback details",
+            "graph_mode": "chatbi",
+            "warnings": [],
+            "errors": [],
+        }
+    )
+    assert waiting_state["approval_status"] == "waiting"
+
+    rejected_state = await resume_graph("run_rejected", approved=False)
+
+    assert rejected_state["approval_status"] == "rejected"
+    assert "rejected" in rejected_state["final_report"]["summary"]
+    assert calls["execute"] == 0
+
+
+@pytest.mark.asyncio
+async def test_checkpoint_survives_process_restart(monkeypatch, tmp_path):
+    from app.graph import graph_builder
+
+    db_path = str(tmp_path / "checkpoints.sqlite")
+
+    async def high_risk_validate_sql(*args, **kwargs):
+        return {
+            "pass": False,
+            "sql": kwargs["sql"],
+            "riskLevel": "HIGH",
+            "errorCode": "DETAIL_QUERY_WITHOUT_LIMIT",
+            "reason": "Detail table queries must include LIMIT.",
+            "suggestion": "Approve only if necessary.",
+            "accessedTables": ["play_detail"],
+            "violations": [{"code": "DETAIL_QUERY_WITHOUT_LIMIT", "message": "missing LIMIT"}],
+        }
+
+    async def execute_sql(*args, **kwargs):
+        return {
+            "success": True,
+            "sql": kwargs["sql"],
+            "columns": ["ok"],
+            "rows": [{"ok": "yes"}],
+            "rowCount": 1,
+            "truncated": False,
+            "warnings": [],
+            "errorCode": None,
+            "error": None,
+            "riskLevel": "HIGH",
+            "accessedTables": ["play_detail"],
+            "durationMs": 0,
+        }
+
+    monkeypatch.setattr(graph_builder.platform, "validate_sql", high_risk_validate_sql)
+    monkeypatch.setattr(graph_builder.platform, "execute_sql", execute_sql)
+
+    # first process: analyze -> waiting
+    saver1 = await create_checkpointer(db_path)
+    graph_builder.init_graph(saver1)
+    waiting_state = await run_chatbi_graph(
+        {
+            "run_id": "run_restart",
+            "user_id": "demo",
+            "question": "query playback details",
+            "graph_mode": "chatbi",
+            "warnings": [],
+            "errors": [],
+        }
+    )
+    assert waiting_state["approval_status"] == "waiting"
+
+    # simulate restart: close the first connection, then a brand-new
+    # checkpointer instance on the same file (as after a process restart)
+    await saver1.conn.close()
+    saver2 = await create_checkpointer(db_path)
+    graph_builder.init_graph(saver2)
+    resumed_state = await resume_graph("run_restart", approved=True)
+    await saver2.conn.close()
+
     assert resumed_state["approval_status"] == "approved"
     assert resumed_state["validation_feedback"] == "PASS"
     assert resumed_state["final_report"]["summary"].startswith("ChatBI answered")

@@ -24,6 +24,7 @@ if BaseSettings is not None:
         ai_base_url: str = "https://api.deepseek.com"
         ai_api_key: str = ""
         ai_model: str = "deepseek-chat"
+        checkpoint_db_path: str = "checkpoints.sqlite"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 else:
@@ -37,6 +38,7 @@ else:
             self.ai_base_url = os.getenv("AI_BASE_URL", "https://api.deepseek.com")
             self.ai_api_key = os.getenv("AI_API_KEY", "")
             self.ai_model = os.getenv("AI_MODEL", "deepseek-chat")
+            self.checkpoint_db_path = os.getenv("CHECKPOINT_DB_PATH", "checkpoints.sqlite")
 
 
 settings = Settings()
