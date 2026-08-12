@@ -1489,7 +1489,7 @@ fix(engine): resolve real platform integration issues
 范围：
 
 - 扩充 `agent-engine/app/eval/cases.yaml`。
-- 增加 `--mode real`。
+- 增加端到端评测（`--llm real --platform real`）。
 - 调用真实 Spring 入口。
 - 收集 runId、SQL、DQ、耗时、成功率。
 - 生成 `docs/eval-report.md`。

@@ -3,16 +3,27 @@
 > 评测只覆盖 ChatBI 主链路（语义解析 → 确定性合成 → 护栏 → 执行 → DQ → 回答）。
 > 原则：**指标先实测、后定标**；本文不再写拍脑袋的"目标值"。
 
-## 评测分层
+## 评测分层与运行轴
+
+评测用两个正交参数控制运行方式：`--llm <mock|record|replay|real>`（LLM 来源）× `--platform <mock|real>`（平台来源）。
 
 | 层级 | 目标 | 运行方式 |
 |---|---|---|
 | 单元测试 | 比较器 / 合成器 / FakeLLM 行为 | `pytest` |
-| Mock Eval | 不依赖 LLM/MySQL，验证图逻辑与降级路径 | `python -m app.eval.runner --mode mock` |
-| Replay Eval | FakeLLM 回放真实录制的响应，CI 可复现 | `python -m app.eval.runner --mode replay --cassette cassettes/xxx.json` |
-| Real Eval | 真实 LLM + Spring Boot + MySQL 出数字 | `python -m app.eval.runner --mode real` |
+| Mock Eval | 不依赖 LLM/MySQL，验证图逻辑与降级路径 | `--llm mock --platform mock` |
+| Replay Eval | FakeLLM 回放真实录制的响应，CI 可复现 | `--llm replay --platform mock --cassette cassettes/xxx.json` |
+| 语义层评测 | 真实 LLM + mock 平台，出 L1~L4（无需 MySQL） | `--llm real --platform mock` |
+| 端到端评测 | 真实 LLM + Spring Boot + MySQL 全链路 | `--llm real --platform real` |
 
-**回放 ≠ 质量测量**：replay 用于回归（图逻辑正确性、可复现）；真实数字来自 `--mode real`（需 API key 与 MySQL）。真实跑一次后录制 cassette，之后 CI 用 replay 回归。
+**回放 ≠ 质量测量**：replay 用于回归（图逻辑正确性、可复现）；真实数字来自 `--llm real`（需 API key；`--platform real` 还需 MySQL）。真实跑一次后录制 cassette，之后 CI 用 replay 回归。
+
+### 失败语义（三态）
+
+- `PASS`：业务成功。
+- `FAIL`：业务失败（解析错、合成失败、状态不符）→ 正常参与评分。
+- `ERROR`：环境性失败（网络/超时/限流/5xx）→ 不计入 `judged`，报告单列，计入「评测可用性 x/21」。
+
+环境失败与业务失败严格分离：**一个用例超时不会中断整场评测，也不会污染口径正确率分母**。
 
 ## 核心指标（计算口径）
 
@@ -45,13 +56,14 @@
 cd agent-engine
 .venv/bin/python -m pytest tests
 .venv/bin/python -m ruff check app tests
-.venv/bin/python -m app.eval.runner --mode mock                 # CI 回归
-.venv/bin/python -m app.eval.runner --mode replay --cassette cassettes/xxx.json
-.venv/bin/python -m app.eval.runner --mode real                  # 需要 API key + MySQL
-.venv/bin/python -m app.eval.runner --compare a.json b.json      # A/B 对比
+.venv/bin/python -m app.eval.runner --llm mock --platform mock                    # CI 回归
+.venv/bin/python -m app.eval.runner --llm replay --platform mock --cassette cassettes/xxx.json
+.venv/bin/python -m app.eval.runner --llm real --platform mock                    # 语义层基线（无需 MySQL）
+.venv/bin/python -m app.eval.runner --llm real --platform real                    # 端到端定标（需 API key + MySQL）
+.venv/bin/python -m app.eval.runner --compare a.json b.json                       # A/B 对比（配置不一致会拒绝）
 ```
 
-报告输出 `docs/eval-report.md` 与 `docs/eval-report.json`。
+报告输出：`docs/eval-report.md`（最近一次可读快照）+ `docs/eval-reports/eval-{llm}-{platform}-{eval_date}.json`（按运行配置归档，供 A/B 对比）。
 
 ## 失败处理规范
 

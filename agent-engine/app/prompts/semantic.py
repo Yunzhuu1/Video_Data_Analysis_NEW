@@ -31,6 +31,7 @@ SEMANTIC_SYSTEM_PROMPT = """你是一个指标语义解析器。基于给定的�
 - 语义判断：'各分类的播放量' → 分类是 dimensions（group by）；'美食类视频的播放量' → 美食是 filters（where）。
 - '趋势/变化/每天' → intent=trend；'对比/各分类' 带时间 → trend；'Top/最高/前N' → ranking；'明细/列表' → detail。
 - 相对时间（最近7天/上周）→ time_range.type=relative；明确日期 → absolute。
+- 用户未提及时间范围时，time_range.type=none，禁止默认添加时间窗（如'最近7天'）；趋势类问题同样适用。
 - 无法确定指标或维度时，confidence 给低值（< 0.5）并设置 coverage。
 - 不要输出任何 SQL。
 """

@@ -114,7 +114,7 @@ mvn test
 cd agent-engine
 .\.venv\Scripts\python.exe -m pytest tests
 .\.venv\Scripts\python.exe -m ruff check app tests
-.\.venv\Scripts\python.exe -m app.eval.runner --mode mock
+.\.venv\Scripts\python.exe -m app.eval.runner --llm mock --platform mock
 ```
 
 ## 核心文档
