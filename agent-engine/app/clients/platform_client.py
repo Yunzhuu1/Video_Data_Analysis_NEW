@@ -117,49 +117,6 @@ class PlatformClient:
             response.raise_for_status()
             return dict(response.json())
 
-    async def analyze_rag(self, question: str, query_result: dict) -> dict:
-        if not settings.platform_calls_enabled:
-            return {
-                "themes": [],
-                "negativeRatio": 0.0,
-                "representativeComments": [],
-                "summary": "RAG disabled for test",
-                "confidence": 0.0,
-            }
-        http = self._require_httpx()
-        async with http.AsyncClient(timeout=40) as client:
-            response = await client.post(
-                f"{self.base_url}/internal/rag/analyze",
-                headers=self.headers,
-                json={"question": question, "queryResult": str(query_result)},
-            )
-            response.raise_for_status()
-            return dict(response.json())
-
-    async def cross_validate(self, rag_result: dict) -> str:
-        if not settings.platform_calls_enabled:
-            confidence = float(rag_result.get("confidence") or 0.0)
-            if confidence < 0.3:
-                return "SKIPPED: RAG confidence below threshold"
-            return "CROSS_VALIDATION_DISABLED_FOR_TEST"
-        http = self._require_httpx()
-        async with http.AsyncClient(timeout=30) as client:
-            response = await client.post(
-                f"{self.base_url}/internal/cross-validation/analyze",
-                headers=self.headers,
-                json={
-                    "ragResult": {
-                        "themes": rag_result.get("themes") or [],
-                        "negativeRatio": rag_result.get("negative_ratio", 0.0),
-                        "representativeComments": rag_result.get("representative_comments", []),
-                        "summary": rag_result.get("summary", ""),
-                        "confidence": rag_result.get("confidence", 0.0),
-                    }
-                },
-            )
-            response.raise_for_status()
-            return str(response.json().get("result", ""))
-
     async def check_sql_result_dq(
         self,
         run_id: str,
@@ -186,6 +143,46 @@ class PlatformClient:
                     "question": question,
                     "queryResult": query_result,
                 },
+            )
+            response.raise_for_status()
+            return dict(response.json())
+
+    async def metric_catalog(self) -> list[dict]:
+        """List active metric definitions (the metric dictionary)."""
+        if not settings.platform_calls_enabled:
+            return [
+                {"metricCode": "total_plays", "metricName": "播放量",
+                 "businessDefinition": "播放事件总数", "sourceTable": "metric_daily",
+                 "timeField": "date", "dimensions": ["date", "category"]},
+                {"metricCode": "total_likes", "metricName": "点赞量",
+                 "businessDefinition": "点赞事件总数", "sourceTable": "metric_daily",
+                 "timeField": "date", "dimensions": ["date", "category"]},
+                {"metricCode": "completion_rate", "metricName": "完播率",
+                 "businessDefinition": "完播率均值", "sourceTable": "play_detail",
+                 "timeField": "created_at", "dimensions": ["content"]},
+            ]
+        http = self._require_httpx()
+        async with http.AsyncClient(timeout=30) as client:
+            response = await client.get(f"{self.base_url}/internal/metrics", headers=self.headers)
+            response.raise_for_status()
+            return list(response.json())
+
+    async def metric_definition(self, code: str) -> dict:
+        """Fetch a single metric definition by code."""
+        if not settings.platform_calls_enabled:
+            return {
+                "metricCode": code,
+                "metricName": code,
+                "businessDefinition": "mock definition",
+                "formula": "total_plays",
+                "sourceTable": "metric_daily",
+                "timeField": "date",
+                "dimensions": ["date", "category"],
+            }
+        http = self._require_httpx()
+        async with http.AsyncClient(timeout=30) as client:
+            response = await client.get(
+                f"{self.base_url}/internal/metrics/{code}", headers=self.headers
             )
             response.raise_for_status()
             return dict(response.json())

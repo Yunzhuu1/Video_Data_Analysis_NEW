@@ -1,0 +1,202 @@
+"""确定性 SQL 合成器：从 ResolvedIntent + 指标字典生成 SQL（同意图同 SQL）。
+
+v1 规则：
+- 单指标；多指标暂不支持（抛 SynthesisError，由节点降级 raw SQL）。
+- metric_daily 路径：指标表达式为列名，按分组粒度决定是否 SUM 包裹。
+- ranking 或 metric_daily 无法支撑的维度（content/creator）：走明细事实表
+  （fact_formula + fact_event_filter）。
+- 相对时间由解析器已展开为 absolute；这里只处理 absolute。
+"""
+from __future__ import annotations
+
+from typing import Any
+
+from app.graph.state import ResolvedIntent
+
+
+class SynthesisError(Exception):
+    """合成器无法处理该意图（应降级到 raw SQL 生成）。"""
+
+
+_ALIAS = {
+    "metric_daily": "md",
+    "user_behavior_fact": "ubf",
+    "play_detail": "pd",
+}
+
+DIMENSIONS = [
+    {"code": "date", "name": "日期", "description": "时间维度（日粒度）"},
+    {"code": "category", "name": "分类", "description": "内容分类（美食/美妆/游戏）"},
+    {"code": "content", "name": "内容", "description": "单个视频（content_id）"},
+    {"code": "creator", "name": "创作者", "description": "创作者（creator_id）"},
+]
+
+
+def _field_expr(source: str, field: str) -> tuple[str, list[str]]:
+    """Return (sql_expr, join_clauses) for a semantic field on a source table."""
+    alias = _ALIAS.get(source, source)
+    if source == "user_behavior_fact":
+        if field == "date":
+            return f"DATE({alias}.timestamp)", []
+        if field == "category":
+            return "cd.category", [f"JOIN content_dim cd ON {alias}.content_id = cd.content_id"]
+        if field == "content":
+            return f"{alias}.content_id", []
+        if field == "creator":
+            return f"{alias}.creator_id", []
+        return f"{alias}.{field}", []
+    if source == "play_detail":
+        if field == "date":
+            return f"DATE({alias}.created_at)", []
+        if field == "content":
+            return f"{alias}.content_id", []
+        return f"{alias}.{field}", []
+    # metric_daily
+    return f"{alias}.{field}", []
+
+
+def _format_value(value: Any) -> str:
+    if isinstance(value, bool):
+        return "1" if value else "0"
+    if isinstance(value, (int, float)):
+        return str(value)
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def _filter_cond(expr: str, flt: dict[str, Any]) -> str:
+    op = str(flt.get("op") or "=").lower()
+    value = flt.get("value")
+    if op == "in":
+        values = value if isinstance(value, list) else [value]
+        return f"{expr} IN ({', '.join(_format_value(v) for v in values)})"
+    if op == "between" and isinstance(value, (list, tuple)) and len(value) == 2:
+        return f"{expr} BETWEEN {_format_value(value[0])} AND {_format_value(value[1])}"
+    return f"{expr} {op} {_format_value(value)}"
+
+
+def _limit(ordering: dict[str, Any] | None, default: int) -> int:
+    limit = (ordering or {}).get("limit")
+    if not limit:
+        return default
+    return max(1, int(limit))
+
+
+def _resolve_path(mdef: dict[str, Any], intent: str, dims: list[str]) -> dict[str, Any]:
+    source = mdef.get("sourceTable") or "metric_daily"
+    if intent == "ranking":
+        if source == "metric_daily" and mdef.get("factFormula"):
+            return {
+                "source": "user_behavior_fact",
+                "expr": mdef["factFormula"],
+                "event_filter": mdef.get("factEventFilter"),
+            }
+        return {
+            "source": source,
+            "expr": mdef.get("formula") or "COUNT(*)",
+            "event_filter": None,
+        }
+    # aggregate / trend
+    if source == "metric_daily" and set(dims) <= {"date", "category"}:
+        return {
+            "source": "metric_daily",
+            "expr": mdef.get("formula") or "total_plays",
+            "event_filter": None,
+        }
+    if mdef.get("factFormula"):
+        return {
+            "source": "user_behavior_fact",
+            "expr": mdef["factFormula"],
+            "event_filter": mdef.get("factEventFilter"),
+        }
+    return {
+        "source": source,
+        "expr": mdef.get("formula") or "COUNT(*)",
+        "event_filter": None,
+    }
+
+
+def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -> str:
+    """Deterministically synthesize SELECT SQL from a resolved intent."""
+    metrics = intent.get("metrics") or []
+    if len(metrics) != 1:
+        raise SynthesisError(f"v1 synthesizer supports exactly one metric, got {metrics}")
+    code = metrics[0]
+    mdef = metric_defs.get(code)
+    if mdef is None:
+        raise SynthesisError(f"unknown metric code: {code}")
+
+    it = intent.get("intent", "aggregate")
+    dims = list(intent.get("dimensions") or [])
+    filters = list(intent.get("filters") or [])
+    tr = intent.get("time_range") or {"type": "none", "granularity": None}
+    ordering = intent.get("ordering") or {}
+
+    path = _resolve_path(mdef, it, dims)
+    source = path["source"]
+    alias = _ALIAS.get(source, source)
+    expr = path["expr"]
+    event_filter = path["event_filter"]
+
+    # group-by set (trend always includes date on the x axis)
+    gb: list[str] = []
+    if it == "trend":
+        gb = ["date"] + [d for d in dims if d != "date"]
+    elif it in ("aggregate", "ranking"):
+        gb = list(dims)
+
+    # metric expression (metric_daily rows are at (date, category) grain)
+    agg_expr = expr
+    if source == "metric_daily" and set(gb) != {"date", "category"}:
+        agg_expr = f"SUM({expr})"
+
+    # resolve field expressions + joins
+    joins: list[str] = []
+    field_exprs: dict[str, str] = {}
+    for f in sorted(set(gb) | ({"date"} if it == "trend" else set())):
+        e, j = _field_expr(source, f)
+        field_exprs[f] = e
+        joins.extend(j)
+
+    # WHERE
+    conds: list[str] = []
+    if event_filter:
+        conds.append(event_filter)
+    for flt in filters:
+        fexpr, j = _field_expr(source, str(flt.get("field") or ""))
+        joins.extend(j)
+        conds.append(_filter_cond(fexpr, flt))
+    if tr.get("type") == "absolute":
+        absolute = tr.get("absolute") or {}
+        start = absolute.get("start")
+        end = absolute.get("end")
+        if start and end:
+            tcol = mdef.get("timeField") or "date"
+            time_expr, j = _field_expr(source, tcol)
+            joins.extend(j)
+            end_sql = str(end) + (" 23:59:59" if len(str(end)) <= 10 else "")
+            conds.append(f"{time_expr} BETWEEN '{start}' AND '{end_sql}'")
+    where = (" WHERE " + " AND ".join(conds)) if conds else ""
+
+    join_sql = (" " + " ".join(dict.fromkeys(joins))) if joins else ""
+
+    # detail intent
+    if it == "detail":
+        return f"SELECT * FROM {alias}{join_sql}{where} LIMIT {_limit(ordering, 100)}".strip()
+
+    # SELECT columns
+    select_cols: list[str] = []
+    if it == "trend":
+        select_cols.append(f"{field_exprs['date']} AS date")
+    for f in dims:
+        select_cols.append(f"{field_exprs[f]} AS {f}")
+    select_cols.append(f"{agg_expr} AS {code}")
+
+    sql = f"SELECT {', '.join(select_cols)} FROM {alias}{join_sql}{where}"
+    if gb:
+        sql += " GROUP BY " + ", ".join(field_exprs[f] for f in gb)
+    if it == "trend":
+        sql += f" ORDER BY {field_exprs['date']}"
+    elif it == "ranking":
+        direction = str(ordering.get("direction") or "desc").upper()
+        sql += f" ORDER BY {agg_expr} {direction} LIMIT {_limit(ordering, 10)}"
+    return sql.strip()

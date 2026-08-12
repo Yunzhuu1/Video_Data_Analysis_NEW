@@ -64,14 +64,33 @@ public class DataInitializer implements CommandLineRunner {
                     "挑战赛", "[\"content_5\",\"content_6\"]", "100积分"}
     };
 
-    /** [metric_name, formula, dimension, time_granularity] */
+    /**
+     * [metric_code, metric_name, business_definition, formula, dimensions_json,
+     *  time_granularity, source_table, time_field]
+     */
     private static final String[][] METRICS = {
-            {"完播率",
-             "SUM(CASE WHEN event_type = 'play' THEN value ELSE 0 END) / SUM(c.duration)",
-             null, "天"},
-            {"互动率",
-             "(SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END)",
-             null, "天"}
+            {"total_plays", "播放量", "播放事件总数",
+             "total_plays", "[\"date\",\"category\"]", "天", "metric_daily", "date",
+             "COUNT(*)", "event_type = 'play'"},
+            {"total_play_duration", "播放时长", "播放总时长（秒）",
+             "total_play_duration", "[\"date\",\"category\"]", "天", "metric_daily", "date",
+             "SUM(value)", "event_type = 'play'"},
+            {"total_likes", "点赞量", "点赞事件总数",
+             "total_likes", "[\"date\",\"category\"]", "天", "metric_daily", "date",
+             "COUNT(*)", "event_type = 'like'"},
+            {"total_comments", "评论量", "评论事件总数",
+             "total_comments", "[\"date\",\"category\"]", "天", "metric_daily", "date",
+             "COUNT(*)", "event_type = 'comment'"},
+            {"total_shares", "分享量", "分享事件总数",
+             "total_shares", "[\"date\",\"category\"]", "天", "metric_daily", "date",
+             "COUNT(*)", "event_type = 'share'"},
+            {"completion_rate", "完播率", "完播率均值（0-100）",
+             "AVG(completion_rate)", "[\"content\"]", "天", "play_detail", "created_at",
+             null, null},
+            {"engagement_rate", "互动率", "(点赞+评论)/播放",
+             "(SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0)",
+             "[\"date\",\"category\",\"content\"]", "天", "user_behavior_fact", "timestamp",
+             null, null}
     };
 
     /* ==================== 运行入口 ==================== */
@@ -95,10 +114,8 @@ public class DataInitializer implements CommandLineRunner {
         insertContentDim();
         insertActivityDim();
         insertMetricDef();
-        createMetricDailyTable();
         insertUserBehaviorFact();
         insertMetricDaily();
-        createPlayDetailTable();
         insertPlayDetail();
 
         log.info("测试数据初始化完成");
@@ -193,13 +210,15 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void insertMetricDef() {
-        String sql = "INSERT IGNORE INTO metric_def (metric_name, formula, dimension, time_granularity) "
-                + "VALUES (?, ?, CAST(? AS JSON), ?)";
+        String sql = "INSERT IGNORE INTO metric_definition "
+                + "(metric_name, metric_code, business_definition, formula, dimensions, "
+                + " time_granularity, source_table, time_field, fact_formula, fact_event_filter) "
+                + "VALUES (?, ?, ?, ?, CAST(? AS JSON), ?, ?, ?, ?, ?)";
 
         for (String[] m : METRICS) {
-            jdbcTemplate.update(sql, m[0], m[1], m[2], m[3]);
+            jdbcTemplate.update(sql, m[1], m[0], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9]);
         }
-        log.info("  metric_def: {} metrics inserted", METRICS.length);
+        log.info("  metric_definition: {} metrics inserted", METRICS.length);
     }
 
     /* ==================== 行为事实数据 ==================== */
@@ -334,21 +353,6 @@ public class DataInitializer implements CommandLineRunner {
 
     /* ==================== RAG 评论数据 ==================== */
 
-    private void createPlayDetailTable() {
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS play_detail (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    user_id VARCHAR(64) NOT NULL,
-                    content_id VARCHAR(64) NOT NULL,
-                    play_duration INT NOT NULL COMMENT '实际观看时长(秒)',
-                    drop_off_second INT COMMENT '跳出时间点(秒)',
-                    completion_rate DECIMAL(5,2) COMMENT '完播率',
-                    created_at DATETIME NOT NULL
-                )
-                """);
-        log.info("  play_detail: 表已就绪");
-    }
-
     private void insertPlayDetail() {
         // 为每个用户每天的美食类播放生成播放明细
         // 重点：美食类视频广告多(12s插入)，用户跳出集中在12-20秒区间
@@ -392,24 +396,6 @@ public class DataInitializer implements CommandLineRunner {
         } catch (Exception e) {
             log.warn("  play_detail 注入失败: {}", e.getMessage());
         }
-    }
-
-    private void createMetricDailyTable() {
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS metric_daily (
-                    date DATE NOT NULL,
-                    category VARCHAR(32) NOT NULL,
-                    total_plays BIGINT DEFAULT 0,
-                    total_play_duration DECIMAL(10,2) DEFAULT 0,
-                    total_likes BIGINT DEFAULT 0,
-                    total_comments BIGINT DEFAULT 0,
-                    total_shares BIGINT DEFAULT 0,
-                    total_follows BIGINT DEFAULT 0,
-                    total_favorites BIGINT DEFAULT 0,
-                    PRIMARY KEY (date, category)
-                ) COMMENT='每日预聚合指标表'
-                """);
-        log.info("  metric_daily: 表已就绪");
     }
 
     private void insertMetricDaily() {

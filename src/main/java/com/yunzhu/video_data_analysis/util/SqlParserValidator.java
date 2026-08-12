@@ -24,8 +24,8 @@ public class SqlParserValidator {
 
     private static final List<String> KNOWN_TABLES = List.of(
             "user_behavior_fact", "content_dim", "creator_dim", "user_dim",
-            "time_dim", "activity_dim", "metric_def", "metric_daily", "play_detail",
-            "comment_content", "COLUMNS", "KEY_COLUMN_USAGE", "TABLES");
+            "time_dim", "activity_dim", "metric_definition", "metric_daily", "play_detail",
+            "COLUMNS", "KEY_COLUMN_USAGE", "TABLES");
 
     private static final List<String> BLOCKED_STATEMENTS = List.of(
             "INSERT", "UPDATE", "DELETE", "DROP", "ALTER", "CREATE",

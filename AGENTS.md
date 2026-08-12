@@ -16,12 +16,17 @@
 ```text
 ROUTER
   -> SCHEMA
-  -> SQL_GENERATE
+  -> SEMANTIC_RESOLVE      # LLM 只做语义匹配，输出 ResolvedIntent
+  -> SQL_SYNTHESIZE        # 确定性合成 SQL
   -> SQL_HARD_GUARD
   -> SQL_EXECUTE
   -> SQL_VALIDATE
   -> SQL_SOFT_DQ
   -> ANSWER
+
+SEMANTIC_RESOLVE 失败/低置信 或 SQL_SYNTHESIZE 失败
+  -> SQL_GENERATE（raw LLM SQL 降级，source=fallback）
+  -> SQL_HARD_GUARD ...
 ```
 
 `/analyze` 仅支持 `graphMode=chatbi`。历史全量图（RAG/归因/DBQA）已下线，不再保留兼容。

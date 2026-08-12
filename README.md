@@ -7,7 +7,7 @@
 - Spring Boot 负责平台层能力：对外 API、SQL Gateway、SQL 硬校验、SQL 执行、DQ 软审核、运行记录、审批入口。
 - Python Agent Engine 负责 Agent 编排：ChatBI 状态图、SQL 生成、校验反馈重试、高风险 SQL 等待审批、最终回答生成。
 
-当前主线是 ChatBI / Text2SQL 主链路；演进方向为语义解析 + 确定性合成、LangGraph 迁移与评测 harness（见 [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md)）。RAG 评论归因、交叉验证等全量图分支已下线。
+当前主线是 ChatBI 主链路：语义解析（NL -> ResolvedIntent）+ 确定性 SQL 合成 + 安全护栏 + HITL 审批，编排基于 LangGraph；评测 harness 为下一步演进（见 [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md)）。RAG 评论归因、交叉验证等全量图分支已下线。
 
 ## 当前主链路
 
@@ -18,13 +18,15 @@ User
   -> Python Agent Engine /analyze
   -> ROUTER
   -> SCHEMA
-  -> SQL_GENERATE
+  -> SEMANTIC_RESOLVE   # LLM 只做语义匹配（指标/维度/过滤/时间）
+  -> SQL_SYNTHESIZE     # 确定性合成 SQL（同意图同 SQL）
   -> SQL_HARD_GUARD
   -> SQL_EXECUTE
   -> SQL_VALIDATE
   -> SQL_SOFT_DQ
   -> ANSWER
   -> AnalysisReport
+  （语义解析失败/覆盖不到时降级 SQL_GENERATE raw SQL）
 ```
 
 高风险 SQL 会进入 `WAITING_APPROVAL` 状态，由 Spring Boot 审批接口恢复执行。
@@ -34,7 +36,7 @@ User
 | 层级 | 技术 |
 |---|---|
 | 平台层 | Spring Boot, MySQL, Redis, JSqlParser |
-| Agent 引擎层 | Python, FastAPI, 自研状态机编排（规划迁移 LangGraph）, httpx |
+| Agent 引擎层 | Python, FastAPI, LangGraph（StateGraph + interrupt + SQLite checkpoint）, httpx |
 | LLM 接入 | OpenAI-compatible API, DeepSeek-compatible API |
 | 测试评测 | JUnit, pytest, ruff, eval runner |
 
