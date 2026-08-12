@@ -1,30 +1,30 @@
 ## 1. debug 透传（P0）
 
-- [ ] 1.1 Python `AnalyzeResponse` 增加可空 `resolvedIntent` / `sqlRetryCount`（pydantic alias 为 camelCase）
-- [ ] 1.2 `routes.py` 的 `analyze()` / `approve_run()` 从 graph state 透传这两个字段
-- [ ] 1.3 Spring `EngineAnalyzeResponse` 增加可空 `resolvedIntent` / `sqlRetryCount`
-- [ ] 1.4 `AnalysisReport` 增加 `debug` 字段（Map，默认 null，不影响现有消费方）
-- [ ] 1.5 `AgentController.analyze` 增加 `includeDebug` 参数（默认 false），true 时填充 `report.debug`
-- [ ] 1.6 eval runner `run_real_case` 请求加 `includeDebug=true`，从 `payload["debug"]` 读取 `resolvedIntent`
-- [ ] 1.7 Python route 测试：响应含 `resolvedIntent` / `sqlRetryCount`
-- [ ] 1.8 Java `AgentController` 契约测试：includeDebug=false → debug 为 null；true → debug 有值
+- [x] 1.1 Python `AnalyzeResponse` 增加可空 `resolvedIntent` / `sqlRetryCount`（pydantic alias 为 camelCase）
+- [x] 1.2 `routes.py` 的 `analyze()` / `approve_run()` 从 graph state 透传这两个字段
+- [x] 1.3 Spring `EngineAnalyzeResponse` 增加可空 `resolvedIntent` / `sqlRetryCount`
+- [x] 1.4 `AnalysisReport` 增加 `debug` 字段（Map，默认 null，不影响现有消费方）
+- [x] 1.5 `AgentController.analyze` 增加 `includeDebug` 参数（默认 false），true 时填充 `report.debug`
+- [x] 1.6 eval runner `run_real_case` 请求加 `includeDebug=true`，从 `payload["debug"]` 读取 `resolvedIntent`
+- [x] 1.7 Python route 测试：响应含 `resolvedIntent` / `sqlRetryCount`
+- [x] 1.8 Java `AgentController` 契约测试：includeDebug=false → debug 为 null；true → debug 有值
 
 ## 2. 失败隔离（P0）
 
-- [ ] 2.1 runner 主循环逐用例 try/except，环境性异常（httpx 网络/超时/5xx/限流）标 `ERROR`
-- [ ] 2.2 聚合与报告新增「评测可用性 x/21」，`ERROR` 不计入 `judged` 并单列明细
-- [ ] 2.3 real 模式对可重试环境错误重试一次 + 退避
-- [ ] 2.4 测试：环境失败不中断整场、`ERROR` 不计入口径分母
+- [x] 2.1 runner 主循环逐用例 try/except，环境性异常（httpx 网络/超时/5xx/限流）标 `ERROR`
+- [x] 2.2 聚合与报告新增「评测可用性 x/21」，`ERROR` 不计入 `judged` 并单列明细
+- [x] 2.3 real 模式对可重试环境错误重试一次 + 退避
+- [x] 2.4 测试：环境失败不中断整场、`ERROR` 不计入口径分母
 
 ## 3. 正交轴解耦（P0）
 
-- [ ] 3.1 runner CLI 改为 `--llm <mock|record|replay|real>` × `--platform <mock|real>`；`EVAL_LLM_MODE` / `PLATFORM_CALLS_ENABLED` 作为默认值来源
-- [ ] 3.2 非法组合校验（如 record + platform=real 拒绝）
-- [ ] 3.3 报告 header 记录 `llm_source` / `platform_source` / `model` / `eval_date` / cassette
-- [ ] 3.4 `run_real_case` 使用 cases.yaml 的 `eval_date` 而非硬编码 `2023-10-14`
-- [ ] 3.5 A/B compare 前校验两报告配置一致，不一致拒绝
-- [ ] 3.6 测试：语义层评测组合（llm=real, platform=mock）可跑通且报告自描述配置
-- [ ] 3.7 报告归档：JSON 写入 `docs/eval-reports/eval-{llm}-{platform}-{eval_date}.json`，MD 保留 `docs/eval-report.md` 最近快照
+- [x] 3.1 runner CLI 改为 `--llm <mock|record|replay|real>` × `--platform <mock|real>`；`EVAL_LLM_MODE` / `PLATFORM_CALLS_ENABLED` 作为默认值来源
+- [x] 3.2 非法组合校验（如 record + platform=real 拒绝）
+- [x] 3.3 报告 header 记录 `llm_source` / `platform_source` / `model` / `eval_date` / cassette
+- [x] 3.4 `run_real_case` 使用 cases.yaml 的 `eval_date` 而非硬编码 `2023-10-14`
+- [x] 3.5 A/B compare 前校验两报告配置一致，不一致拒绝
+- [x] 3.6 测试：语义层评测组合（llm=real, platform=mock）可跑通且报告自描述配置
+- [x] 3.7 报告归档：JSON 写入 `docs/eval-reports/eval-{llm}-{platform}-{eval_date}.json`，MD 保留 `docs/eval-report.md` 最近快照
 
 ## 4. mock catalog 对齐（P1）
 

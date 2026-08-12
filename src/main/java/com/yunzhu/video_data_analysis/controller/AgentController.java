@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -53,7 +54,8 @@ public class AgentController {
     /** 结构化分析（同步 JSON，LangGraph 主线），nocache=true 时转发给引擎跳过缓存 */
     @GetMapping("/analyze")
     public AnalysisReport analyze(@RequestParam String userId, @RequestParam String message,
-                                  @RequestParam(defaultValue = "false") boolean nocache) {
+                                  @RequestParam(defaultValue = "false") boolean nocache,
+                                  @RequestParam(defaultValue = "false") boolean includeDebug) {
         String runId = agentRunTraceService.startRun(userId, message);
         try {
             EngineAnalyzeResponse response = langGraphClient.analyze(
@@ -65,6 +67,12 @@ public class AgentController {
             }
             AnalysisReport report = MAPPER.convertValue(response.finalReport(), AnalysisReport.class);
             report.setRunId(runId);
+            if (includeDebug) {
+                Map<String, Object> debug = new LinkedHashMap<>();
+                debug.put("resolvedIntent", response.resolvedIntent());
+                debug.put("sqlRetryCount", response.sqlRetryCount());
+                report.setDebug(debug);
+            }
             agentRunTraceService.finishRun(runId, report);
             return report;
         } catch (Exception e) {

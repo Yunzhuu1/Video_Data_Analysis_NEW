@@ -8,5 +8,7 @@ public record EngineAnalyzeResponse(
         String status,
         Map<String, Object> finalReport,
         List<String> warnings,
-        String approvalReason
+        String approvalReason,
+        Map<String, Object> resolvedIntent,
+        Integer sqlRetryCount
 ) {}
