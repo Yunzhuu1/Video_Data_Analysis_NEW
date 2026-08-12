@@ -120,3 +120,21 @@ async def test_run_cases_isolates_errors(monkeypatch):
 
     assert len(results) == 2
     assert all(r["status"] == "ERROR" for r in results)
+
+
+def test_golden_metrics_covered_by_metric_catalog():
+    import json
+
+    from app.eval.runner import DEFAULT_CASES, ROOT
+
+    cases = json.loads(DEFAULT_CASES.read_text(encoding="utf-8"))
+    golden_metrics = set()
+    for c in cases["cases"]:
+        g = c.get("golden_spec")
+        if g:
+            golden_metrics.update(g.get("metrics") or [])
+
+    catalog = json.loads((ROOT / "src" / "main" / "resources" / "metric_catalog.json").read_text(encoding="utf-8"))
+    catalog_codes = {m["metricCode"] for m in catalog}
+
+    assert golden_metrics <= catalog_codes, f"missing: {golden_metrics - catalog_codes}"

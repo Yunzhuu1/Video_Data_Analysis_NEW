@@ -28,9 +28,9 @@
 
 ## 4. mock catalog 对齐（P1）
 
-- [ ] 4.1 抽取共享指标定义（单数据源），Java `DataInitializer` 与 Python mock catalog 同源读取
-- [ ] 4.2 覆盖测试：所有 golden 用例指标均存在于共享定义中
-- [ ] 4.3 若跨语言读取成本过高，回退方案：Python 内联 7 指标 + 注释指向 `DataInitializer.METRICS` + 覆盖测试兜底
+- [x] 4.1 抽取共享指标定义（单数据源），Java `DataInitializer` 与 Python mock catalog 同源读取
+- [x] 4.2 覆盖测试：所有 golden 用例指标均存在于共享定义中
+- [x] 4.3 若跨语言读取成本过高，回退方案：Python 内联 7 指标 + 注释指向 `DataInitializer.METRICS` + 覆盖测试兜底
 
 ## 5. golden 质量与报告透明（P1）
 

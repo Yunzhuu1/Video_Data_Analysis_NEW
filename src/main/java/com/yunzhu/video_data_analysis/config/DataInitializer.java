@@ -2,11 +2,15 @@ package com.yunzhu.video_data_analysis.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -64,34 +68,10 @@ public class DataInitializer implements CommandLineRunner {
                     "挑战赛", "[\"content_5\",\"content_6\"]", "100积分"}
     };
 
-    /**
-     * [metric_code, metric_name, business_definition, formula, dimensions_json,
-     *  time_granularity, source_table, time_field]
-     */
-    private static final String[][] METRICS = {
-            {"total_plays", "播放量", "播放事件总数",
-             "total_plays", "[\"date\",\"category\"]", "天", "metric_daily", "date",
-             "COUNT(*)", "event_type = 'play'"},
-            {"total_play_duration", "播放时长", "播放总时长（秒）",
-             "total_play_duration", "[\"date\",\"category\"]", "天", "metric_daily", "date",
-             "SUM(value)", "event_type = 'play'"},
-            {"total_likes", "点赞量", "点赞事件总数",
-             "total_likes", "[\"date\",\"category\"]", "天", "metric_daily", "date",
-             "COUNT(*)", "event_type = 'like'"},
-            {"total_comments", "评论量", "评论事件总数",
-             "total_comments", "[\"date\",\"category\"]", "天", "metric_daily", "date",
-             "COUNT(*)", "event_type = 'comment'"},
-            {"total_shares", "分享量", "分享事件总数",
-             "total_shares", "[\"date\",\"category\"]", "天", "metric_daily", "date",
-             "COUNT(*)", "event_type = 'share'"},
-            {"completion_rate", "完播率", "完播率均值（0-100）",
-             "AVG(completion_rate)", "[\"content\"]", "天", "play_detail", "created_at",
-             null, null},
-            {"engagement_rate", "互动率", "(点赞+评论)/播放",
-             "(SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0)",
-             "[\"date\",\"category\",\"content\"]", "天", "user_behavior_fact", "timestamp",
-             null, null}
-    };
+    /** 共享指标字典文件（与 Python mock catalog 同源）。 */
+    private static final String METRIC_CATALOG = "metric_catalog.json";
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     /* ==================== 运行入口 ==================== */
 
@@ -215,10 +195,36 @@ public class DataInitializer implements CommandLineRunner {
                 + " time_granularity, source_table, time_field, fact_formula, fact_event_filter) "
                 + "VALUES (?, ?, ?, ?, CAST(? AS JSON), ?, ?, ?, ?, ?)";
 
-        for (String[] m : METRICS) {
-            jdbcTemplate.update(sql, m[1], m[0], m[2], m[3], m[4], m[5], m[6], m[7], m[8], m[9]);
+        List<Map<String, Object>> metrics = loadMetricCatalog();
+        for (Map<String, Object> m : metrics) {
+            jdbcTemplate.update(sql,
+                    m.get("metricName"), m.get("metricCode"), m.get("businessDefinition"),
+                    m.get("formula"), toJson(m.get("dimensions")),
+                    m.get("timeGranularity"), m.get("sourceTable"), m.get("timeField"),
+                    m.get("factFormula"), m.get("factEventFilter"));
         }
-        log.info("  metric_definition: {} metrics inserted", METRICS.length);
+        log.info("  metric_definition: {} metrics inserted", metrics.size());
+    }
+
+    private List<Map<String, Object>> loadMetricCatalog() {
+        try {
+            return objectMapper.readValue(
+                    new ClassPathResource(METRIC_CATALOG).getInputStream(),
+                    new TypeReference<List<Map<String, Object>>>() {});
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load " + METRIC_CATALOG, e);
+        }
+    }
+
+    private String toJson(Object value) {
+        if (value == null) {
+            return null;
+        }
+        try {
+            return objectMapper.writeValueAsString(value);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to serialize metric field", e);
+        }
     }
 
     /* ==================== 行为事实数据 ==================== */

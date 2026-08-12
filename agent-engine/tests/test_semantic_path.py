@@ -131,19 +131,14 @@ async def test_synthesis_failure_falls_back(monkeypatch):
 async def test_replay_cassette_drives_semantic_path(monkeypatch, tmp_path):
     """replay 模式：手写 cassette 让语义解析命中，跑通 SEMANTIC_RESOLVE -> SQL_SYNTHESIZE。"""
     from app.clients.llm_client import settings as llm_settings
+
+    # deterministic prompt for this question + 共享 metric catalog（与 mock 平台同源）
+    from app.clients.platform_client import _load_metric_catalog
     from app.eval.fakellm import CassetteStore, request_key
     from app.prompts.semantic import SEMANTIC_SYSTEM_PROMPT, build_semantic_user_prompt
     from app.synthesis.sql_synthesizer import DIMENSIONS
 
-    # deterministic prompt for this question + mock catalog
-    catalog = [
-        {"metricCode": "total_plays", "metricName": "播放量", "businessDefinition": "播放事件总数",
-         "sourceTable": "metric_daily", "timeField": "date", "dimensions": ["date", "category"]},
-        {"metricCode": "total_likes", "metricName": "点赞量", "businessDefinition": "点赞事件总数",
-         "sourceTable": "metric_daily", "timeField": "date", "dimensions": ["date", "category"]},
-        {"metricCode": "completion_rate", "metricName": "完播率", "businessDefinition": "完播率均值",
-         "sourceTable": "play_detail", "timeField": "created_at", "dimensions": ["content"]},
-    ]
+    catalog = _load_metric_catalog()
     user_prompt = build_semantic_user_prompt("analyze category play trends", catalog, DIMENSIONS)
     key = request_key(SEMANTIC_SYSTEM_PROMPT, user_prompt)
 

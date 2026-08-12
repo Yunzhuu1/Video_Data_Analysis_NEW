@@ -1,9 +1,22 @@
+import json
+from pathlib import Path
+
 try:
     import httpx
 except ModuleNotFoundError:  # pragma: no cover - exercised in minimal local environments.
     httpx = None
 
 from app.settings import settings
+
+# 共享指标字典（与 Java DataInitializer 种子同源，见 src/main/resources/metric_catalog.json）
+_METRIC_CATALOG_PATH = Path(__file__).resolve().parents[3] / "src" / "main" / "resources" / "metric_catalog.json"
+
+
+def _load_metric_catalog() -> list[dict]:
+    try:
+        return json.loads(_METRIC_CATALOG_PATH.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return []
 
 
 class PlatformClient:
@@ -150,17 +163,7 @@ class PlatformClient:
     async def metric_catalog(self) -> list[dict]:
         """List active metric definitions (the metric dictionary)."""
         if not settings.platform_calls_enabled:
-            return [
-                {"metricCode": "total_plays", "metricName": "播放量",
-                 "businessDefinition": "播放事件总数", "sourceTable": "metric_daily",
-                 "timeField": "date", "dimensions": ["date", "category"]},
-                {"metricCode": "total_likes", "metricName": "点赞量",
-                 "businessDefinition": "点赞事件总数", "sourceTable": "metric_daily",
-                 "timeField": "date", "dimensions": ["date", "category"]},
-                {"metricCode": "completion_rate", "metricName": "完播率",
-                 "businessDefinition": "完播率均值", "sourceTable": "play_detail",
-                 "timeField": "created_at", "dimensions": ["content"]},
-            ]
+            return _load_metric_catalog()
         http = self._require_httpx()
         async with http.AsyncClient(timeout=30) as client:
             response = await client.get(f"{self.base_url}/internal/metrics", headers=self.headers)
@@ -170,11 +173,14 @@ class PlatformClient:
     async def metric_definition(self, code: str) -> dict:
         """Fetch a single metric definition by code."""
         if not settings.platform_calls_enabled:
+            for m in _load_metric_catalog():
+                if m.get("metricCode") == code:
+                    return m
             return {
                 "metricCode": code,
                 "metricName": code,
-                "businessDefinition": "mock definition",
-                "formula": "total_plays",
+                "businessDefinition": "unknown metric",
+                "formula": "COUNT(*)",
                 "sourceTable": "metric_daily",
                 "timeField": "date",
                 "dimensions": ["date", "category"],
