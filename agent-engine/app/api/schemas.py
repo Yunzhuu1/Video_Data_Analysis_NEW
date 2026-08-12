@@ -19,6 +19,8 @@ class AnalyzeResponse(BaseModel):
     final_report: dict[str, Any] = Field(alias="finalReport")
     warnings: list[str] = []
     approval_reason: str | None = Field(default=None, alias="approvalReason")
+    resolved_intent: dict[str, Any] | None = Field(default=None, alias="resolvedIntent")
+    sql_retry_count: int | None = Field(default=None, alias="sqlRetryCount")
 
     model_config = {"populate_by_name": True}
 

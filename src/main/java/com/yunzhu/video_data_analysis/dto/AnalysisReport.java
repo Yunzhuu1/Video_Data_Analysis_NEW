@@ -52,6 +52,10 @@ public class AnalysisReport {
     @JsonProperty("dq")
     private Map<String, Object> dq;
 
+    /** 评测观测数据（仅 includeDebug=true 时填充，非业务契约，默认 null）。 */
+    @JsonProperty("debug")
+    private Map<String, Object> debug;
+
     public AnalysisReport() {}
 
     public AnalysisReport(String summary, List<MetricPoint> metrics,
@@ -89,4 +93,7 @@ public class AnalysisReport {
 
     public Map<String, Object> getDq() { return dq; }
     public void setDq(Map<String, Object> dq) { this.dq = dq; }
+
+    public Map<String, Object> getDebug() { return debug; }
+    public void setDebug(Map<String, Object> debug) { this.debug = debug; }
 }
