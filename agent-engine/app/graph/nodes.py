@@ -1,10 +1,13 @@
 from app.agents.answer_agent import AnswerAgent
+from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
+from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
 
 sql_generation_agent = SQLGenerationAgent()
 answer_agent = AnswerAgent()
+semantic_resolver = SemanticResolver()
 
 
 async def router_node(state: DataAgentState) -> DataAgentState:
@@ -59,8 +62,71 @@ async def sql_generate_node(state: DataAgentState) -> DataAgentState:
             "hard_guard_feedback": state.get("hard_guard_feedback"),
             "warnings": [],
             "risk_level": None,
+            "source": "fallback",
         }
     )
+    state["sql_source"] = "fallback"
+    return state
+
+async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
+    """LLM 只做语义匹配：把问题解析为结构化 ResolvedIntent（不写 SQL）。"""
+    catalog = await platform.metric_catalog()
+    try:
+        intent = await semantic_resolver.resolve(
+            question=state["question"],
+            catalog=catalog or [],
+            dimensions=DIMENSIONS,
+        )
+    except Exception:  # noqa: BLE001 - degrade to raw SQL generation
+        intent = None
+    if intent is None:
+        state["semantic_ok"] = False
+        return state
+
+    acceptable = bool(
+        intent.get("metrics")
+        and intent.get("intent") in {"aggregate", "trend", "ranking", "detail"}
+        and float(intent.get("confidence") or 0.0) >= 0.5
+    )
+    state["resolved_intent"] = intent
+    state["semantic_ok"] = acceptable
+    return state
+
+
+async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
+    """按 ResolvedIntent + 指标字典确定性合成 SQL。"""
+    intent = state.get("resolved_intent") or {}
+    metric_defs = {}
+    for code in intent.get("metrics") or []:
+        try:
+            metric_defs[code] = await platform.metric_definition(code)
+        except Exception:  # noqa: BLE001 - degrade to raw SQL generation
+            state["semantic_ok"] = False
+            return state
+
+    try:
+        sql = synthesize(intent, metric_defs)
+    except (SynthesisError, KeyError, TypeError, ValueError):
+        state["semantic_ok"] = False
+        return state
+
+    attempts = state.setdefault("sql_attempts", [])
+    attempts.append(
+        {
+            "sql": sql,
+            "purpose": f"Semantic synthesis for {intent.get('metrics')}",
+            "assumptions": [f"source={metric_defs.get(intent['metrics'][0], {}).get('sourceTable')}"],
+            "expected_columns": list(intent.get("dimensions") or []) + list(intent.get("metrics") or []),
+            "success": False,
+            "result_preview": None,
+            "error": None,
+            "hard_guard_feedback": state.get("hard_guard_feedback"),
+            "warnings": [],
+            "risk_level": None,
+            "source": "semantic",
+        }
+    )
+    state["sql_source"] = "semantic"
     return state
 
 

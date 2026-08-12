@@ -19,9 +19,12 @@
 
 ```text
 User -> Spring Boot /api/agent/analyze -> LangGraphClient -> Python /analyze
-  -> ROUTER -> SCHEMA -> SQL_GENERATE -> SQL_HARD_GUARD -> SQL_EXECUTE
-  -> SQL_VALIDATE -> SQL_SOFT_DQ -> ANSWER
+  -> ROUTER -> SCHEMA -> SEMANTIC_RESOLVE -> SQL_SYNTHESIZE -> SQL_HARD_GUARD
+  -> SQL_EXECUTE -> SQL_VALIDATE -> SQL_SOFT_DQ -> ANSWER
   -> AnalysisReport
+
+  SEMANTIC_RESOLVE 失败/低置信/合成失败
+    -> SQL_GENERATE（raw LLM SQL 降级，source=fallback）-> SQL_HARD_GUARD ...
 ```
 
 `graphMode` 仅支持 `chatbi`。全量图（RAG/归因/DBQA）已下线。
@@ -42,8 +45,11 @@ agent-engine/
 │   │   ├── nodes.py            # chatbi 8 节点
 │   │   └── checkpoints.py      # SQLite checkpointer（AsyncSqliteSaver）
 │   ├── agents/
-│   │   ├── sql_agent.py        # SQL 生成 Agent
+│   │   ├── sql_agent.py        # SQL 生成 Agent（fallback）
+│   │   ├── semantic_resolver.py# 语义解析 Agent（NL -> ResolvedIntent）
 │   │   └── answer_agent.py     # 回答生成 Agent
+│   ├── synthesis/
+│   │   └── sql_synthesizer.py  # 确定性 SQL 合成器
 │   ├── clients/
 │   │   ├── llm_client.py       # OpenAI 兼容 LLM 客户端（唯一接缝）
 │   │   └── platform_client.py  # Spring Boot 平台客户端
@@ -71,10 +77,16 @@ agent-engine/
 ### 5.2 SCHEMA
 调用 `/internal/schema/relevant` 获取 schema 上下文，不直查数据库。
 
-### 5.3 SQL_GENERATE
-调用 LLM 生成 SELECT SQL；消费 question/schemaContext/feedback（hardGuard/execution/dq）；每次生成写入 `sql_attempts`；不执行 SQL。
+### 5.3 SEMANTIC_RESOLVE
+调用 LLM 做**语义匹配**（不写 SQL）：基于指标字典把问题解析为结构化 `ResolvedIntent`（intent/metrics/dimensions/time_range/filters/ordering + confidence/coverage）。低置信或无候选时 `semantic_ok=false`。
 
-### 5.4 SQL_HARD_GUARD
+### 5.4 SQL_SYNTHESIZE
+按 `ResolvedIntent` + `metric_definition`（formula/source_table/fact_formula）**确定性合成** SQL（同意图同 SQL）；metric_daily 按分组粒度决定是否 SUM；ranking/内容级走明细事实表。合成失败（如多指标）降级 `SQL_GENERATE`。
+
+### 5.5 SQL_GENERATE（fallback）
+语义路径覆盖不到时，调用 LLM 生成原始 SELECT SQL；消费 feedback（hardGuard/execution/dq）；结果标记 `source=fallback`。
+
+### 5.6 SQL_HARD_GUARD
 调用 `/internal/sql/validate`。结果分三类：
 
 | 结果 | 行为 |
@@ -83,16 +95,16 @@ agent-engine/
 | retryable（SQL_EMPTY/NOT_SELECT/PARSE/SYNTAX/RULE_WARNING） | 反馈给 SQL_GENERATE 重试 |
 | approval-needed（明细无 LIMIT/无时间范围/全表扫描/大扫描/熔断/敏感字段） | 进入 WAITING_APPROVAL |
 
-### 5.5 SQL_EXECUTE
+### 5.7 SQL_EXECUTE
 调用 `/internal/sql/execute`；Java 内部二次强制校验；审批通过后 `allowHighRisk=true` 复用同一条 SQL。
 
-### 5.6 SQL_VALIDATE
+### 5.8 SQL_VALIDATE
 执行结果基础合理性检查；失败反馈给 SQL_GENERATE。
 
-### 5.7 SQL_SOFT_DQ
+### 5.9 SQL_SOFT_DQ
 调用 `/internal/dq/sql-result/check` 软审核；warnings 必须带入最终回答。
 
-### 5.8 ANSWER
+### 5.10 ANSWER
 调用 AnswerAgent 生成 `AnalysisReport`（summary/metrics/charts/recommendations/sql/warnings/dq）。
 
 ## 6. Human-in-the-loop
@@ -120,7 +132,7 @@ SQL_HARD_GUARD 判定 approval-needed
 ## 9. 演进方向
 
 - **LangGraph 迁移（已完成）**：编排层已基于 `StateGraph` + 条件边 + `interrupt` + SQLite checkpoint 重写，审批持久化跨进程可恢复。
-- **语义解析 + 确定性合成（规划）**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL（OpenSpec change `semantic-resolve-node`）。
+- **语义解析 + 确定性合成（已完成）**：`SEMANTIC_RESOLVE`（NL -> `ResolvedIntent`）+ `SQL_SYNTHESIZE`（确定性合成）已接入主链路；`metric_definition` 指标字典与 `MetricCatalogService` 落地；长尾问题降级 raw SQL。
 - **评测 harness（规划）**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁（OpenSpec change `agent-eval-harness`）。
 
 ## 10. 验收清单

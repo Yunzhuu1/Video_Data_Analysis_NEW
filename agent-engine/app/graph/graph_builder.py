@@ -9,10 +9,12 @@ from app.graph.nodes import (
     answer_node,
     router_node,
     schema_node,
+    semantic_resolve_node,
     sql_execute_node,
     sql_generate_node,
     sql_hard_guard_node,
     sql_soft_dq_node,
+    sql_synthesize_node,
     sql_validate_node,
 )
 from app.graph.state import DataAgentState
@@ -87,6 +89,14 @@ async def _soft_dq(state: DataAgentState) -> DataAgentState:
     return await sql_soft_dq_node(state, platform)
 
 
+async def _semantic_resolve(state: DataAgentState) -> DataAgentState:
+    return await semantic_resolve_node(state, platform)
+
+
+async def _synthesize(state: DataAgentState) -> DataAgentState:
+    return await sql_synthesize_node(state, platform)
+
+
 # ---------------------------------------------------------------------------
 # Human-in-the-loop approval node: pauses via interrupt() until an operator
 # approves/rejects. The resume value comes from Command(resume=...) and decides
@@ -119,6 +129,15 @@ async def approval_node(state: DataAgentState) -> DataAgentState:
 # ---------------------------------------------------------------------------
 # Conditional edge routing (the graph's control flow).
 # ---------------------------------------------------------------------------
+def route_after_resolve(state: DataAgentState) -> str:
+    return "synthesize" if state.get("semantic_ok") else "generate"
+
+
+def route_after_synthesize(state: DataAgentState) -> str:
+    # synthesis failure (e.g. unsupported intent) degrades to raw generation
+    return "guard" if state.get("semantic_ok") else "generate"
+
+
 def route_after_hard_guard(state: DataAgentState) -> str:
     if state.get("approval_status") == "waiting":
         return "approval"
@@ -164,6 +183,8 @@ def build_graph(checkpointer):
     graph = StateGraph(DataAgentState)
     graph.add_node("ROUTER", traced("ROUTER")(router_node))
     graph.add_node("SCHEMA", traced("SCHEMA")(_schema))
+    graph.add_node("SEMANTIC_RESOLVE", traced("SEMANTIC_RESOLVE")(_semantic_resolve))
+    graph.add_node("SQL_SYNTHESIZE", traced("SQL_SYNTHESIZE")(_synthesize))
     graph.add_node("SQL_GENERATE", traced("SQL_GENERATE")(sql_generate_node))
     graph.add_node("SQL_HARD_GUARD", traced("SQL_HARD_GUARD")(_hard_guard))
     graph.add_node("SQL_EXECUTE", traced("SQL_EXECUTE")(_execute))
@@ -176,7 +197,17 @@ def build_graph(checkpointer):
 
     graph.add_edge(START, "ROUTER")
     graph.add_edge("ROUTER", "SCHEMA")
-    graph.add_edge("SCHEMA", "SQL_GENERATE")
+    graph.add_edge("SCHEMA", "SEMANTIC_RESOLVE")
+    graph.add_conditional_edges(
+        "SEMANTIC_RESOLVE",
+        route_after_resolve,
+        {"synthesize": "SQL_SYNTHESIZE", "generate": "SQL_GENERATE"},
+    )
+    graph.add_conditional_edges(
+        "SQL_SYNTHESIZE",
+        route_after_synthesize,
+        {"guard": "SQL_HARD_GUARD", "generate": "SQL_GENERATE"},
+    )
     graph.add_edge("SQL_GENERATE", "SQL_HARD_GUARD")
 
     graph.add_conditional_edges(
