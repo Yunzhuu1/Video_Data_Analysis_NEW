@@ -1,6 +1,5 @@
 import os
 
-
 try:
     from pydantic_settings import BaseSettings, SettingsConfigDict
 except ModuleNotFoundError:  # pragma: no cover - used by minimal eval environments.

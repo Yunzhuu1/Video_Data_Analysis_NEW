@@ -158,15 +158,10 @@
         <div id="adminPanel" class="panel">
             <div style="display:flex;gap:12px;margin-bottom:16px">
                 <button onclick="refreshStats()" style="background:#1a1a2e;color:#fff;border:none;border-radius:8px;padding:10px 20px;cursor:pointer">🔄 刷新</button>
-                <button onclick="clearCache()" style="background:#f5222d;color:#fff;border:none;border-radius:8px;padding:10px 20px;cursor:pointer">🗑 清空缓存</button>
                 <button onclick="clearTokens()" style="background:#fa8c16;color:#fff;border:none;border-radius:8px;padding:10px 20px;cursor:pointer">🗑 清空记录</button>
             </div>
 
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-                <div style="background:#fafafa;border-radius:8px;padding:16px">
-                    <div style="font-weight:600;margin-bottom:8px">缓存</div>
-                    <div id="adminCache" style="font-size:14px;color:#666">加载中...</div>
-                </div>
                 <div style="background:#fafafa;border-radius:8px;padding:16px">
                     <div style="font-weight:600;margin-bottom:8px">Token 统计</div>
                     <div id="adminTokens" style="font-size:14px;color:#666">加载中...</div>
@@ -197,25 +192,20 @@
         /* ==================== Admin ==================== */
 
         async function refreshStats() {
-            document.getElementById('adminCache').textContent = '加载中...';
             document.getElementById('adminTokens').textContent = '加载中...';
             document.getElementById('adminRecent').textContent = '加载中...';
             try {
-                const res = await fetch('/api/agent/admin/stats');
+                const res = await fetch('/api/agent/admin/tokens');
                 const data = await res.json();
-                document.getElementById('adminCache').innerHTML = `
-                    <div>条数: ${data.cache.size}</div>
-                    <div>阈值: ${data.cache.threshold}</div>`;
                 document.getElementById('adminTokens').innerHTML = `
-                    <div>总调用: ${data.tokens.totalCalls}</div>
-                    <div>Prompt: ${data.tokens.totalPromptTokens}</div>
-                    <div>Completion: ${data.tokens.totalCompletionTokens}</div>
-                    <div>总计: ${data.tokens.totalTokens}</div>
-                    <div>费用: $${data.tokens.totalCostUsd}</div>
-                    <div>缓存命中: ${data.tokens.cachedCount}</div>
-                    <div>非缓存: ${data.tokens.uncachedCount}</div>`;
+                    <div>总调用: ${data.totalCalls}</div>
+                    <div>Prompt: ${data.totalPromptTokens}</div>
+                    <div>Completion: ${data.totalCompletionTokens}</div>
+                    <div>总计: ${data.totalTokens}</div>
+                    <div>费用: $${data.totalCostUsd}</div>
+                    <div>缓存命中: ${data.cachedCount}</div>
+                    <div>非缓存: ${data.uncachedCount}</div>`;
             } catch(e) {
-                document.getElementById('adminCache').textContent = '获取失败: ' + e.message;
             }
             try {
                 const res = await fetch('/api/agent/admin/recent');
@@ -239,12 +229,6 @@
             }
         }
 
-        async function clearCache() {
-            if (!confirm('确认清空语义缓存？')) return;
-            await fetch('/api/agent/admin/cache/clear', { method: 'POST' });
-            refreshStats();
-        }
-
         async function clearTokens() {
             if (!confirm('确认清空Token记录？')) return;
             await fetch('/api/agent/admin/tokens/clear', { method: 'POST' });
@@ -257,10 +241,7 @@
             { label: '检索相关表结构', icon: '1' },
             { label: '生成 SQL 并执行查询', icon: '2' },
             { label: '校验数据合理性', icon: '3' },
-            { label: '交叉验证归因', icon: '4' },
-            { label: '检索用户评论', icon: '5' },
-            { label: '生成分析与建议', icon: '6' },
-            { label: '生成结构化报告', icon: '7' }
+            { label: '生成结构化报告', icon: '4' }
         ];
 
         function analyze() {
@@ -268,35 +249,7 @@
             if (!message) return;
             document.getElementById('submitBtn').disabled = true;
             showProgress();
-
-            // 使用 EventSource (SSE) 接收实时进度事件
-            const url = `/api/agent/analyze-stream?userId=demo&message=${encodeURIComponent(message)}`;
-            const eventSource = new EventSource(url);
-
-            eventSource.onmessage = function(event) {
-                try {
-                    const data = JSON.parse(event.data);
-                    if (data.type === 'progress') {
-                        updateProgressFromSSE(data.message);
-                    } else if (data.type === 'complete') {
-                        eventSource.close();
-                        // complete 后立即用同步接口拿最终报告
-                        fetchResult(message);
-                    } else if (data.type === 'error') {
-                        eventSource.close();
-                        renderError(data.message || '分析出错');
-                        document.getElementById('submitBtn').disabled = false;
-                    }
-                } catch (e) {
-                    // SSE 的第一行是连接确认，忽略非 JSON 消息
-                }
-            };
-
-            eventSource.onerror = function() {
-                eventSource.close();
-                // fallback: 如果 SSE 不可用（如 404），走同步接口
-                fetchResult(message);
-            };
+            fetchResult(message);
         }
 
         async function fetchResult(message) {
@@ -309,34 +262,6 @@
                 renderError(err.message);
             } finally {
                 document.getElementById('submitBtn').disabled = false;
-            }
-        }
-
-        const STEP_MAP = {
-            'schema': 0, 'sql': 1, 'validate': 2,
-            'cross-ref': 3, 'rag': 4, 'parallel': 5, 'merge': 6, 'complete': 6
-        };
-
-        function updateProgressFromSSE(msg) {
-            const step = msg.split(':')[0];
-            const label = msg.substring(msg.indexOf(':') + 1);
-            const idx = STEP_MAP[step];
-            if (idx === undefined) return;
-
-            // 更新当前步骤为 active
-            const cur = document.getElementById('step_' + idx);
-            if (cur) { cur.classList.remove('pending'); cur.classList.add('active'); }
-
-            // 将前一步标记为 done
-            if (idx > 0) {
-                const prev = document.getElementById('step_' + (idx - 1));
-                if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
-            }
-
-            // 如果 complete，标记最后一步为 done
-            if (step === 'complete') {
-                const last = document.getElementById('step_' + idx);
-                if (last) { last.classList.remove('active'); last.classList.add('done'); }
             }
         }
 
@@ -467,7 +392,6 @@
             const area = document.getElementById('chatArea');
             area.innerHTML = `<div class="chat-msg user"><div class="bubble">${escapeHtml(msg)}</div></div>`;
 
-            // 显示进度
             const progressDiv = document.createElement('div');
             progressDiv.innerHTML = '<div class="progress-container">' +
                 STEPS.map((s, i) =>
@@ -477,42 +401,7 @@
                 ).join('') + '</div>';
             area.appendChild(progressDiv);
 
-            // 用分析管线获取报告
-            const url = `/api/agent/analyze-stream?userId=demo&message=${encodeURIComponent(msg)}`;
-            const es = new EventSource(url);
-
-            es.onmessage = function(e) {
-                try {
-                    const data = JSON.parse(e.data);
-                    if (data.type === 'progress') {
-                        const step = data.message.split(':')[0];
-                        const idx = STEP_MAP[step];
-                        if (idx !== undefined) {
-                            const el = document.getElementById('chat_step_' + idx);
-                            if (el) { el.classList.remove('pending'); el.classList.add('active'); }
-                            if (idx > 0) {
-                                const prev = document.getElementById('chat_step_' + (idx - 1));
-                                if (prev) { prev.classList.remove('active'); prev.classList.add('done'); }
-                            }
-                            if (step === 'complete') {
-                                const last = document.getElementById('chat_step_' + idx);
-                                if (last) { last.classList.remove('active'); last.classList.add('done'); }
-                            }
-                        }
-                    } else if (data.type === 'complete') {
-                        es.close();
-                        fetchChatReport(msg, area);
-                    } else if (data.type === 'error') {
-                        es.close();
-                        area.innerHTML += `<div class="error-card">❌ ${data.message || '分析出错'}</div>`;
-                        document.getElementById('chatBtn').disabled = false;
-                    }
-                } catch(e) {}
-            };
-            es.onerror = function() {
-                es.close();
-                fetchChatReport(msg, area);
-            };
+            await fetchChatReport(msg, area);
         }
 
         async function fetchChatReport(msg, area) {

@@ -17,7 +17,6 @@ from app.graph import graph_builder
 from app.graph.graph_builder import run_chatbi_graph
 from app.settings import settings
 
-
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CASES = Path(__file__).with_name("cases.yaml")
 DEFAULT_REPORT = ROOT / "docs" / "eval-report.md"
@@ -108,9 +107,8 @@ async def run_real_case(case: dict[str, Any]) -> dict[str, Any]:
 
 
 def evaluate_case(case: dict[str, Any], state: dict[str, Any]) -> tuple[bool, str]:
-    if expected := case.get("expected_route"):
-        if state.get("route") != expected:
-            return False, f"route={state.get('route')} expected={expected}"
+    if (expected := case.get("expected_route")) and state.get("route") != expected:
+        return False, f"route={state.get('route')} expected={expected}"
 
     if expected_status := case.get("expected_status"):
         status = "WAITING_APPROVAL" if state.get("approval_status") == "waiting" else "SUCCESS"
@@ -123,19 +121,18 @@ def evaluate_case(case: dict[str, Any], state: dict[str, Any]) -> tuple[bool, st
         if not contains_all(sql_text, expected_sql):
             return False, "generated SQL missing expected fragments"
 
-    if expected_fields := case.get("expected_report_fields"):
-        if not required_fields_present(state.get("final_report") or {}, expected_fields):
-            return False, "final report missing required fields"
+    if (expected_fields := case.get("expected_report_fields")) and not required_fields_present(
+        state.get("final_report") or {}, expected_fields
+    ):
+        return False, "final report missing required fields"
 
     if expected_keywords := case.get("expected_report_keywords"):
         report_text = json.dumps(state.get("final_report") or {}, ensure_ascii=False)
         if not contains_all(report_text, expected_keywords):
             return False, "final report missing expected keywords"
 
-    if "expected_sql_retry_count" in case:
-        expected_retry_count = int(case["expected_sql_retry_count"])
-        if int(state.get("sql_retry_count", 0)) != expected_retry_count:
-            return False, f"sql_retry_count={state.get('sql_retry_count')} expected={expected_retry_count}"
+    if "expected_sql_retry_count" in case and int(state.get("sql_retry_count", 0)) != int(case["expected_sql_retry_count"]):
+        return False, f"sql_retry_count={state.get('sql_retry_count')} expected={case['expected_sql_retry_count']}"
 
     return True, "PASS"
 

@@ -21,9 +21,5 @@ app:
   ai:
     strong-model: ${AI_STRONG_MODEL:deepseek-chat}
     cheap-model: ${AI_CHEAP_MODEL:deepseek-chat}
-  embedding:
-    ollama:
-      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
-      model: ${OLLAMA_EMBED_MODEL:nomic-embed-text}
   data-initializer:
     enabled: ${DATA_INITIALIZER_ENABLED:true}

@@ -3,7 +3,6 @@ from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
 
-
 sql_generation_agent = SQLGenerationAgent()
 answer_agent = AnswerAgent()
 
@@ -225,61 +224,6 @@ def _execution_suggestion(error_code: str, error: str) -> str:
     return "Regenerate SQL according to the error and schema_context."
 
 
-async def rag_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
-    rag_result = await platform.analyze_rag(state["question"], state.get("query_result") or {})
-    state["rag_result"] = {
-        "themes": rag_result.get("themes") or [],
-        "negative_ratio": rag_result.get("negativeRatio", rag_result.get("negative_ratio", 0.0)),
-        "representative_comments": rag_result.get(
-            "representativeComments", rag_result.get("representative_comments", [])
-        ),
-        "summary": rag_result.get("summary", ""),
-        "confidence": rag_result.get("confidence", 0.0),
-    }
-    return state
-
-
-async def cross_validation_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
-    state["cross_validation"] = await platform.cross_validate(state.get("rag_result") or {})
-    return state
-
-
-async def insight_node(state: DataAgentState) -> DataAgentState:
-    query_result = state.get("query_result") or {}
-    rag_result = state.get("rag_result") or {}
-    state["insight_report"] = {
-        "summary": (
-            f"LangGraph analyzed question: {state['question']} "
-            f"(route={state.get('route')}, schemaReady={bool(state.get('schema_context'))}, "
-            f"sqlStatus={query_result.get('success')}, ragConfidence={rag_result.get('confidence')}, "
-            f"crossValidation={state.get('cross_validation')})"
-        ),
-        "period": "-",
-        "metrics": [],
-        "charts": [],
-    }
-    return state
-
-
-async def recommendation_node(state: DataAgentState) -> DataAgentState:
-    query_result = state.get("query_result") or {}
-    recommendations: list[str] = []
-    if query_result.get("success"):
-        recommendations.append("Continue validating business context with SQL Gateway results.")
-    rag_result = state.get("rag_result") or {}
-    if float(rag_result.get("confidence") or 0.0) < 0.5:
-        recommendations.append("RAG evidence confidence is low; avoid strong attribution claims.")
-    state["recommendations"] = recommendations[:3]
-    return state
-
-
-async def merge_node(state: DataAgentState) -> DataAgentState:
-    report = dict(state.get("insight_report") or {})
-    report["recommendations"] = state.get("recommendations", [])
-    state["final_report"] = report
-    return state
-
-
 async def answer_node(state: DataAgentState) -> DataAgentState:
     query_result = state.get("query_result") or {}
     attempts = state.get("sql_attempts") or []
@@ -315,23 +259,4 @@ async def answer_node(state: DataAgentState) -> DataAgentState:
         )
     report["dq"] = state.get("dq_result")
     state["final_report"] = report
-    return state
-
-
-async def dbqa_node(state: DataAgentState) -> DataAgentState:
-    report = state.get("final_report") or {}
-    missing: list[str] = []
-    if not report.get("summary"):
-        missing.append("summary")
-    if "recommendations" not in report:
-        missing.append("recommendations")
-    if state.get("query_result") is None:
-        missing.append("query_result")
-
-    if missing:
-        state["dbqa_status"] = "fail"
-        state["dbqa_feedback"] = "Missing fields: " + ", ".join(missing)
-    else:
-        state["dbqa_status"] = "pass"
-        state["dbqa_feedback"] = "PASS"
     return state

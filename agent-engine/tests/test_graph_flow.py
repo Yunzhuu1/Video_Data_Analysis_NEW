@@ -1,6 +1,6 @@
 import pytest
 
-from app.graph.graph_builder import resume_graph, run_chatbi_graph, run_graph
+from app.graph.graph_builder import resume_graph, run_chatbi_graph
 from app.settings import settings
 
 
@@ -27,28 +27,6 @@ async def test_chatbi_graph_returns_final_report_without_attribution_branches():
     assert "cross_validation" not in state
     assert state["final_report"]["summary"].startswith("ChatBI answered")
     assert state["final_report"]["sql"].startswith("SELECT")
-
-
-@pytest.mark.asyncio
-async def test_full_graph_keeps_attribution_branches():
-    settings.trace_callback_enabled = False
-    settings.platform_calls_enabled = False
-    state = await run_graph(
-        {
-            "run_id": "run_full",
-            "user_id": "demo",
-            "question": "test question",
-            "graph_mode": "full",
-            "warnings": [],
-            "errors": [],
-        }
-    )
-
-    assert state["rag_result"]["confidence"] == 0.0
-    assert state["cross_validation"].startswith("SKIPPED")
-    assert state["insight_report"]["summary"].startswith("LangGraph analyzed question")
-    assert state["recommendations"]
-    assert state["dbqa_status"] == "pass"
 
 
 @pytest.mark.asyncio
@@ -350,44 +328,6 @@ async def test_hard_guard_stops_after_max_retries(monkeypatch):
     assert state["sql_retry_count"] == 3
     assert "query_result" not in state
     assert state["final_report"]["summary"].startswith("ChatBI failed before SQL execution")
-
-
-@pytest.mark.asyncio
-async def test_cross_validation_uses_platform_client(monkeypatch):
-    settings.trace_callback_enabled = False
-    settings.platform_calls_enabled = False
-
-    from app.graph import graph_builder
-
-    async def high_confidence_rag(*args, **kwargs):
-        return {
-            "themes": ["ad"],
-            "negativeRatio": 0.8,
-            "representativeComments": ["drop-off after ad"],
-            "summary": "users report ad impact",
-            "confidence": 0.9,
-        }
-
-    async def cross_validate(rag_result):
-        assert rag_result["themes"] == ["ad"]
-        return "Playback cross-validation\nAd zone drop-off rate (10-25s):\n  food: 72.0%"
-
-    monkeypatch.setattr(graph_builder.platform, "analyze_rag", high_confidence_rag)
-    monkeypatch.setattr(graph_builder.platform, "cross_validate", cross_validate)
-
-    state = await run_graph(
-        {
-            "run_id": "run_cross_validation",
-            "user_id": "demo",
-            "question": "why did food plays drop",
-            "graph_mode": "full",
-            "warnings": [],
-            "errors": [],
-        }
-    )
-
-    assert state["rag_result"]["confidence"] == 0.9
-    assert "Ad zone drop-off rate" in state["cross_validation"]
 
 
 @pytest.mark.asyncio

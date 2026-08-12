@@ -8,7 +8,7 @@ class AnalyzeRequest(BaseModel):
     user_id: str = Field(alias="userId")
     question: str
     bypass_cache: bool = Field(default=False, alias="bypassCache")
-    graph_mode: Literal["chatbi", "full"] = Field(default="chatbi", alias="graphMode")
+    graph_mode: Literal["chatbi"] = Field(default="chatbi", alias="graphMode")
 
     model_config = {"populate_by_name": True}
 

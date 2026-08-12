@@ -24,7 +24,7 @@ ROUTER
   -> ANSWER
 ```
 
-默认 `/analyze` 使用 `graphMode=chatbi`。历史完整图仍可通过 `graphMode=full` 保留兼容，但不作为当前主线验收目标。
+`/analyze` 仅支持 `graphMode=chatbi`。历史全量图（RAG/归因/DBQA）已下线，不再保留兼容。
 
 ## 节点说明
 
@@ -162,14 +162,12 @@ Content-Type: application/json
 
 审批通过后，Agent Engine 使用同一条 SQL 继续执行，并设置 `allowHighRisk=true`，避免重新生成 SQL 导致审批对象漂移。
 
-## 后续扩展节点
+## 演进方向（规划，未实现）
 
-以下节点暂不作为当前 ChatBI 主链路的完成标准：
+以下能力属于规划方向，不作为当前 ChatBI 主链路的完成标准：
 
-- RAGAgent：评论检索与主题归因。
-- CrossValidationAgent：播放行为交叉验证。
-- InsightAgent：复杂归因报告。
-- RecommendationAgent：运营建议专家。
-- DBQANode：报告质量自动评审。
+- **LangGraph 迁移**：用真 LangGraph（StateGraph + interrupt + SqliteSaver）重写编排层，审批持久化跨进程可恢复。
+- **语义解析 + 确定性合成**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL。
+- **评测 harness**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁。
 
-这些能力后续应作为可插拔节点接入，而不是重新打乱当前 ChatBI 主链路。
+这些方向分别由 OpenSpec change `langgraph-migration`、`semantic-resolve-node`、`agent-eval-harness` 承接，不重新打乱当前 ChatBI 主链路。

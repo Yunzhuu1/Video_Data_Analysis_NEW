@@ -7,7 +7,7 @@
 - Spring Boot 负责平台层能力：对外 API、SQL Gateway、SQL 硬校验、SQL 执行、DQ 软审核、运行记录、审批入口。
 - Python Agent Engine 负责 Agent 编排：ChatBI 状态图、SQL 生成、校验反馈重试、高风险 SQL 等待审批、最终回答生成。
 
-RAG 评论归因、重排模型、多层防御增强属于后续扩展方向。当前优先保证 ChatBI / Text2SQL 主链路真实可跑。
+当前主线是 ChatBI / Text2SQL 主链路；演进方向为语义解析 + 确定性合成、LangGraph 迁移与评测 harness（见 [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md)）。RAG 评论归因、交叉验证等全量图分支已下线。
 
 ## 当前主链路
 
@@ -33,9 +33,9 @@ User
 
 | 层级 | 技术 |
 |---|---|
-| 平台层 | Spring Boot, Spring AI, MySQL, Redis, JSqlParser |
-| Agent 引擎层 | Python, FastAPI, LangGraph-style state graph, httpx |
-| LLM 接入 | OpenAI-compatible API, DeepSeek-compatible API, Ollama 可选 |
+| 平台层 | Spring Boot, MySQL, Redis, JSqlParser |
+| Agent 引擎层 | Python, FastAPI, 自研状态机编排（规划迁移 LangGraph）, httpx |
+| LLM 接入 | OpenAI-compatible API, DeepSeek-compatible API |
 | 测试评测 | JUnit, pytest, ruff, eval runner |
 
 ## 项目结构
@@ -121,12 +121,12 @@ cd agent-engine
 - [docs/ChatBI真实联调手册.md](docs/ChatBI真实联调手册.md)
 - [docs/服务接口契约.md](docs/服务接口契约.md)
 - [docs/开发规范.md](docs/开发规范.md)
-- [docs/DataAgent总体架构与迁移路线.md](docs/DataAgent总体架构与迁移路线.md)
+- [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md)
 - [agent-engine/README.md](agent-engine/README.md)
 
 ## 当前边界
 
-- ChatBI / Text2SQL 是当前第一优先级。
-- RAG 评论归因、Cross Validation、DBQA、复杂规则引擎是后续增强项。
+- 只有 ChatBI / Text2SQL 一条主线（`graphMode=chatbi`）；全量图（RAG/归因/DBQA）已下线。
 - Python 引擎不直接访问数据库，所有确定性平台能力必须通过 Spring Boot 内部接口完成。
+- 演进方向：LangGraph 迁移、语义解析 + 确定性合成、评测 harness（见 OpenSpec changes）。
 - 每个最小功能点独立提交，提交前至少运行相关 Java/Python 测试。

@@ -6,7 +6,7 @@ class DataAgentState(TypedDict, total=False):
     user_id: str
     question: str
     bypass_cache: bool
-    graph_mode: Literal["chatbi", "full"]
+    graph_mode: Literal["chatbi"]
 
     route: Literal["simple", "complex"]
     schema_context: str
@@ -24,11 +24,6 @@ class DataAgentState(TypedDict, total=False):
     approval_status: Literal["not_required", "waiting", "approved", "rejected"]
     approval_reason: str
 
-    rag_result: dict[str, Any]
-    cross_validation: str
-
-    insight_report: dict[str, Any]
-    recommendations: list[str]
     final_report: dict[str, Any]
 
     warnings: list[str]

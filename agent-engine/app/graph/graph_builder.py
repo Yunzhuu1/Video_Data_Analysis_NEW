@@ -2,12 +2,6 @@ from app.clients.platform_client import PlatformClient
 from app.graph.checkpoints import checkpoint_store
 from app.graph.nodes import (
     answer_node,
-    cross_validation_node,
-    dbqa_node,
-    insight_node,
-    merge_node,
-    rag_node,
-    recommendation_node,
     router_node,
     schema_node,
     sql_execute_node,
@@ -18,52 +12,11 @@ from app.graph.nodes import (
 )
 from app.graph.state import DataAgentState
 
-
 platform = PlatformClient()
 
 
-async def run_graph(initial_state: DataAgentState) -> DataAgentState:
-    """Run the legacy full graph with RAG, cross-validation, recommendations and DBQA."""
-    state = await traced_node(initial_state, "ROUTER", router_node)
-    state = await traced_node(state, "SCHEMA", lambda s: schema_node(s, platform))
-
-    while True:
-        state = await traced_node(state, "SQL_GENERATE", sql_generate_node)
-        state = await traced_node(state, "SQL_HARD_GUARD", lambda s: sql_hard_guard_node(s, platform))
-        if state.get("approval_status") == "waiting":
-            checkpoint_store.save(state["run_id"], state)
-            return state
-        if state.get("hard_guard_feedback") != "PASS":
-            if int(state.get("sql_retry_count", 0)) >= 3:
-                state = await traced_node(state, "ANSWER", answer_node)
-                return state
-            continue
-        state = await traced_node(state, "SQL_EXECUTE", lambda s: sql_execute_node(s, platform))
-        state = await traced_node(state, "SQL_VALIDATE", sql_validate_node)
-        if state.get("validation_feedback") == "PASS":
-            state = await traced_node(state, "SQL_SOFT_DQ", lambda s: sql_soft_dq_node(s, platform))
-            if state.get("dq_feedback") == "PASS" or str(state.get("dq_feedback", "")).startswith("WARNING"):
-                break
-            if int(state.get("sql_retry_count", 0)) >= 3:
-                state = await traced_node(state, "ANSWER", answer_node)
-                return state
-            continue
-        if int(state.get("sql_retry_count", 0)) >= 3:
-            state = await traced_node(state, "ANSWER", answer_node)
-            return state
-        continue
-
-    state = await traced_node(state, "RAG", lambda s: rag_node(s, platform))
-    state = await traced_node(state, "CROSS_VALIDATE", lambda s: cross_validation_node(s, platform))
-    state = await traced_node(state, "INSIGHT", insight_node)
-    state = await traced_node(state, "RECOMMENDATION", recommendation_node)
-    state = await traced_node(state, "MERGE", merge_node)
-    state = await traced_node(state, "DBQA", dbqa_node)
-    return state
-
-
 async def run_chatbi_graph(initial_state: DataAgentState) -> DataAgentState:
-    """Run the default ChatBI graph without attribution side branches."""
+    """Run the default ChatBI graph (the only supported main line)."""
     state = await traced_node(initial_state, "ROUTER", router_node)
     state = await traced_node(state, "SCHEMA", lambda s: schema_node(s, platform))
 
@@ -127,17 +80,7 @@ async def resume_graph(run_id: str, approved: bool) -> DataAgentState:
         checkpoint_store.delete(run_id)
         return state
 
-    if state.get("graph_mode", "chatbi") == "chatbi":
-        state = await traced_node(state, "ANSWER", answer_node)
-        checkpoint_store.delete(run_id)
-        return state
-
-    state = await traced_node(state, "RAG", lambda s: rag_node(s, platform))
-    state = await traced_node(state, "CROSS_VALIDATE", lambda s: cross_validation_node(s, platform))
-    state = await traced_node(state, "INSIGHT", insight_node)
-    state = await traced_node(state, "RECOMMENDATION", recommendation_node)
-    state = await traced_node(state, "MERGE", merge_node)
-    state = await traced_node(state, "DBQA", dbqa_node)
+    state = await traced_node(state, "ANSWER", answer_node)
     checkpoint_store.delete(run_id)
     return state
 
@@ -164,13 +107,7 @@ async def traced_node(state: DataAgentState, node_name: str, fn) -> DataAgentSta
                 "validation_feedback": next_state.get("validation_feedback"),
                 "dq_result": next_state.get("dq_result"),
                 "dq_feedback": next_state.get("dq_feedback"),
-                "rag_result": next_state.get("rag_result"),
-                "cross_validation": next_state.get("cross_validation"),
-                "insight_report": next_state.get("insight_report"),
-                "recommendations": next_state.get("recommendations"),
                 "final_report": next_state.get("final_report"),
-                "dbqa_status": next_state.get("dbqa_status"),
-                "dbqa_feedback": next_state.get("dbqa_feedback"),
             },
         )
         return next_state

@@ -2,8 +2,6 @@ package com.yunzhu.video_data_analysis.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +35,6 @@ public class DataInitializer implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DataInitializer.class);
 
     private final JdbcTemplate jdbcTemplate;
-    private final VectorStore vectorStore;
     private final Random random = new Random(42);
 
     /* ==================== 维度数据定义 ==================== */
@@ -79,9 +76,8 @@ public class DataInitializer implements CommandLineRunner {
 
     /* ==================== 运行入口 ==================== */
 
-    public DataInitializer(JdbcTemplate jdbcTemplate, VectorStore vectorStore) {
+    public DataInitializer(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.vectorStore = vectorStore;
     }
 
     @Override
@@ -93,7 +89,6 @@ public class DataInitializer implements CommandLineRunner {
 
         log.info("开始初始化测试数据...");
 
-        createCommentTable();
         insertTimeDim();
         insertUserDim();
         insertCreatorDim();
@@ -103,11 +98,8 @@ public class DataInitializer implements CommandLineRunner {
         createMetricDailyTable();
         insertUserBehaviorFact();
         insertMetricDaily();
-        extendContentDim();
         createPlayDetailTable();
         insertPlayDetail();
-        seedComments();
-        loadCommentsIntoVectorStore();
 
         log.info("测试数据初始化完成");
     }
@@ -342,106 +334,6 @@ public class DataInitializer implements CommandLineRunner {
 
     /* ==================== RAG 评论数据 ==================== */
 
-    private void createCommentTable() {
-        jdbcTemplate.execute("""
-                CREATE TABLE IF NOT EXISTS comment_content (
-                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                    content_id VARCHAR(64) NOT NULL COMMENT '视频ID',
-                    user_id VARCHAR(64) NOT NULL COMMENT '用户ID',
-                    text TEXT NOT NULL COMMENT '评论文本',
-                    sentiment VARCHAR(8) NULL COMMENT '情感: positive/negative/neutral',
-                    created_at DATETIME NOT NULL COMMENT '评论时间'
-                ) COMMENT='用户评论内容表'
-                """);
-        log.info("  comment_content: 表已就绪");
-    }
-
-    private void seedComments() {
-        String sql = "INSERT IGNORE INTO comment_content (content_id, user_id, text, sentiment, created_at) VALUES (?, ?, ?, ?, ?)";
-        List<Object[]> batch = new ArrayList<>();
-
-        // 模板生成 500+ 条评论
-        // 保留活动期后（10.08-10.10）美食类负面评论的高密度模式（用于 RAG 归因）
-        String[][] templates = {
-                {"positive", "{keyword}做得真好，学到了"},
-                {"positive", "太棒了，{keyword}强烈推荐"},
-                {"positive", "跟着做了，效果很好"},
-                {"positive", "这个{keyword}内容很实用"},
-                {"positive", "期待更多{keyword}相关视频"},
-                {"positive", "讲得很清楚，{keyword}很容易理解"},
-                {"positive", "看了好几遍了，{keyword}确实是好内容"},
-                {"neutral", "{keyword}还行吧，一般般"},
-                {"neutral", "有没有其他{keyword}推荐"},
-                {"neutral", "先收藏，{keyword}有空再看"},
-                {"neutral", "{keyword}内容中规中矩"},
-                {"neutral", "第一次看这类{keyword}视频"},
-                {"negative", "广告太多了，{keyword}根本没法看"},
-                {"negative", "开头就是广告，{keyword}体验太差"},
-                {"negative", "能不能少点广告，{keyword}都被破坏了"},
-                {"negative", "加载太慢了，{keyword}卡得看不下去"},
-                {"negative", "画质太差了，{keyword}糊得不行"},
-                {"negative", "看了一半就卡住了，{keyword}体验极差"},
-                {"negative", "以前不是这样的，现在{keyword}广告也太多了"},
-                {"negative", "内容还行但广告多得离谱，{keyword}看不下去了"},
-        };
-
-        // 已知投诉模式：10.08-10.10 期间美食类视频获得大量负面评论
-        String[] contentIds = {"content_1","content_2","content_3","content_4","content_5","content_6"};
-        String[] contentKeywords = {"美妆教程","口红试色","游戏操作","游戏攻略","家常菜","小吃"};
-
-        for (int i = 0; i < 500; i++) {
-            int ci = random.nextInt(6);
-            String contentId = contentIds[ci];
-            String keyword = contentKeywords[ci];
-            int ui = 1 + random.nextInt(50);
-            String userId = "user_" + ui;
-
-            // 10.08-10.10 期间，美食类(content_5,content_6)的负面评论概率翻倍
-            int day = 1 + random.nextInt(31);
-            boolean isFoodNegativePeriod = (ci >= 4 && day >= 8 && day <= 10);
-
-            String sentiment;
-            if (isFoodNegativePeriod) {
-                sentiment = random.nextDouble() < 0.7 ? "negative" : "neutral";
-            } else {
-                double r = random.nextDouble();
-                sentiment = r < 0.4 ? "positive" : r < 0.7 ? "neutral" : "negative";
-            }
-
-            // 按情感倾向匹配模板
-            List<String> matchingTemplates = new ArrayList<>();
-            for (String[] t : templates) {
-                if (t[0].equals(sentiment)) matchingTemplates.add(t[1]);
-            }
-            String text = matchingTemplates.get(random.nextInt(matchingTemplates.size()))
-                    .replace("{keyword}", keyword);
-
-            int hour = 8 + random.nextInt(16);
-            String ts = String.format("2023-10-%02d %02d:%02d:00", day, hour, random.nextInt(60));
-
-            batch.add(new Object[]{contentId, userId, text, sentiment, ts});
-        }
-
-        try {
-            jdbcTemplate.batchUpdate(sql, batch);
-            log.info("  comment_content: {} 条评论已注入", batch.size());
-        } catch (Exception e) {
-            log.warn("  comment_content 注入失败: {}", e.getMessage());
-        }
-    }
-
-    /* ==================== 归因交叉验证数据 ==================== */
-
-    private void extendContentDim() {
-        try { jdbcTemplate.execute("ALTER TABLE content_dim ADD COLUMN ad_count INT DEFAULT 0"); } catch (Exception e) { /* 字段可能已存在 */ }
-        try { jdbcTemplate.execute("ALTER TABLE content_dim ADD COLUMN ad_positions JSON"); } catch (Exception e) { /* 字段可能已存在 */ }
-        // 为已有视频设置广告数据：美食类广告多且早，美妆类少量广告，游戏类无广告
-        jdbcTemplate.update("UPDATE content_dim SET ad_count=3, ad_positions='[12,30,55]' WHERE content_id IN ('content_5','content_6')");
-        jdbcTemplate.update("UPDATE content_dim SET ad_count=1, ad_positions='[50]' WHERE content_id IN ('content_1','content_2')");
-        jdbcTemplate.update("UPDATE content_dim SET ad_count=0, ad_positions='[]' WHERE content_id IN ('content_3','content_4')");
-        log.info("  content_dim: 广告字段已更新");
-    }
-
     private void createPlayDetailTable() {
         jdbcTemplate.execute("""
                 CREATE TABLE IF NOT EXISTS play_detail (
@@ -501,35 +393,6 @@ public class DataInitializer implements CommandLineRunner {
             log.warn("  play_detail 注入失败: {}", e.getMessage());
         }
     }
-
-    private void loadCommentsIntoVectorStore() {
-        try {
-            List<Map<String, Object>> rows = jdbcTemplate.queryForList(
-                    "SELECT content_id, text, sentiment, created_at FROM comment_content");
-            if (rows.isEmpty()) {
-                log.info("  Redis VectorStore: 无评论数据需加载");
-                return;
-            }
-
-            List<Document> docs = new ArrayList<>();
-            for (var row : rows) {
-                docs.add(Document.builder()
-                        .text(row.get("text").toString())
-                        .metadata(Map.of(
-                                "contentId", row.get("content_id"),
-                                "sentiment", row.get("sentiment") != null ? row.get("sentiment") : "neutral",
-                                "createdAt", row.get("created_at").toString(),
-                                "doc_type", "comment"))
-                        .build());
-            }
-            vectorStore.add(docs);
-            log.info("  Redis VectorStore: {} 条评论已加载到向量库", docs.size());
-        } catch (Exception e) {
-            log.warn("  Redis VectorStore 加载失败 (请确认 Redis Stack 是否运行): {}", e.getMessage());
-        }
-    }
-
-    /* ==================== 预聚合表 ==================== */
 
     private void createMetricDailyTable() {
         jdbcTemplate.execute("""

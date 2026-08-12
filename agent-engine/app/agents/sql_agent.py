@@ -29,7 +29,7 @@ class SQLGenerationAgent:
             try:
                 result = await self.llm_client.complete_json(SQL_SYSTEM_PROMPT, user_prompt)
                 return self._normalize(result)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - fallback on any LLM failure
                 return self._fallback(question, f"LLM generation failed: {exc}")
 
         return self._fallback(question, "LLM disabled because AI_API_KEY is not configured")

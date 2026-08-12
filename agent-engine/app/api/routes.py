@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.schemas import AnalyzeRequest, AnalyzeResponse, ApprovalRequest, HealthResponse
-from app.graph.graph_builder import resume_graph, run_chatbi_graph, run_graph
+from app.graph.graph_builder import resume_graph, run_chatbi_graph
 from app.settings import settings
 
 router = APIRouter()
@@ -14,14 +14,13 @@ async def health() -> HealthResponse:
 
 @router.post("/analyze", response_model=AnalyzeResponse)
 async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
-    graph_runner = run_graph if request.graph_mode == "full" else run_chatbi_graph
-    state = await graph_runner(
+    state = await run_chatbi_graph(
         {
             "run_id": request.run_id,
             "user_id": request.user_id,
             "question": request.question,
             "bypass_cache": request.bypass_cache,
-            "graph_mode": request.graph_mode,
+            "graph_mode": "chatbi",
             "warnings": [],
             "errors": [],
         }

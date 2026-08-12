@@ -30,7 +30,7 @@ class AnswerAgent:
                     sql,
                     warnings,
                 )
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - fallback on any LLM failure
                 fallback = self._fallback(question, query_result, sql, warnings)
                 fallback["warnings"].append(f"Answer LLM fallback used: {exc}")
                 return fallback
