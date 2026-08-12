@@ -8,7 +8,6 @@
 
 ```text
 MySQL        127.0.0.1:3306
-Redis        127.0.0.1:6379
 Spring Boot  127.0.0.1:8080
 Agent Engine 127.0.0.1:8090
 ```
@@ -38,7 +37,7 @@ AI_MODEL=deepseek-chat
 
 ## 3. 启动顺序
 
-先启动 MySQL 和 Redis，再启动 Spring Boot，最后启动 Agent Engine。
+先启动 MySQL，再启动 Spring Boot，最后启动 Agent Engine。
 
 Spring Boot：
 

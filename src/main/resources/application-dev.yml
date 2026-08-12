@@ -6,11 +6,6 @@ spring:
     url: ${DB_URL:jdbc:mysql://localhost:3306/video_data_analysis?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai}
     username: ${DB_USERNAME:root}
 
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-
   ai:
     openai:
       base-url: ${AI_BASE_URL:https://api.deepseek.com}

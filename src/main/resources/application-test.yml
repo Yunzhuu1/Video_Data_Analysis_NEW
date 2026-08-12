@@ -7,11 +7,6 @@ spring:
     username: ${DB_USERNAME:test}
     password: ${DB_PASSWORD:test}
 
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
-
   ai:
     openai:
       base-url: ${AI_BASE_URL:http://localhost}

@@ -58,7 +58,6 @@ com.yunzhu.dataagent.platform
 │   └── AgentRunDetail
 └── config
     ├── WebClientConfig
-    ├── RedisConfig
     ├── DataSourceConfig
     └── ObservabilityConfig
 ```
@@ -421,5 +420,5 @@ AnalysisController -> LangGraphClient -> agent-engine
 - `/internal/sql/execute` 可独立执行并返回结构化结果。
 - 高风险 SQL 不会直接执行。
 - 所有 SQL 有审计日志。
-- 测试环境不依赖真实模型、Redis、MySQL 初始化逻辑。
+- 测试环境不依赖真实模型、MySQL 初始化逻辑。
 

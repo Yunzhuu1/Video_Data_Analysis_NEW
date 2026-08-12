@@ -133,7 +133,7 @@ SQL_HARD_GUARD 判定 approval-needed
 
 - **LangGraph 迁移（已完成）**：编排层已基于 `StateGraph` + 条件边 + `interrupt` + SQLite checkpoint 重写，审批持久化跨进程可恢复。
 - **语义解析 + 确定性合成（已完成）**：`SEMANTIC_RESOLVE`（NL -> `ResolvedIntent`）+ `SQL_SYNTHESIZE`（确定性合成）已接入主链路；`metric_definition` 指标字典与 `MetricCatalogService` 落地；长尾问题降级 raw SQL。
-- **评测 harness（规划）**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁（OpenSpec change `agent-eval-harness`）。
+- **评测 harness（已完成）**：golden_spec（与 ResolvedIntent 同构）+ 四层评分比较器 + FakeLLM 录制回放 + 21 条 golden 用例 + A/B 对比 + mock/replay/real 三种模式。
 
 ## 10. 验收清单
 
@@ -142,4 +142,4 @@ SQL_HARD_GUARD 判定 approval-needed
 - `/internal/sql/validate`、`/internal/sql/execute`、`/internal/dq/sql-result/check` 可独立调用。
 - 高风险 SQL 不会直接执行（进入审批或拦截）。
 - 所有 SQL 有审计日志。
-- 测试环境不依赖真实模型/Redis/MySQL 初始化逻辑。
+- 测试环境不依赖真实模型/MySQL 初始化逻辑。

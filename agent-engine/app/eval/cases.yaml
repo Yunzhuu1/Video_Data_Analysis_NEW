@@ -1,39 +1,242 @@
-[
-  {
-    "id": "chatbi_category_trend",
-    "type": "text2sql",
-    "question": "analyze category play trends",
-    "expected_route": "complex",
-    "expected_sql_contains": ["metric_daily", "total_plays"],
-    "expected_report_fields": ["summary", "sql", "charts"]
-  },
-  {
-    "id": "chatbi_answer_structure",
-    "type": "answer_quality",
-    "question": "compare category plays",
-    "expected_report_fields": ["summary", "sql", "metrics", "charts"]
-  },
-  {
-    "id": "chatbi_hard_guard_retry",
-    "type": "hard_guard",
-    "question": "analyze play trend",
-    "mock_guard_failures": 1,
-    "expected_sql_retry_count": 1,
-    "expected_status": "SUCCESS"
-  },
-  {
-    "id": "chatbi_dq_retry",
-    "type": "dq",
-    "question": "analyze play trend",
-    "mock_dq_failures": 1,
-    "expected_sql_retry_count": 1,
-    "expected_status": "SUCCESS"
-  },
-  {
-    "id": "chatbi_dq_warning",
-    "type": "dq",
-    "question": "compare category plays",
-    "mock_dq_warning": true,
-    "expected_report_keywords": ["partial data"]
-  }
-]
+{
+  "eval_date": "2023-10-14",
+  "cases": [
+    {
+      "id": "c01_category_trend",
+      "type": "text2sql",
+      "question": "分析各分类播放量趋势",
+      "expected_route": "complex",
+      "expected_sql_contains": ["metric_daily", "total_plays"],
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": "day"},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c02_category_total",
+      "type": "text2sql",
+      "question": "统计各分类总播放量",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c03_last7d_daily_plays",
+      "type": "text2sql",
+      "question": "最近7天每天播放量是多少",
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_plays"],
+        "dimensions": [],
+        "time_range": {"type": "relative", "relative": {"amount": 7, "unit": "day"}, "granularity": "day"},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c04_completion_rate",
+      "type": "metric",
+      "question": "完播率是多少",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["completion_rate"],
+        "dimensions": [],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c05_food_plays",
+      "type": "text2sql",
+      "question": "美食类视频总播放量是多少",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": [],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [{"field": "category", "op": "=", "value": "美食"}],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c06_top10_videos",
+      "type": "text2sql",
+      "question": "播放量最高的10个视频",
+      "expected_report_fields": ["summary", "sql"],
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": ["total_plays"],
+        "dimensions": ["content"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [],
+        "ordering": {"field": "total_plays", "direction": "desc", "limit": 10}
+      }
+    },
+    {
+      "id": "c07_compare_food_game_trend",
+      "type": "text2sql",
+      "question": "对比美食和游戏分类的播放趋势",
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": "day"},
+        "filters": [{"field": "category", "op": "in", "value": ["美食", "游戏"]}],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c08_oct1to7_plays",
+      "type": "text2sql",
+      "question": "10月1日到10月7日播放量是多少",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": [],
+        "time_range": {"type": "absolute", "absolute": {"start": "2023-10-01", "end": "2023-10-07"}, "granularity": null},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c09_likes_trend",
+      "type": "text2sql",
+      "question": "各分类点赞量趋势",
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_likes"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": "day"},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c10_engagement_rate",
+      "type": "metric",
+      "question": "互动率是多少",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["engagement_rate"],
+        "dimensions": [],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c11_shares_total",
+      "type": "text2sql",
+      "question": "统计各分类总分享量",
+      "expected_report_fields": ["summary", "sql", "metrics"],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_shares"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c12_food_trend",
+      "type": "text2sql",
+      "question": "美食类视频播放量趋势",
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_plays"],
+        "dimensions": [],
+        "time_range": {"type": "none", "granularity": "day"},
+        "filters": [{"field": "category", "op": "=", "value": "美食"}],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c13_lastweek_plays",
+      "type": "text2sql",
+      "question": "最近一周每天播放量",
+      "expected_report_fields": ["summary", "sql", "charts"],
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": ["total_plays"],
+        "dimensions": [],
+        "time_range": {"type": "relative", "relative": {"amount": 1, "unit": "week"}, "granularity": "day"},
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "c14_answer_structure",
+      "type": "answer_quality",
+      "question": "对比美食和游戏分类的播放量",
+      "expected_report_fields": ["summary", "sql", "metrics", "charts"]
+    },
+    {
+      "id": "c15_hard_guard_retry",
+      "type": "hard_guard",
+      "question": "分析各分类播放量趋势",
+      "mock_guard_failures": 1,
+      "expected_sql_retry_count": 1,
+      "expected_status": "SUCCESS"
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "question": "分析各分类播放量趋势",
+      "mock_dq_failures": 1,
+      "expected_sql_retry_count": 1,
+      "expected_status": "SUCCESS"
+    },
+    {
+      "id": "c17_dq_warning",
+      "type": "dq",
+      "question": "对比美食和游戏分类播放量",
+      "mock_dq_warning": true,
+      "expected_report_keywords": ["partial data"]
+    },
+    {
+      "id": "c18_detail_playback",
+      "type": "risk",
+      "question": "查询所有播放明细",
+      "mock_high_risk": true,
+      "expected_status": "WAITING_APPROVAL"
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "question": "不加时间范围查询用户行为明细",
+      "mock_high_risk": true,
+      "expected_status": "WAITING_APPROVAL"
+    },
+    {
+      "id": "c20_open_analysis",
+      "type": "open",
+      "question": "分析播放情况"
+    },
+    {
+      "id": "c21_open_reason",
+      "type": "open",
+      "question": "为什么美食视频完播率下降了"
+    }
+  ]
+}

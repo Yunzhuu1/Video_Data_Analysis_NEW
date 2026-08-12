@@ -15,7 +15,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 class SqlExecutionServiceTest {
 
     private final JdbcTemplate jdbcTemplate = mock(JdbcTemplate.class);
-    private final SqlResultCache sqlResultCache = mock(SqlResultCache.class);
     private final SqlRulesChecker sqlRulesChecker = mock(SqlRulesChecker.class);
     private final SqlParserValidator sqlParserValidator = new SqlParserValidator();
     private final SqlValidationService sqlValidationService = new SqlValidationService(sqlParserValidator);
@@ -23,7 +22,6 @@ class SqlExecutionServiceTest {
     private final SqlAuditService sqlAuditService = mock(SqlAuditService.class);
     private final SqlExecutionService service = new SqlExecutionService(
             jdbcTemplate,
-            sqlResultCache,
             sqlRulesChecker,
             sqlParserValidator,
             sqlValidationService,
@@ -41,7 +39,7 @@ class SqlExecutionServiceTest {
         assertThat(result.errorCode()).isEqualTo("SQL_NOT_SELECT");
         assertThat(result.riskLevel()).isEqualTo("HIGH");
         verify(sqlAuditService).record(request, result);
-        verifyNoInteractions(jdbcTemplate, sqlResultCache, sqlRulesChecker, slowQueryService);
+        verifyNoInteractions(jdbcTemplate, sqlRulesChecker, slowQueryService);
     }
 
     @Test
@@ -55,7 +53,7 @@ class SqlExecutionServiceTest {
         assertThat(result.riskLevel()).isEqualTo("HIGH");
         assertThat(result.accessedTables()).containsExactly("play_detail");
         verify(sqlAuditService).record(request, result);
-        verifyNoInteractions(jdbcTemplate, sqlResultCache, sqlRulesChecker, slowQueryService);
+        verifyNoInteractions(jdbcTemplate, sqlRulesChecker, slowQueryService);
     }
 
     private static SqlExecuteRequest request(String sql, boolean allowHighRisk) {

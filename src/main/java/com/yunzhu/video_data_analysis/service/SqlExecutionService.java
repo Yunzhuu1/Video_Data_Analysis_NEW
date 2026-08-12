@@ -30,7 +30,6 @@ public class SqlExecutionService {
             Pattern.compile("^\\s*(--.*\\n)*\\s*SELECT\\b.*", Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
 
     private final JdbcTemplate jdbcTemplate;
-    private final SqlResultCache sqlResultCache;
     private final SqlRulesChecker sqlRulesChecker;
     private final SqlParserValidator sqlParserValidator;
     private final SqlValidationService sqlValidationService;
@@ -41,14 +40,12 @@ public class SqlExecutionService {
     private final ThreadLocal<String> lastExecutedSql = ThreadLocal.withInitial(() -> "");
 
     public SqlExecutionService(JdbcTemplate jdbcTemplate,
-                               SqlResultCache sqlResultCache,
                                SqlRulesChecker sqlRulesChecker,
                                SqlParserValidator sqlParserValidator,
                                SqlValidationService sqlValidationService,
                                SlowQueryService slowQueryService,
                                SqlAuditService sqlAuditService) {
         this.jdbcTemplate = jdbcTemplate;
-        this.sqlResultCache = sqlResultCache;
         this.sqlRulesChecker = sqlRulesChecker;
         this.sqlParserValidator = sqlParserValidator;
         this.sqlValidationService = sqlValidationService;
@@ -93,12 +90,6 @@ public class SqlExecutionService {
 
         lastExecutedSql.set(sql);
 
-        String cached = sqlResultCache.get(sql);
-        if (cached != null) {
-            return auditAndReturn(request, new SqlExecuteResult(true, sql, cached, List.of(), List.of(), 0, false,
-                    List.of(), null, null, "LOW", accessedTables, elapsed(start)));
-        }
-
         String ruleWarning = sqlRulesChecker.check(sql);
         if (ruleWarning != null) {
             return auditAndReturn(request, rejected(sql, "SQL_RULE_WARNING", ruleWarning,
@@ -141,7 +132,6 @@ public class SqlExecutionService {
             int rowCount = results.size();
             SqlExecuteResult result = new SqlExecuteResult(true, sql, null, columns, results, rowCount, truncated,
                     List.of(), null, null, "LOW", accessedTables, elapsed(start));
-            sqlResultCache.put(sql, result.toToolResponse());
             return auditAndReturn(request, result);
         } catch (Exception e) {
             String msg = e.getMessage();

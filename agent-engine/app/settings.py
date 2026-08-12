@@ -25,6 +25,8 @@ if BaseSettings is not None:
         ai_api_key: str = ""
         ai_model: str = "deepseek-chat"
         checkpoint_db_path: str = "checkpoints.sqlite"
+        eval_llm_mode: str = "real"  # real | record | replay | mock
+        eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 else:
@@ -39,6 +41,8 @@ else:
             self.ai_api_key = os.getenv("AI_API_KEY", "")
             self.ai_model = os.getenv("AI_MODEL", "deepseek-chat")
             self.checkpoint_db_path = os.getenv("CHECKPOINT_DB_PATH", "checkpoints.sqlite")
+            self.eval_llm_mode = os.getenv("EVAL_LLM_MODE", "real")
+            self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 
 settings = Settings()

@@ -173,6 +173,6 @@ Content-Type: application/json
 
 - **LangGraph 迁移（已完成）**：编排层已基于 LangGraph StateGraph（条件边 + interrupt + SQLite checkpoint）重写，审批持久化跨进程可恢复。
 - **语义解析 + 确定性合成**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL。
-- **评测 harness**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁。
+- **评测 harness（已完成）**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 对比 + mock/replay/real 模式。
 
-剩余方向由 OpenSpec change `semantic-resolve-node`、`agent-eval-harness` 承接，不重新打乱当前 ChatBI 主链路。
+当前 ChatBI 主链路已完整落地（语义解析/合成/护栏/HITL/评测），不再有规划中的主线改动。

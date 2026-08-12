@@ -661,13 +661,12 @@ Response：
 ```text
 1. validate(sql)
 2. riskLevel=HIGH 且 allowHighRisk=false -> 拒绝执行
-3. SQL 结果缓存检查
-4. setQueryTimeout
-5. setMaxRows
-6. 执行 SQL
-7. 格式化 rows/resultText
-8. 写审计日志
-9. 返回 SqlExecuteResult
+3. setQueryTimeout
+4. setMaxRows
+5. 执行 SQL
+6. 格式化 rows/resultText
+7. 写审计日志
+8. 返回 SqlExecuteResult
 ```
 
 ### 8.3 SqlResultDQService
@@ -1033,7 +1032,7 @@ Python：
 
 目标：
 
-- 保证 Spring Boot、agent-engine、MySQL、Redis、Ollama 可以稳定启动。
+- 保证 Spring Boot、agent-engine、MySQL、Ollama 可以稳定启动。
 - 保证 `Spring -> Python /analyze` 可以稳定通信。
 - 明确当前运行模式是 demo 还是真实平台调用。
 
@@ -1449,7 +1448,7 @@ test(engine): cover approval resume and reject
 
 - Spring 使用真实 `AI_API_KEY`。
 - Python 使用真实或可用 LLM 配置。
-- MySQL/Redis 正常。
+- MySQL 正常。
 - Ollama 不阻塞启动；RAG 可跳过。
 
 验收：
