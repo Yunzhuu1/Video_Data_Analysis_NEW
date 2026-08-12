@@ -1,0 +1,46 @@
+# 语义解析与确定性合成
+
+## Purpose
+
+语义解析与确定性合成：LLM 只做语义匹配，SQL 由确定性合成器产出，指标字典落地，长尾问题降级 raw SQL。
+
+## Requirements
+
+### Requirement: LLM 只做语义匹配，不写 SQL
+`SEMANTIC_RESOLVE` 节点 SHALL 输出结构化 `ResolvedIntent`（指标/维度/时间范围/过滤/排序），不得直接产出 SQL。
+
+#### Scenario: 解析输出结构化意图
+- **WHEN** 用户问题进入 `SEMANTIC_RESOLVE`
+- **THEN** 节点输出 `ResolvedIntent`（含 `intent`、`metrics`、`dimensions`、`time_range`、`filters`、`ordering`），state 中不出现新 SQL
+
+### Requirement: SQL 由确定性合成器生成
+`SQL_SYNTHESIZE` 节点 SHALL 依据 `ResolvedIntent` 与 `metric_definition`（formula/source_table）确定性合成 SQL；相同 intent SHALL 生成相同 SQL。
+
+#### Scenario: 同意图同 SQL
+- **WHEN** 两次输入相同的 `ResolvedIntent`
+- **THEN** 合成器产出完全一致的 SQL 文本
+
+#### Scenario: 合成 SQL 可复验
+- **WHEN** 合成器产出 SQL
+- **THEN** 该 SQL 可通过 `SQL_HARD_GUARD` 校验（或返回明确校验失败信息）
+
+### Requirement: 指标字典落地
+系统 SHALL 提供 `metric_definition` 表（含 `metric_code` 唯一键、`formula`、`dimensions`、`time_granularity`、`source_table`）与 `MetricCatalogService`，并通过 `/internal/metrics/{code}` 对外提供指标定义查询。
+
+#### Scenario: 按代码查指标
+- **WHEN** 调用 `/internal/metrics/total_plays`
+- **THEN** 返回公式、可选维度、时间粒度与 `source_table`
+
+### Requirement: 长尾问题降级 raw SQL
+当 `SEMANTIC_RESOLVE` 无法解析（低置信/无候选/覆盖不到）时，系统 SHALL 降级到 `SQL_GENERATE`（原始 LLM SQL）+ 硬校验 + 重试，并标记 `source=fallback`。
+
+#### Scenario: 解析失败降级
+- **WHEN** `SEMANTIC_RESOLVE` 输出低置信或空候选
+- **THEN** 条件边进入 `SQL_GENERATE`，生成结果标记 `source=fallback`，继续走护栏与执行
+
+### Requirement: 数据模型 DDL 可复现
+所有 mock 表（`user_behavior_fact`/`content_dim`/`creator_dim`/`user_dim`/`time_dim`/`activity_dim`/`metric_definition`/`metric_daily` 等）的建表语句 SHALL 收编进 `src/main/resources/schema.sql`，`DataInitializer` 仅负责种子数据。
+
+#### Scenario: 空库可初始化
+- **WHEN** 在空 MySQL 实例上执行 `schema.sql` 后再运行 `DataInitializer`
+- **THEN** 所有表存在且种子数据注入成功，无"幽灵表"报错

@@ -12,7 +12,7 @@
 | Replay Eval | FakeLLM 回放真实录制的响应，CI 可复现 | `python -m app.eval.runner --mode replay --cassette cassettes/xxx.json` |
 | Real Eval | 真实 LLM + Spring Boot + MySQL 出数字 | `python -m app.eval.runner --mode real` |
 
-**回放 ≠ 质量测量**：replay 用于回归（图逻辑正确性、可复现）；真实数字来自 `--mode real`（需 API key 与 MySQL/Redis）。真实跑一次后录制 cassette，之后 CI 用 replay 回归。
+**回放 ≠ 质量测量**：replay 用于回归（图逻辑正确性、可复现）；真实数字来自 `--mode real`（需 API key 与 MySQL）。真实跑一次后录制 cassette，之后 CI 用 replay 回归。
 
 ## 核心指标（计算口径）
 
@@ -47,7 +47,7 @@ cd agent-engine
 .venv/bin/python -m ruff check app tests
 .venv/bin/python -m app.eval.runner --mode mock                 # CI 回归
 .venv/bin/python -m app.eval.runner --mode replay --cassette cassettes/xxx.json
-.venv/bin/python -m app.eval.runner --mode real                  # 需要 API key + MySQL/Redis
+.venv/bin/python -m app.eval.runner --mode real                  # 需要 API key + MySQL
 .venv/bin/python -m app.eval.runner --compare a.json b.json      # A/B 对比
 ```
 
