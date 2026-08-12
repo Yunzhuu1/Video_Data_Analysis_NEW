@@ -7,7 +7,7 @@
 双服务架构：
 
 - **Spring Boot 平台层**：对外 API、SQL 校验/执行/DQ、审计、Run Trace、审批入口、Schema 缓存、Token 统计。只做确定性平台治理，不做编排。
-- **Python Agent Engine**：ChatBI 状态图编排（当前为自研 while-loop 状态机，计划迁移到真 LangGraph）、SQL 生成、失败重试、高风险 SQL 等待审批、最终回答生成。
+- **Python Agent Engine**：ChatBI 状态图编排（基于 LangGraph `StateGraph`：显式节点/条件边/`interrupt` + SQLite 持久化 checkpoint）、SQL 生成、失败重试、高风险 SQL 等待审批、最终回答生成。
 
 边界原则：
 
@@ -38,9 +38,9 @@ agent-engine/
 │   │   └── schemas.py          # AnalyzeRequest/Response
 │   ├── graph/
 │   │   ├── state.py            # DataAgentState
-│   │   ├── graph_builder.py    # run_chatbi_graph / resume_graph / traced_node
+│   │   ├── graph_builder.py    # LangGraph StateGraph + 条件边 + facades
 │   │   ├── nodes.py            # chatbi 8 节点
-│   │   └── checkpoints.py      # 审批 checkpoint（当前进程内，计划换 SqliteSaver）
+│   │   └── checkpoints.py      # SQLite checkpointer（AsyncSqliteSaver）
 │   ├── agents/
 │   │   ├── sql_agent.py        # SQL 生成 Agent
 │   │   └── answer_agent.py     # 回答生成 Agent
@@ -99,11 +99,12 @@ agent-engine/
 
 ```text
 SQL_HARD_GUARD 判定 approval-needed
-  -> approval_status=waiting
-  -> checkpoint 保存（当前进程内内存）
+  -> 条件边进入 APPROVAL 节点，interrupt() 挂起
+  -> 状态由 SQLite checkpointer 持久化（跨进程/重启可恢复）
   -> 返回 WAITING_APPROVAL
 审批 POST /api/agent/runs/{runId}/approval {"approved": true}
-  -> resume_graph：复用同一条 SQL 继续执行（不重新生成，防审批对象漂移）
+  -> resume：Command(resume=True) 从 APPROVAL 继续
+  -> 复用同一条 SQL 执行（不重新生成，防审批对象漂移）
 ```
 
 ## 7. Trace 回写
@@ -116,12 +117,11 @@ SQL_HARD_GUARD 判定 approval-needed
 - 重试上限 3 次；超限进入 ANSWER 返回错误报告。
 - 错误分类（retryable / approval-needed / fatal）由硬校验结果驱动。
 
-## 9. 演进方向（规划，未实现）
+## 9. 演进方向
 
-- **LangGraph 迁移**：用 `StateGraph` + 条件边 + `interrupt` + `SqliteSaver` 重写编排层，审批持久化跨进程可恢复。
-- **语义解析 + 确定性合成**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL。
-- **评测 harness**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁。
-- 上述方向分别由 OpenSpec change `langgraph-migration`、`semantic-resolve-node`、`agent-eval-harness` 承接。
+- **LangGraph 迁移（已完成）**：编排层已基于 `StateGraph` + 条件边 + `interrupt` + SQLite checkpoint 重写，审批持久化跨进程可恢复。
+- **语义解析 + 确定性合成（规划）**：LLM 只做语义匹配（指标/维度/过滤/时间），SQL 由合成器确定性生成；`metric_definition` 指标字典落地；长尾问题降级 raw SQL（OpenSpec change `semantic-resolve-node`）。
+- **评测 harness（规划）**：golden_spec + 四层评分比较器 + FakeLLM 录制回放 + A/B 基线对比 + CI 回归门禁（OpenSpec change `agent-eval-harness`）。
 
 ## 10. 验收清单
 

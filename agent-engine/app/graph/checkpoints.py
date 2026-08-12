@@ -1,27 +1,19 @@
-from copy import deepcopy
+"""Persistent checkpointing for human-in-the-loop approval resumes.
 
-from app.graph.state import DataAgentState
+Replaces the old process-local in-memory store with LangGraph's SQLite
+checkpointer (aiosqlite-backed), so a waiting approval can be resumed after a
+process restart or from another instance sharing the same DB file.
+"""
+import aiosqlite
+from langgraph.checkpoint.sqlite.aio import AsyncSqliteSaver
 
 
-class InMemoryCheckpointStore:
-    """Demo checkpoint store for human approval waits.
+async def create_checkpointer(db_path: str) -> AsyncSqliteSaver:
+    """Create a long-lived async SQLite checkpointer.
 
-    This is intentionally process-local. The platform docs call out SQLite/Postgres as the next
-    production step; the first slice proves the resume contract without adding infrastructure.
+    ``db_path`` may be a file path or ``":memory:"`` for tests.
     """
-
-    def __init__(self) -> None:
-        self._states: dict[str, DataAgentState] = {}
-
-    def save(self, run_id: str, state: DataAgentState) -> None:
-        self._states[run_id] = deepcopy(state)
-
-    def get(self, run_id: str) -> DataAgentState | None:
-        state = self._states.get(run_id)
-        return deepcopy(state) if state is not None else None
-
-    def delete(self, run_id: str) -> None:
-        self._states.pop(run_id, None)
-
-
-checkpoint_store = InMemoryCheckpointStore()
+    conn = await aiosqlite.connect(db_path)
+    saver = AsyncSqliteSaver(conn)
+    await saver.setup()
+    return saver
