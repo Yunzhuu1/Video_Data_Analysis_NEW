@@ -7,7 +7,7 @@
 - Spring Boot 负责平台层能力：对外 API、SQL Gateway、SQL 硬校验、SQL 执行、DQ 软审核、运行记录、审批入口。
 - Python Agent Engine 负责 Agent 编排：ChatBI 状态图、SQL 生成、校验反馈重试、高风险 SQL 等待审批、最终回答生成。
 
-当前主线是 ChatBI 主链路：语义解析（NL -> ResolvedIntent）+ 确定性 SQL 合成 + 安全护栏 + HITL 审批，编排基于 LangGraph；评测 harness 为下一步演进（见 [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md)）。RAG 评论归因、交叉验证等全量图分支已下线。
+当前主线是 ChatBI 主链路：语义解析（NL -> ResolvedIntent）+ 确定性 SQL 合成 + 安全护栏 + HITL 审批，编排基于 LangGraph，评测 harness（golden_spec + 四层评分 + FakeLLM 录制回放 + A/B 对比）已就绪（见 [docs/Agent编排与架构设计.md](docs/Agent编排与架构设计.md) 与 [EVALUATION.md](EVALUATION.md)）。RAG 评论归因、交叉验证等全量图分支已下线。
 
 ## 当前主链路
 
@@ -38,7 +38,7 @@ User
 | 平台层 | Spring Boot, MySQL, Redis, JSqlParser |
 | Agent 引擎层 | Python, FastAPI, LangGraph（StateGraph + interrupt + SQLite checkpoint）, httpx |
 | LLM 接入 | OpenAI-compatible API, DeepSeek-compatible API |
-| 测试评测 | JUnit, pytest, ruff, eval runner |
+| 测试评测 | JUnit, pytest, ruff, eval harness（golden_spec/FakeLLM 回放/A-B） |
 
 ## 项目结构
 

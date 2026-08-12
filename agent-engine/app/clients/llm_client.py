@@ -12,10 +12,32 @@ class LLMClient:
         self.api_key = settings.ai_api_key
         self.model = settings.ai_model
 
+    def _eval_mode(self) -> str:
+        return getattr(settings, "eval_llm_mode", "real") or "real"
+
     def enabled(self) -> bool:
+        mode = self._eval_mode()
+        if mode == "mock":
+            return False
+        if mode in ("record", "replay"):
+            return True
         return bool(self.api_key)
 
     async def complete_json(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
+        mode = self._eval_mode()
+        if mode in ("record", "replay"):
+            from app.eval.fakellm import CassetteStore, FakeLLM
+
+            cassette = CassetteStore(getattr(settings, "eval_llm_cassette", "cassettes/default.json"))
+            fake = FakeLLM(
+                cassette,
+                mode=mode,
+                real_call=self._call if mode == "record" else None,
+            )
+            return await fake.complete_json(system_prompt, user_prompt)
+        return await self._call(system_prompt, user_prompt)
+
+    async def _call(self, system_prompt: str, user_prompt: str) -> dict[str, Any]:
         if not self.enabled():
             raise RuntimeError("AI_API_KEY is required for LLM SQL generation")
 

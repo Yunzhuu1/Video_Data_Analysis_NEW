@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import statistics
 import time
 from pathlib import Path
 from typing import Any
@@ -12,7 +13,8 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     httpx = None
 
-from app.eval.metrics import contains_all, required_fields_present, summarize_results
+from app.eval.comparator import SpecScore, aggregate_scores, compare_spec
+from app.eval.metrics import contains_all, required_fields_present
 from app.graph import graph_builder
 from app.graph.graph_builder import run_chatbi_graph
 from app.settings import settings
@@ -20,19 +22,22 @@ from app.settings import settings
 ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_CASES = Path(__file__).with_name("cases.yaml")
 DEFAULT_REPORT = ROOT / "docs" / "eval-report.md"
+DEFAULT_REPORT_JSON = ROOT / "docs" / "eval-report.json"
 
 
-def load_cases(path: Path) -> list[dict[str, Any]]:
-    return json.loads(path.read_text(encoding="utf-8"))
+def load_cases(path: Path) -> tuple[str, list[dict[str, Any]]]:
+    data = json.loads(path.read_text(encoding="utf-8"))
+    return str(data.get("eval_date") or "2023-10-14"), list(data.get("cases") or [])
 
 
-async def run_case(case: dict[str, Any], mode: str) -> dict[str, Any]:
+async def run_case(case: dict[str, Any], mode: str, eval_date: str) -> dict[str, Any]:
     if mode == "real":
         return await run_real_case(case)
-    return await run_mock_case(case)
+    return await run_graph_case(case, eval_date)
 
 
-async def run_mock_case(case: dict[str, Any]) -> dict[str, Any]:
+async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
+    """mock/replay：跑真实图（LLM 由 settings.eval_llm_mode 控制），平台走 mock。"""
     start = time.perf_counter()
     original_validate_sql = graph_builder.platform.validate_sql
     original_execute_sql = graph_builder.platform.execute_sql
@@ -40,6 +45,8 @@ async def run_mock_case(case: dict[str, Any]) -> dict[str, Any]:
 
     if int(case.get("mock_guard_failures", 0)) > 0:
         graph_builder.platform.validate_sql = _mock_guard(case)
+    if case.get("mock_high_risk"):
+        graph_builder.platform.validate_sql = _mock_high_risk
     if int(case.get("mock_dq_failures", 0)) > 0 or case.get("mock_dq_warning"):
         graph_builder.platform.check_sql_result_dq = _mock_dq(case)
 
@@ -56,6 +63,7 @@ async def run_mock_case(case: dict[str, Any]) -> dict[str, Any]:
         )
         latency_ms = int((time.perf_counter() - start) * 1000)
         passed, reason = evaluate_case(case, state)
+        score = compare_spec(state.get("resolved_intent"), case.get("golden_spec"), eval_date)
     finally:
         graph_builder.platform.validate_sql = original_validate_sql
         graph_builder.platform.execute_sql = original_execute_sql
@@ -67,6 +75,10 @@ async def run_mock_case(case: dict[str, Any]) -> dict[str, Any]:
         "passed": passed,
         "reason": reason,
         "latency_ms": latency_ms,
+        "status": "WAITING_APPROVAL" if state.get("approval_status") == "waiting" else "SUCCESS",
+        "retry_count": int(state.get("sql_retry_count", 0)),
+        "sql_source": state.get("sql_source"),
+        "spec_score": _score_dict(score),
     }
 
 
@@ -77,12 +89,7 @@ async def run_real_case(case: dict[str, Any]) -> dict[str, Any]:
     async with httpx.AsyncClient(timeout=120) as client:
         response = await client.get(
             f"{settings.platform_base_url.rstrip('/')}/api/agent/analyze",
-            params={
-                "userId": "eval",
-                "message": case["question"],
-                "nocache": "true",
-                "engine": "langgraph",
-            },
+            params={"userId": "eval", "message": case["question"], "nocache": "true"},
         )
         response.raise_for_status()
         payload = response.json()
@@ -94,15 +101,33 @@ async def run_real_case(case: dict[str, Any]) -> dict[str, Any]:
         "sql_attempts": [{"sql": final_report.get("sql", "")}],
         "sql_retry_count": payload.get("sqlRetryCount", 0),
         "final_report": final_report,
+        "resolved_intent": payload.get("resolvedIntent") or payload.get("resolved_intent"),
     }
     latency_ms = int((time.perf_counter() - start) * 1000)
     passed, reason = evaluate_case(case, state)
+    score = compare_spec(state.get("resolved_intent"), case.get("golden_spec"), "2023-10-14")
     return {
         "id": case["id"],
         "type": case["type"],
         "passed": passed,
         "reason": reason,
         "latency_ms": latency_ms,
+        "status": "WAITING_APPROVAL" if state.get("approval_status") == "waiting" else "SUCCESS",
+        "retry_count": int(state.get("sql_retry_count", 0)),
+        "sql_source": state.get("sql_source"),
+        "spec_score": _score_dict(score),
+    }
+
+
+def _score_dict(score: SpecScore | None) -> dict[str, Any] | None:
+    if score is None:
+        return None
+    return {
+        "matched": score.matched,
+        "core_ok": score.core_ok,
+        "field_hits": score.field_hits,
+        "field_total": score.field_total,
+        "fields": score.fields,
     }
 
 
@@ -110,48 +135,55 @@ def evaluate_case(case: dict[str, Any], state: dict[str, Any]) -> tuple[bool, st
     if (expected := case.get("expected_route")) and state.get("route") != expected:
         return False, f"route={state.get('route')} expected={expected}"
 
-    if expected_status := case.get("expected_status"):
-        status = "WAITING_APPROVAL" if state.get("approval_status") == "waiting" else "SUCCESS"
-        if status != expected_status:
-            return False, f"status={status} expected={expected_status}"
+    status = "WAITING_APPROVAL" if state.get("approval_status") == "waiting" else "SUCCESS"
+    if (expected_status := case.get("expected_status")) and status != expected_status:
+        return False, f"status={status} expected={expected_status}"
 
-    if expected_sql := case.get("expected_sql_contains"):
-        attempts = state.get("sql_attempts") or []
-        sql_text = " ".join(str(attempt.get("sql", "")) for attempt in attempts)
-        if not contains_all(sql_text, expected_sql):
-            return False, "generated SQL missing expected fragments"
+    if (expected_sql := case.get("expected_sql_contains")) and not contains_all(
+        " ".join(str(attempt.get("sql", "")) for attempt in (state.get("sql_attempts") or [])),
+        expected_sql,
+    ):
+        return False, "generated SQL missing expected fragments"
 
     if (expected_fields := case.get("expected_report_fields")) and not required_fields_present(
         state.get("final_report") or {}, expected_fields
     ):
         return False, "final report missing required fields"
 
-    if expected_keywords := case.get("expected_report_keywords"):
-        report_text = json.dumps(state.get("final_report") or {}, ensure_ascii=False)
-        if not contains_all(report_text, expected_keywords):
-            return False, "final report missing expected keywords"
+    if (expected_keywords := case.get("expected_report_keywords")) and not contains_all(
+        json.dumps(state.get("final_report") or {}, ensure_ascii=False), expected_keywords
+    ):
+        return False, "final report missing expected keywords"
 
-    if "expected_sql_retry_count" in case and int(state.get("sql_retry_count", 0)) != int(case["expected_sql_retry_count"]):
-        return False, f"sql_retry_count={state.get('sql_retry_count')} expected={case['expected_sql_retry_count']}"
+    if "expected_sql_retry_count" in case and int(state.get("sql_retry_count", 0)) != int(
+        case["expected_sql_retry_count"]
+    ):
+        return False, (
+            f"sql_retry_count={state.get('sql_retry_count')} expected={case['expected_sql_retry_count']}"
+        )
 
     return True, "PASS"
 
 
+# ---------------------------------------------------------------------------
+# Mock platform behaviors
+# ---------------------------------------------------------------------------
 def _mock_guard(case: dict[str, Any]):
-    remaining = {"count": int(case.get("mock_guard_failures", 0))}
+    failures = int(case.get("mock_guard_failures", 0))
 
-    async def validate_sql(*args: Any, **kwargs: Any) -> dict[str, Any]:
-        if remaining["count"] > 0:
-            remaining["count"] -= 1
+    async def validate_sql(*args, **kwargs):
+        nonlocal failures
+        if failures > 0:
+            failures -= 1
             return {
                 "pass": False,
                 "sql": kwargs["sql"],
-                "riskLevel": "MEDIUM",
-                "errorCode": "SQL_RULE_WARNING",
-                "reason": "eval guard failure",
-                "suggestion": "regenerate SQL",
-                "accessedTables": ["metric_daily"],
-                "violations": [{"code": "SQL_RULE_WARNING", "message": "eval guard failure"}],
+                "riskLevel": "HIGH",
+                "errorCode": "SQL_NOT_SELECT",
+                "reason": "Only SELECT statements are allowed.",
+                "suggestion": "Rewrite as SELECT.",
+                "accessedTables": [],
+                "violations": [{"code": "SQL_NOT_SELECT", "message": "Only SELECT"}],
             }
         return {
             "pass": True,
@@ -167,53 +199,161 @@ def _mock_guard(case: dict[str, Any]):
     return validate_sql
 
 
-def _mock_dq(case: dict[str, Any]):
-    remaining = {"count": int(case.get("mock_dq_failures", 0))}
+async def _mock_high_risk(*args, **kwargs):
+    return {
+        "pass": False,
+        "sql": kwargs["sql"],
+        "riskLevel": "HIGH",
+        "errorCode": "DETAIL_QUERY_WITHOUT_LIMIT",
+        "reason": "Detail table queries must include LIMIT.",
+        "suggestion": "Approve only if the detail query is necessary.",
+        "accessedTables": ["play_detail"],
+        "violations": [{"code": "DETAIL_QUERY_WITHOUT_LIMIT", "message": "missing LIMIT"}],
+    }
 
-    async def check_sql_result_dq(*args: Any, **kwargs: Any) -> dict[str, Any]:
-        if remaining["count"] > 0:
-            remaining["count"] -= 1
+
+def _mock_dq(case: dict[str, Any]):
+    failures = int(case.get("mock_dq_failures", 0))
+    warning = bool(case.get("mock_dq_warning"))
+
+    async def check_sql_result_dq(*args, **kwargs):
+        nonlocal failures
+        if failures > 0:
+            failures -= 1
             return {
                 "pass": False,
                 "riskLevel": "HIGH",
-                "reason": "eval dq failure",
-                "suggestion": "regenerate SQL",
+                "reason": "Trend question result lacks a time column.",
+                "suggestion": "Regenerate SQL with date.",
                 "warnings": [],
             }
-        warnings = ["partial data"] if case.get("mock_dq_warning") else []
         return {
             "pass": True,
-            "riskLevel": "MEDIUM" if warnings else "LOW",
+            "riskLevel": "LOW",
             "reason": None,
             "suggestion": None,
-            "warnings": warnings,
+            "warnings": ["Result was truncated; answer should mention partial data."]
+            if warning
+            else [],
         }
 
     return check_sql_result_dq
 
 
-def render_report(case_results: list[dict[str, Any]]) -> str:
-    metrics = summarize_results(case_results)
+# ---------------------------------------------------------------------------
+# Aggregation & report
+# ---------------------------------------------------------------------------
+def _percent(part: int, total: int) -> float:
+    return (part / total) if total else 0.0
+
+
+def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
+    total = len(results)
+    passed = sum(1 for r in results if r["passed"])
+    retried = [r for r in results if r["retry_count"] > 0]
+    auto_fix = sum(1 for r in retried if r["passed"])
+    risk = [r for r in results if r["type"] == "risk"]
+    risk_ok = sum(1 for r in risk if r["status"] == "WAITING_APPROVAL")
+
+    scores = [
+        SpecScore(
+            matched=r["spec_score"]["matched"],
+            core_ok=r["spec_score"]["core_ok"],
+            field_hits=r["spec_score"]["field_hits"],
+            field_total=r["spec_score"]["field_total"],
+            fields=r["spec_score"]["fields"],
+        )
+        for r in results
+        if r["spec_score"] is not None
+    ]
+    layer = aggregate_scores(scores)
+
+    latencies = sorted(r["latency_ms"] for r in results)
+    return {
+        "total": total,
+        "passed": passed,
+        "end_to_end": _percent(passed, total),
+        "auto_fix": _percent(auto_fix, len(retried)),
+        "auto_fix_total": len(retried),
+        "risk_interception": _percent(risk_ok, len(risk)),
+        "risk_total": len(risk),
+        "judged": len(scores),
+        "core_accuracy": layer["core"],
+        "strict_accuracy": layer["strict"],
+        "avg_field_match": layer["avg_field"],
+        "per_field": {name: layer[name] for name in ["intent", "metrics", "dimensions", "time_range", "filters", "ordering"]},
+        "latency_p50": statistics.median(latencies) if latencies else 0,
+        "latency_p95": _percentile(latencies, 0.95),
+    }
+
+
+def _percentile(sorted_values: list[float], p: float) -> float:
+    if not sorted_values:
+        return 0.0
+    k = (len(sorted_values) - 1) * p
+    f = int(k)
+    c = f + 1 if f + 1 < len(sorted_values) else f
+    return sorted_values[f] + (sorted_values[c] - sorted_values[f]) * (k - f)
+
+
+def render_report(results: list[dict[str, Any]], mode: str, eval_date: str) -> str:
+    agg = aggregate(results)
     lines = [
         "# DataAgent Evaluation Report",
         "",
-        "This report is generated by `python -m app.eval.runner`.",
+        f"- 运行模式: `{mode}`",
+        f"- eval_date: `{eval_date}`",
+        f"- 时间: {time.strftime('%Y-%m-%d %H:%M:%S')}",
         "",
         "## Metrics",
         "",
-        "| Metric | Passed | Total | Score |",
-        "|---|---:|---:|---:|",
+        "| Metric | Score | Detail |",
+        "|---|---:|---:|",
+        f"| 端到端成功率 | {agg['end_to_end']:.2%} | {agg['passed']}/{agg['total']} |",
+        f"| 口径核心正确率 (L1) | {agg['core_accuracy']:.2%} | judged={agg['judged']} |",
+        f"| 严格全字段正确率 (L2) | {agg['strict_accuracy']:.2%} | judged={agg['judged']} |",
+        f"| 平均字段匹配率 (L3) | {agg['avg_field_match']:.2%} | judged={agg['judged']} |",
+        f"| 自动修复成功率 | {agg['auto_fix']:.2%} | {agg['auto_fix_total']} cases retried |",
+        f"| 高风险拦截率 | {agg['risk_interception']:.2%} | {agg['risk_total']} cases |",
+        f"| 延迟 p50 / p95 | {agg['latency_p50']}ms / {agg['latency_p95']:.0f}ms | - |",
+        "",
+        "## 分项正确率 (L4)",
+        "",
+        "| Field | Accuracy |",
+        "|---|---:|",
     ]
-    for metric in metrics:
-        lines.append(f"| {metric.name} | {metric.passed} | {metric.total} | {metric.score:.2%} |")
-
-    lines.extend(["", "## Cases", "", "| Case | Type | Result | Latency | Reason |", "|---|---|---|---:|---|"])
-    for result in case_results:
+    for name, value in agg["per_field"].items():
+        lines.append(f"| {name} | {value:.2%} |")
+    lines.extend(["", "## Cases", "", "| Case | Type | Result | Status | Source | Retry | Latency | Reason |", "|---|---|---|---|---|---:|---:|---|"])
+    for result in results:
         outcome = "PASS" if result["passed"] else "FAIL"
         lines.append(
-            f"| {result['id']} | {result['type']} | {outcome} | {result['latency_ms']}ms | {result['reason']} |"
+            f"| {result['id']} | {result['type']} | {outcome} | {result['status']} | "
+            f"{result.get('sql_source') or '-'} | {result['retry_count']} | {result['latency_ms']}ms | {result['reason']} |"
         )
     lines.append("")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# A/B compare
+# ---------------------------------------------------------------------------
+def compare_reports(report_a: dict[str, Any], report_b: dict[str, Any]) -> str:
+    a = report_a.get("metrics", report_a)
+    b = report_b.get("metrics", report_b)
+    lines = ["# Eval A/B Compare", "", "| Metric | A | B | Δ |", "|---|---:|---:|---:|"]
+    ratio_keys = [
+        "end_to_end", "core_accuracy", "strict_accuracy", "avg_field_match",
+        "auto_fix", "risk_interception",
+    ]
+    for key in ratio_keys:
+        av = a.get(key, 0.0)
+        bv = b.get(key, 0.0)
+        lines.append(f"| {key} | {av:.2%} | {bv:.2%} | {bv - av:+.2%} |")
+    for key in ["latency_p50"]:
+        av = a.get(key, 0.0)
+        bv = b.get(key, 0.0)
+        lines.append(f"| {key} | {av}ms | {bv}ms | {bv - av:+.0f}ms |")
     return "\n".join(lines)
 
 
@@ -221,24 +361,39 @@ async def main() -> None:
     parser = argparse.ArgumentParser(description="Run DataAgent evaluation cases.")
     parser.add_argument("--cases", type=Path, default=DEFAULT_CASES)
     parser.add_argument("--report", type=Path, default=DEFAULT_REPORT)
-    parser.add_argument("--mode", choices=["mock", "real"], default="mock")
+    parser.add_argument("--report-json", type=Path, default=DEFAULT_REPORT_JSON)
+    parser.add_argument("--mode", choices=["mock", "replay", "real"], default="mock")
+    parser.add_argument("--cassette", default=None)
+    parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     args = parser.parse_args()
+
+    if args.compare:
+        a = json.loads(Path(args.compare[0]).read_text(encoding="utf-8"))
+        b = json.loads(Path(args.compare[1]).read_text(encoding="utf-8"))
+        print(compare_reports(a, b))
+        return
 
     settings.trace_callback_enabled = args.mode == "real"
     settings.platform_calls_enabled = args.mode == "real"
+    settings.eval_llm_mode = {"mock": "mock", "replay": "replay", "real": "real"}[args.mode]
+    if args.mode == "replay":
+        settings.eval_llm_cassette = args.cassette or "cassettes/default.json"
 
     from app.graph.checkpoints import create_checkpointer
 
-    db_path = ":memory:" if args.mode == "mock" else settings.checkpoint_db_path
+    db_path = ":memory:" if args.mode != "real" else settings.checkpoint_db_path
     checkpointer = await create_checkpointer(db_path)
     graph_builder.init_graph(checkpointer)
 
-    cases = load_cases(args.cases)
-    results = [await run_case(case, args.mode) for case in cases]
+    eval_date, cases = load_cases(args.cases)
+    results = [await run_case(case, args.mode, eval_date) for case in cases]
     await checkpointer.conn.close()
+
     args.report.parent.mkdir(parents=True, exist_ok=True)
-    args.report.write_text(render_report(results), encoding="utf-8")
-    print(f"wrote {args.report}")
+    args.report.write_text(render_report(results, args.mode, eval_date), encoding="utf-8")
+    json_report = {"mode": args.mode, "eval_date": eval_date, "metrics": aggregate(results), "cases": results}
+    args.report_json.write_text(json.dumps(json_report, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"wrote {args.report} and {args.report_json}")
 
 
 if __name__ == "__main__":
