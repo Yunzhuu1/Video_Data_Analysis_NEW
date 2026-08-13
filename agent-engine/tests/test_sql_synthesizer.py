@@ -39,7 +39,7 @@ def test_same_intent_yields_same_sql():
 def test_trend_by_category_on_metric_daily():
     intent = _intent(intent="trend", dimensions=["category"])
     sql = synthesize(intent, METRIC_DEFS)
-    assert "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM md" in sql
+    assert "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md" in sql
     assert "GROUP BY md.date, md.category" in sql
     assert "ORDER BY md.date" in sql
 
@@ -58,7 +58,7 @@ def test_ranking_uses_fact_table():
         ordering={"field": "total_plays", "direction": "desc", "limit": 10},
     )
     sql = synthesize(intent, METRIC_DEFS)
-    assert "FROM ubf" in sql
+    assert "FROM user_behavior_fact ubf" in sql
     assert "event_type = 'play'" in sql
     assert "GROUP BY ubf.content_id" in sql
     assert "ORDER BY COUNT(*) DESC LIMIT 10" in sql
@@ -90,7 +90,30 @@ def test_absolute_time_range_between():
 def test_detail_intent_select_star():
     intent = _intent(intent="detail", ordering={"limit": 50})
     sql = synthesize(intent, METRIC_DEFS)
-    assert sql.startswith("SELECT * FROM md LIMIT 50")
+    assert sql.startswith("SELECT * FROM metric_daily md LIMIT 50")
+
+
+def test_from_clause_declares_real_table_and_alias():
+    """合成 SQL 的 FROM 必须含真实表名 + 别名声明（BUG-006 回归）。"""
+    # metric_daily 路径
+    md_sql = synthesize(_intent(intent="aggregate", dimensions=["category"]), METRIC_DEFS)
+    assert "FROM metric_daily md" in md_sql
+    # user_behavior_fact 路径（ranking + factFormula 触发事实表）
+    ubf_sql = synthesize(
+        _intent(
+            intent="ranking",
+            dimensions=["content"],
+            ordering={"field": "total_plays", "direction": "desc", "limit": 10},
+        ),
+        METRIC_DEFS,
+    )
+    assert "FROM user_behavior_fact ubf" in ubf_sql
+    # play_detail 路径（detail intent + sourceTable=play_detail）
+    pd_sql = synthesize(
+        _intent(intent="detail", metrics=["completion_rate"], ordering={"limit": 50}),
+        METRIC_DEFS,
+    )
+    assert pd_sql.startswith("SELECT * FROM play_detail pd")
 
 
 def test_unsupported_multi_metric_raises():

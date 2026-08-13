@@ -181,7 +181,7 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
 
     # detail intent
     if it == "detail":
-        return f"SELECT * FROM {alias}{join_sql}{where} LIMIT {_limit(ordering, 100)}".strip()
+        return f"SELECT * FROM {source} {alias}{join_sql}{where} LIMIT {_limit(ordering, 100)}".strip()
 
     # SELECT columns
     select_cols: list[str] = []
@@ -191,7 +191,7 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         select_cols.append(f"{field_exprs[f]} AS {f}")
     select_cols.append(f"{agg_expr} AS {code}")
 
-    sql = f"SELECT {', '.join(select_cols)} FROM {alias}{join_sql}{where}"
+    sql = f"SELECT {', '.join(select_cols)} FROM {source} {alias}{join_sql}{where}"
     if gb:
         sql += " GROUP BY " + ", ".join(field_exprs[f] for f in gb)
     if it == "trend":
