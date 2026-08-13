@@ -184,6 +184,7 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "sql_retry_count": debug.get("sqlRetryCount") or payload.get("sqlRetryCount") or 0,
         "final_report": final_report,
         "resolved_intent": debug.get("resolvedIntent") or payload.get("resolvedIntent") or payload.get("resolved_intent"),
+        "sql_source": debug.get("sqlSource") or payload.get("sqlSource"),
     }
     latency_ms = int((time.perf_counter() - start) * 1000)
     passed, reason = evaluate_case(case, state)

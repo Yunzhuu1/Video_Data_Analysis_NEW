@@ -62,16 +62,18 @@ public class AgentController {
                     new EngineAnalyzeRequest(runId, userId, message, nocache));
             if ("WAITING_APPROVAL".equalsIgnoreCase(response.status())) {
                 AnalysisReport waiting = waitingApprovalReport(runId, response.approvalReason());
+                waiting.setStatus("WAITING_APPROVAL");
+                if (includeDebug) {
+                    waiting.setDebug(buildDebug(response));
+                }
                 agentRunTraceService.waitForApprovalRun(runId, response.approvalReason());
                 return waiting;
             }
             AnalysisReport report = MAPPER.convertValue(response.finalReport(), AnalysisReport.class);
             report.setRunId(runId);
+            report.setStatus("SUCCESS");
             if (includeDebug) {
-                Map<String, Object> debug = new LinkedHashMap<>();
-                debug.put("resolvedIntent", response.resolvedIntent());
-                debug.put("sqlRetryCount", response.sqlRetryCount());
-                report.setDebug(debug);
+                report.setDebug(buildDebug(response));
             }
             agentRunTraceService.finishRun(runId, report);
             return report;
@@ -90,13 +92,23 @@ public class AgentController {
         if ("REJECTED".equalsIgnoreCase(response.status())) {
             AnalysisReport rejected = MAPPER.convertValue(response.finalReport(), AnalysisReport.class);
             rejected.setRunId(runId);
+            rejected.setStatus("REJECTED");
             agentRunTraceService.failRun(runId, new IllegalStateException("High-risk SQL rejected"));
             return rejected;
         }
         AnalysisReport report = MAPPER.convertValue(response.finalReport(), AnalysisReport.class);
         report.setRunId(runId);
+        report.setStatus("SUCCESS");
         agentRunTraceService.finishRun(runId, report);
         return report;
+    }
+
+    private static Map<String, Object> buildDebug(EngineAnalyzeResponse response) {
+        Map<String, Object> debug = new LinkedHashMap<>();
+        debug.put("resolvedIntent", response.resolvedIntent());
+        debug.put("sqlRetryCount", response.sqlRetryCount());
+        debug.put("sqlSource", response.sqlSource());
+        return debug;
     }
 
     private static AnalysisReport waitingApprovalReport(String runId, String reason) {

@@ -10,5 +10,6 @@ public record EngineAnalyzeResponse(
         List<String> warnings,
         String approvalReason,
         Map<String, Object> resolvedIntent,
-        Integer sqlRetryCount
+        Integer sqlRetryCount,
+        String sqlSource
 ) {}

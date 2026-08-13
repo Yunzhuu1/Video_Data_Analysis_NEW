@@ -15,6 +15,7 @@ class AnalysisReportMappingTest {
     @Test
     void mapsPythonChatBIReportFields() {
         Map<String, Object> payload = Map.of(
+                "status", "SUCCESS",
                 "summary", "ok",
                 "sql", "SELECT date, total_plays FROM metric_daily",
                 "metrics", List.of(Map.of("name", "total_plays", "value", 100)),
@@ -32,6 +33,7 @@ class AnalysisReportMappingTest {
 
         AnalysisReport report = objectMapper.convertValue(payload, AnalysisReport.class);
 
+        assertThat(report.getStatus()).isEqualTo("SUCCESS");
         assertThat(report.getSummary()).isEqualTo("ok");
         assertThat(report.getSql()).startsWith("SELECT");
         assertThat(report.getWarnings()).containsExactly("partial data");
@@ -39,5 +41,25 @@ class AnalysisReportMappingTest {
         assertThat(report.getCharts()).hasSize(1);
         assertThat(report.getCharts().get(0).getXField()).isEqualTo("date");
         assertThat(report.getCharts().get(0).getYField()).isEqualTo("total_plays");
+    }
+
+    @Test
+    void mapsEngineAnalyzeResponseSqlSource() {
+        Map<String, Object> payload = Map.of(
+                "runId", "run-1",
+                "status", "WAITING_APPROVAL",
+                "finalReport", Map.of(),
+                "warnings", List.of(),
+                "approvalReason", "SQL_LARGE_SCAN",
+                "resolvedIntent", Map.of("intent", "aggregate"),
+                "sqlRetryCount", 0,
+                "sqlSource", "semantic"
+        );
+
+        EngineAnalyzeResponse response = objectMapper.convertValue(payload, EngineAnalyzeResponse.class);
+
+        assertThat(response.status()).isEqualTo("WAITING_APPROVAL");
+        assertThat(response.sqlSource()).isEqualTo("semantic");
+        assertThat(response.resolvedIntent()).containsEntry("intent", "aggregate");
     }
 }

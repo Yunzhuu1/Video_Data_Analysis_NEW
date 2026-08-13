@@ -44,7 +44,8 @@ public class LangGraphClient {
     private EngineAnalyzeResponse post(String path, Object body) {
         String json = toJson(body);
         HttpRequest request = HttpRequest.newBuilder(URI.create(baseUrl + path))
-                .timeout(Duration.ofSeconds(90))
+                // 真实 LLM 单请求可达 120s+（评测 p95≈120s），90s 会误触发超时导致 500；放宽到 180s
+                .timeout(Duration.ofSeconds(180))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();

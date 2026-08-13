@@ -38,7 +38,8 @@ class AgentControllerTest {
                 List.of(),
                 null,
                 Map.of("intent", "aggregate", "metrics", List.of("total_plays")),
-                2
+                2,
+                "semantic"
         );
     }
 
@@ -50,6 +51,7 @@ class AgentControllerTest {
         AnalysisReport report = controller.analyze("demo", "q", false, false);
 
         assertThat(report.getRunId()).isEqualTo("run-1");
+        assertThat(report.getStatus()).isEqualTo("SUCCESS");
         assertThat(report.getDebug()).isNull();
     }
 
@@ -64,5 +66,31 @@ class AgentControllerTest {
         assertThat(report.getDebug()).containsEntry(
                 "resolvedIntent", Map.of("intent", "aggregate", "metrics", List.of("total_plays")));
         assertThat(report.getDebug()).containsEntry("sqlRetryCount", 2);
+        assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
+    }
+
+    @Test
+    void analyzeWaitingApprovalCarriesStatusAndDebug() {
+        when(agentRunTraceService.startRun("demo", "q")).thenReturn("run-1");
+        EngineAnalyzeResponse waiting = new EngineAnalyzeResponse(
+                "run-1",
+                "WAITING_APPROVAL",
+                Map.of(),
+                List.of(),
+                "SQL_LARGE_SCAN",
+                Map.of("intent", "aggregate", "metrics", List.of("total_plays")),
+                0,
+                "semantic"
+        );
+        when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(waiting);
+
+        AnalysisReport report = controller.analyze("demo", "q", false, true);
+
+        assertThat(report.getStatus()).isEqualTo("WAITING_APPROVAL");
+        assertThat(report.getSummary()).contains("waiting for human approval");
+        assertThat(report.getDebug()).isNotNull();
+        assertThat(report.getDebug()).containsEntry(
+                "resolvedIntent", Map.of("intent", "aggregate", "metrics", List.of("total_plays")));
+        assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
     }
 }
