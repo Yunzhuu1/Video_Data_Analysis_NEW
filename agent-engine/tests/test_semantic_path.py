@@ -58,7 +58,7 @@ async def test_semantic_path_synthesizes_and_executes(monkeypatch):
     assert state["sql_source"] == "semantic"
     last = state["sql_attempts"][-1]
     assert last["source"] == "semantic"
-    assert "FROM md" in last["sql"]
+    assert "FROM metric_daily md" in last["sql"]
     assert state["query_result"]["success"] is True
     assert state["validation_feedback"] == "PASS"
 
@@ -167,5 +167,5 @@ async def test_replay_cassette_drives_semantic_path(monkeypatch, tmp_path):
     state = await run_chatbi_graph(_initial_state())
 
     assert state["sql_source"] == "semantic"
-    assert "FROM md" in state["sql_attempts"][-1]["sql"]
+    assert "FROM metric_daily md" in state["sql_attempts"][-1]["sql"]
     assert state["resolved_intent"]["metrics"] == ["total_plays"]
