@@ -36,6 +36,7 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
         approvalReason=state.get("approval_reason"),
         resolvedIntent=state.get("resolved_intent"),
         sqlRetryCount=state.get("sql_retry_count"),
+        sqlSource=state.get("sql_source"),
     )
 
 
@@ -54,4 +55,5 @@ async def approve_run(run_id: str, request: ApprovalRequest) -> AnalyzeResponse:
         approvalReason=state.get("approval_reason"),
         resolvedIntent=state.get("resolved_intent"),
         sqlRetryCount=state.get("sql_retry_count"),
+        sqlSource=state.get("sql_source"),
     )

@@ -52,6 +52,10 @@ public class AnalysisReport {
     @JsonProperty("dq")
     private Map<String, Object> dq;
 
+    /** 运行状态：SUCCESS / WAITING_APPROVAL / REJECTED（评测观测用，默认 null）。 */
+    @JsonProperty("status")
+    private String status;
+
     /** 评测观测数据（仅 includeDebug=true 时填充，非业务契约，默认 null）。 */
     @JsonProperty("debug")
     private Map<String, Object> debug;
@@ -93,6 +97,9 @@ public class AnalysisReport {
 
     public Map<String, Object> getDq() { return dq; }
     public void setDq(Map<String, Object> dq) { this.dq = dq; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
     public Map<String, Object> getDebug() { return debug; }
     public void setDebug(Map<String, Object> debug) { this.debug = debug; }

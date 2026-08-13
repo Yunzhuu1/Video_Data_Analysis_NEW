@@ -14,6 +14,7 @@ async def test_analyze_passthroughs_resolved_intent(monkeypatch):
             "run_id": state["run_id"],
             "resolved_intent": {"intent": "aggregate", "metrics": ["total_plays"]},
             "sql_retry_count": 2,
+            "sql_source": "semantic",
             "final_report": {"summary": "s", "sql": "SELECT 1", "metrics": []},
             "warnings": [],
             "approval_status": None,
@@ -24,9 +25,11 @@ async def test_analyze_passthroughs_resolved_intent(monkeypatch):
 
     assert resp.resolved_intent == {"intent": "aggregate", "metrics": ["total_plays"]}
     assert resp.sql_retry_count == 2
+    assert resp.sql_source == "semantic"
     data = resp.model_dump(by_alias=True)
     assert data["resolvedIntent"] == {"intent": "aggregate", "metrics": ["total_plays"]}
     assert data["sqlRetryCount"] == 2
+    assert data["sqlSource"] == "semantic"
 
 
 @pytest.mark.asyncio
@@ -41,6 +44,7 @@ async def test_analyze_omits_observations_when_absent(monkeypatch):
 
     assert resp.resolved_intent is None
     assert resp.sql_retry_count is None
+    assert resp.sql_source is None
 
 
 @pytest.mark.asyncio
@@ -52,6 +56,7 @@ async def test_approve_run_passthroughs_resolved_intent(monkeypatch):
             "run_id": run_id,
             "resolved_intent": {"intent": "ranking", "metrics": ["total_plays"]},
             "sql_retry_count": 1,
+            "sql_source": "fallback",
             "final_report": {"summary": "s", "sql": "SELECT 1", "metrics": []},
             "warnings": [],
             "approval_status": "approved",
@@ -62,3 +67,5 @@ async def test_approve_run_passthroughs_resolved_intent(monkeypatch):
 
     assert resp.resolved_intent == {"intent": "ranking", "metrics": ["total_plays"]}
     assert resp.sql_retry_count == 1
+    assert resp.sql_source == "fallback"
+

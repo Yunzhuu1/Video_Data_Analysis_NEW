@@ -138,3 +138,59 @@ def test_golden_metrics_covered_by_metric_catalog():
     catalog_codes = {m["metricCode"] for m in catalog}
 
     assert golden_metrics <= catalog_codes, f"missing: {golden_metrics - catalog_codes}"
+
+
+class _FakeAnalyzeResponse:
+    def __init__(self, payload):
+        self._payload = payload
+
+    def json(self):
+        return self._payload
+
+
+@pytest.mark.asyncio
+async def test_run_real_case_parses_observability(monkeypatch):
+    payload = {
+        "status": "WAITING_APPROVAL",
+        "summary": "Analysis is waiting for human approval before running high-risk SQL. Reason: SQL_LARGE_SCAN",
+        "period": "-",
+        "recommendations": ["Review the SQL risk reason and approve or reject this run."],
+        "debug": {
+            "resolvedIntent": {
+                "intent": "aggregate",
+                "metrics": ["total_plays"],
+                "dimensions": [],
+                "time_range": {"type": "none", "granularity": None},
+                "filters": [],
+                "ordering": None,
+            },
+            "sqlRetryCount": 0,
+            "sqlSource": "semantic",
+        },
+    }
+
+    async def fake_get(client, question):
+        return _FakeAnalyzeResponse(payload)
+
+    monkeypatch.setattr(runner, "_get_analyze", fake_get)
+    case = {
+        "id": "c18_detail_playback",
+        "type": "risk",
+        "question": "查询所有播放明细",
+        "expected_status": "WAITING_APPROVAL",
+        "golden_spec": {
+            "intent": "aggregate",
+            "metrics": ["total_plays"],
+            "dimensions": [],
+            "time_range": {"type": "none", "granularity": None},
+            "filters": [],
+            "ordering": None,
+        },
+    }
+
+    r = await runner.run_real_case(case, "2023-10-14")
+
+    assert r["status"] == "WAITING_APPROVAL"
+    assert r["sql_source"] == "semantic"
+    assert r["passed"] is True
+    assert r["spec_score"]["core_ok"] is True
