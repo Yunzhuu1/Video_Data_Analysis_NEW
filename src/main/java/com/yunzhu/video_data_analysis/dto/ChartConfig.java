@@ -1,5 +1,6 @@
 package com.yunzhu.video_data_analysis.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * AI模型根据查询结果生成图表定义，
  * 前端使用图表库（ECharts）直接渲染。
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChartConfig {
 
     /** 图表类型："line" | "bar" | "pie"。 */

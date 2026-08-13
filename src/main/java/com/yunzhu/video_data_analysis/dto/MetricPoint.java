@@ -1,10 +1,12 @@
 package com.yunzhu.video_data_analysis.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 一个关键指标，包含值、变化和趋势方向。
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MetricPoint {
 
     @JsonProperty("name")
