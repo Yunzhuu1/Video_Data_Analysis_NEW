@@ -54,3 +54,8 @@ checkpoints.sqlite
 *.sqlite
 *.sqlite-shm
 *.sqlite-wal
+
+### 环境变量（含密钥，勿提交） ###
+.env
+.env.*
+!.env.example
