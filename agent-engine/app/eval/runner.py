@@ -175,12 +175,13 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         response = await _get_analyze(client, case["question"])
     payload = response.json()
     debug = payload.get("debug") or {}
-    final_report = payload.get("finalReport") or payload.get("final_report") or {}
+    # Spring /api/agent/analyze 直接返回 AnalysisReport（无 finalReport 包装）
+    final_report = payload.get("finalReport") or payload.get("final_report") or payload
     state = {
         "route": "complex",
         "approval_status": "waiting" if payload.get("status") == "WAITING_APPROVAL" else None,
         "sql_attempts": [{"sql": final_report.get("sql", "")}],
-        "sql_retry_count": debug.get("sqlRetryCount", payload.get("sqlRetryCount", 0)),
+        "sql_retry_count": debug.get("sqlRetryCount") or payload.get("sqlRetryCount") or 0,
         "final_report": final_report,
         "resolved_intent": debug.get("resolvedIntent") or payload.get("resolvedIntent") or payload.get("resolved_intent"),
     }

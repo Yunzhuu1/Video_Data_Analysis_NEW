@@ -16,7 +16,8 @@ public class MetricCatalogService {
 
     private static final String BASE_SQL =
             "SELECT id, metric_name, metric_code, business_definition, formula, "
-            + "dimensions, time_granularity, source_table, time_field, owner, version, status "
+            + "dimensions, time_granularity, source_table, time_field, "
+            + "fact_formula, fact_event_filter, owner, version, status "
             + "FROM metric_definition WHERE status = 'ACTIVE'";
 
     private final JdbcTemplate jdbcTemplate;
