@@ -3,18 +3,19 @@ spring:
     name: video_data_analysis
 
   datasource:
-    url: ${DB_URL}
-    username: ${DB_USERNAME}
-    password: ${DB_PASSWORD}
+    url: ${DB_URL:jdbc:mysql://localhost:3306/video_data_analysis?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   ai:
     openai:
-      base-url: ${AI_BASE_URL}
-      api-key: ${AI_API_KEY}
+      base-url: ${AI_BASE_URL:https://api.deepseek.com}
+      # Spring Boot 不调用 LLM（编排在 Python），此 key 仅为满足遗留 Spring AI starter 启动检查；真实 key 在 agent-engine/.env
+      api-key: ${AI_API_KEY:dummy}
       chat:
         options:
-          model: ${AI_MODEL:deepseek-chat}
+          model: ${AI_MODEL:deepseek-v4-flash}
     chat:
       client:
         enabled: true
@@ -26,8 +27,8 @@ app:
   langgraph:
     base-url: ${LANGGRAPH_BASE_URL:http://localhost:8090}
   ai:
-    strong-model: ${AI_STRONG_MODEL}
-    cheap-model: ${AI_CHEAP_MODEL}
+    strong-model: ${AI_STRONG_MODEL:deepseek-v4-flash}
+    cheap-model: ${AI_CHEAP_MODEL:deepseek-v4-flash}
   data-initializer:
     enabled: ${DATA_INITIALIZER_ENABLED:false}
   cache:

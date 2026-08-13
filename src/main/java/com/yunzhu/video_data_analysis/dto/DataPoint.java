@@ -1,10 +1,12 @@
 package com.yunzhu.video_data_analysis.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * 用于图表渲染的单个数据点。
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class DataPoint {
 
     @JsonProperty("label")
