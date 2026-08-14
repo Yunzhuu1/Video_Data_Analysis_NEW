@@ -102,6 +102,8 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
 
     if int(case.get("mock_guard_failures", 0)) > 0:
         graph_builder.platform.validate_sql = _mock_guard(case)
+    if case.get("mock_guard_verdict"):
+        graph_builder.platform.validate_sql = _mock_verdict(case["mock_guard_verdict"])
     if case.get("mock_high_risk"):
         graph_builder.platform.validate_sql = _mock_high_risk
     if int(case.get("mock_dq_failures", 0)) > 0 or case.get("mock_dq_warning"):
@@ -259,39 +261,61 @@ def _mock_guard(case: dict[str, Any]):
         if failures > 0:
             failures -= 1
             return {
-                "pass": False,
-                "sql": kwargs["sql"],
-                "riskLevel": "HIGH",
-                "errorCode": "SQL_NOT_SELECT",
+                "verdict": "RETRYABLE",
+                "code": "SQL_NOT_SELECT",
                 "reason": "Only SELECT statements are allowed.",
                 "suggestion": "Rewrite as SELECT.",
+                "riskLevel": "HIGH",
                 "accessedTables": [],
-                "violations": [{"code": "SQL_NOT_SELECT", "message": "Only SELECT"}],
             }
         return {
-            "pass": True,
-            "sql": kwargs["sql"],
-            "riskLevel": "LOW",
-            "errorCode": None,
+            "verdict": "PASS",
+            "code": None,
             "reason": None,
             "suggestion": None,
+            "riskLevel": "LOW",
             "accessedTables": ["metric_daily"],
-            "violations": [],
         }
+
+    return validate_sql
+
+
+def _mock_verdict(verdict: str):
+    """按指定三态注入门禁响应（mock 三态注入，配合门禁行为用例）。"""
+    responses = {
+        "PASS": {
+            "verdict": "PASS", "code": None, "reason": None, "suggestion": None,
+            "riskLevel": "LOW", "accessedTables": ["metric_daily"],
+        },
+        "RETRYABLE": {
+            "verdict": "RETRYABLE", "code": "SQL_RULE_WARNING",
+            "reason": "Aggregate query lacks required event_type filter.",
+            "suggestion": "Add event_type filter.", "riskLevel": "MEDIUM",
+            "accessedTables": ["metric_daily"],
+        },
+        "APPROVAL_NEEDED": {
+            "verdict": "APPROVAL_NEEDED", "code": "SQL_FULL_SCAN",
+            "reason": "Full table scan on fact table (user_behavior_fact).",
+            "suggestion": "Add WHERE conditions or approve via HITL.",
+            "riskLevel": "HIGH", "accessedTables": ["user_behavior_fact"],
+        },
+    }
+    payload = responses.get(verdict, responses["RETRYABLE"])
+
+    async def validate_sql(*args, **kwargs):
+        return dict(payload)
 
     return validate_sql
 
 
 async def _mock_high_risk(*args, **kwargs):
     return {
-        "pass": False,
-        "sql": kwargs["sql"],
-        "riskLevel": "HIGH",
-        "errorCode": "DETAIL_QUERY_WITHOUT_LIMIT",
+        "verdict": "APPROVAL_NEEDED",
+        "code": "DETAIL_QUERY_WITHOUT_LIMIT",
         "reason": "Detail table queries must include LIMIT.",
         "suggestion": "Approve only if the detail query is necessary.",
+        "riskLevel": "HIGH",
         "accessedTables": ["play_detail"],
-        "violations": [{"code": "DETAIL_QUERY_WITHOUT_LIMIT", "message": "missing LIMIT"}],
     }
 
 

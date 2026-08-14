@@ -46,11 +46,47 @@ class AnswerAgent:
         return {
             "summary": str(result.get("summary") or "No summary generated."),
             "sql": result.get("sql") or sql,
-            "metrics": list(result.get("metrics") or []),
-            "charts": list(result.get("charts") or []),
-            "recommendations": list(result.get("recommendations") or []),
+            "metrics": AnswerAgent._sanitize_metrics(result.get("metrics")),
+            "charts": AnswerAgent._sanitize_charts(result.get("charts")),
+            "recommendations": AnswerAgent._sanitize_strings(result.get("recommendations")),
             "warnings": normalized_warnings,
         }
+
+    @staticmethod
+    def _to_number(value: Any, default: float) -> float:
+        if isinstance(value, (int, float)) and not isinstance(value, bool):
+            return float(value)
+        return default
+
+    @staticmethod
+    def _sanitize_metrics(metrics: Any) -> list[dict]:
+        """保证 metrics 是 schema 合规的 dict 列表；LLM 输出 dict/标量/缺 name 时安全降级。"""
+        if not isinstance(metrics, list):
+            return []
+        out: list[dict] = []
+        for m in metrics:
+            if not isinstance(m, dict) or not m.get("name"):
+                continue
+            out.append({
+                "name": str(m["name"]),
+                "value": AnswerAgent._to_number(m.get("value"), 0.0),
+                "change": AnswerAgent._to_number(m.get("change"), 0.0),
+                "trend": m.get("trend"),
+                "unit": m.get("unit"),
+            })
+        return out
+
+    @staticmethod
+    def _sanitize_charts(charts: Any) -> list[dict]:
+        if not isinstance(charts, list):
+            return []
+        return [c for c in charts if isinstance(c, dict)]
+
+    @staticmethod
+    def _sanitize_strings(items: Any) -> list[str]:
+        if not isinstance(items, list):
+            return []
+        return [str(i) for i in items if isinstance(i, (str, int, float))]
 
     @staticmethod
     def _fallback(

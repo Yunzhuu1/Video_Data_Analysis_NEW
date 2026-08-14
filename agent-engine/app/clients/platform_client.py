@@ -104,14 +104,12 @@ class PlatformClient:
     ) -> dict:
         if not settings.platform_calls_enabled:
             return {
-                "pass": True,
-                "sql": sql,
-                "riskLevel": "LOW",
-                "errorCode": None,
+                "verdict": "PASS",
+                "code": None,
                 "reason": None,
                 "suggestion": None,
+                "riskLevel": "LOW",
                 "accessedTables": ["mock_table"],
-                "violations": [],
             }
         http = self._require_httpx()
         async with http.AsyncClient(timeout=30) as client:

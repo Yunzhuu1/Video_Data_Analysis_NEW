@@ -44,7 +44,7 @@ async def sql_generate_node(state: DataAgentState) -> DataAgentState:
         question=state["question"],
         schema_context=state.get("schema_context", ""),
         hard_guard_feedback=state.get("hard_guard_feedback"),
-        execution_feedback=state.get("execution_feedback") or state.get("validation_feedback"),
+        execution_feedback=state.get("execution_feedback"),
         dq_feedback=state.get("dq_feedback"),
         sql_attempts=state.get("sql_attempts", []),
     )
@@ -144,16 +144,18 @@ async def sql_hard_guard_node(state: DataAgentState, platform: PlatformClient) -
     attempt["hard_guard_result"] = result
     attempt["risk_level"] = result.get("riskLevel")
 
-    if result.get("pass"):
+    # 统一门禁三态裁决（分类权威在 Java，Python 只做路由）
+    verdict = str(result.get("verdict") or "").upper()
+    if verdict == "PASS":
         state["hard_guard_feedback"] = "PASS"
         return state
-
-    if _requires_human_approval(result):
+    if verdict == "APPROVAL_NEEDED":
         state["hard_guard_feedback"] = "WAITING_APPROVAL"
         state["approval_status"] = "waiting"
         state["approval_reason"] = _format_guard_feedback(result)
         return state
 
+    # RETRYABLE
     feedback = _format_guard_feedback(result)
     state["hard_guard_feedback"] = feedback
     state["sql_retry_count"] = int(state.get("sql_retry_count", 0)) + 1
@@ -162,33 +164,6 @@ async def sql_hard_guard_node(state: DataAgentState, platform: PlatformClient) -
     errors = state.setdefault("errors", [])
     errors.append(feedback)
     return state
-
-
-def _requires_human_approval(result: dict) -> bool:
-    if str(result.get("riskLevel", "")).upper() != "HIGH":
-        return False
-    retryable_codes = {
-        "SQL_EMPTY",
-        "SQL_NOT_SELECT",
-        "SQL_PARSE_ERROR",
-        "SQL_SYNTAX_ERROR",
-        "SQL_RULE_WARNING",
-    }
-    approval_codes = {
-        "DETAIL_QUERY_WITHOUT_LIMIT",
-        "DETAIL_QUERY_WITHOUT_TIME_RANGE",
-        "SQL_FULL_SCAN",
-        "SQL_LARGE_SCAN",
-        "SQL_CIRCUIT_BREAKER",
-        "SENSITIVE_FIELD_ACCESS",
-    }
-    codes = [str(result.get("errorCode") or "")]
-    for violation in result.get("violations") or []:
-        if isinstance(violation, dict):
-            codes.append(str(violation.get("code") or ""))
-    if any(code in retryable_codes for code in codes):
-        return False
-    return any(code in approval_codes for code in codes)
 
 
 async def sql_execute_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
@@ -207,35 +182,23 @@ async def sql_execute_node(state: DataAgentState, platform: PlatformClient) -> D
     attempt["error"] = result.get("error")
     attempt["warnings"] = result.get("warnings", [])
     attempt["risk_level"] = result.get("riskLevel")
-    return state
-
-
-def _format_guard_feedback(result: dict) -> str:
-    error_code = result.get("errorCode") or "SQL_HARD_GUARD_FAILED"
-    reason = result.get("reason") or "SQL hard guard failed"
-    suggestion = result.get("suggestion") or "Regenerate SQL."
-    violations = result.get("violations") or []
-    violation_text = "; ".join(
-        f"{item.get('code')}: {item.get('message')}" for item in violations if isinstance(item, dict)
-    )
-    if violation_text:
-        return f"{error_code}: {reason}. Suggestion: {suggestion}. Violations: {violation_text}"
-    return f"{error_code}: {reason}. Suggestion: {suggestion}"
-
-
-async def sql_validate_node(state: DataAgentState) -> DataAgentState:
-    result = state.get("query_result") or {}
+    # SQL_VALIDATE 已删除：EXECUTE 直接承担执行成败判定与重试计数
     if result.get("success"):
-        state["validation_feedback"] = "PASS"
         state["execution_feedback"] = "PASS"
     else:
         feedback = _format_execution_feedback(result)
-        state["validation_feedback"] = feedback
         state["execution_feedback"] = feedback
         state["sql_retry_count"] = int(state.get("sql_retry_count", 0)) + 1
         errors = state.setdefault("errors", [])
         errors.append(feedback)
     return state
+
+
+def _format_guard_feedback(result: dict) -> str:
+    error_code = result.get("code") or result.get("errorCode") or "SQL_HARD_GUARD_FAILED"
+    reason = result.get("reason") or "SQL hard guard failed"
+    suggestion = result.get("suggestion") or "Regenerate SQL."
+    return f"{error_code}: {reason}. Suggestion: {suggestion}"
 
 
 async def sql_soft_dq_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:

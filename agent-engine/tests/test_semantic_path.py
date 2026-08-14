@@ -60,7 +60,7 @@ async def test_semantic_path_synthesizes_and_executes(monkeypatch):
     assert last["source"] == "semantic"
     assert "FROM metric_daily md" in last["sql"]
     assert state["query_result"]["success"] is True
-    assert state["validation_feedback"] == "PASS"
+    assert state["execution_feedback"] == "PASS"
 
 
 @pytest.mark.asyncio

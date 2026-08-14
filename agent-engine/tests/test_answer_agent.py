@@ -61,3 +61,33 @@ async def test_answer_agent_normalizes_llm_json_and_preserves_warnings():
     assert result["summary"] == "plays increased"
     assert result["warnings"] == ["dq warning"]
     assert result["charts"][0]["xField"] == "date"
+
+
+@pytest.mark.asyncio
+async def test_answer_agent_sanitizes_malformed_llm_output():
+    class MalformedLLM:
+        def enabled(self):
+            return True
+
+        async def complete_json(self, system_prompt, user_prompt):
+            return {
+                "summary": "plays increased",
+                "sql": "SELECT 1",
+                "metrics": {"total_plays": 100},  # dict 而非 list → 必须安全降级
+                "charts": [{"type": "line"}, "not-a-dict"],  # 非 dict 项剔除
+                "recommendations": {"bad": "shape"},  # dict 而非 list
+            }
+
+    agent = AnswerAgent(MalformedLLM())
+    result = await agent.generate(
+        question="trend",
+        query_result={"columns": ["date"], "rows": [], "rowCount": 0},
+        sql="SELECT 1",
+        dq_result=None,
+        warnings=[],
+    )
+
+    assert result["metrics"] == []
+    assert result["charts"] == [{"type": "line"}]
+    assert result["recommendations"] == []
+

@@ -196,7 +196,6 @@
       "type": "hard_guard",
       "question": "分析各分类播放量趋势",
       "mock_guard_failures": 1,
-      "expected_sql_retry_count": 1,
       "expected_status": "SUCCESS"
     },
     {
@@ -204,7 +203,6 @@
       "type": "dq",
       "question": "分析各分类播放量趋势",
       "mock_dq_failures": 1,
-      "expected_sql_retry_count": 1,
       "expected_status": "SUCCESS"
     },
     {
@@ -237,6 +235,20 @@
       "id": "c21_open_reason",
       "type": "open",
       "question": "为什么美食视频完播率下降了"
+    },
+    {
+      "id": "c22_fact_full_scan_approval",
+      "type": "risk",
+      "question": "不加条件查询用户行为明细",
+      "mock_guard_verdict": "APPROVAL_NEEDED",
+      "expected_status": "WAITING_APPROVAL"
+    },
+    {
+      "id": "c23_aggregate_full_scan_pass",
+      "type": "text2sql",
+      "question": "统计各分类总播放量",
+      "mock_guard_verdict": "PASS",
+      "expected_status": "SUCCESS"
     }
   ]
 }

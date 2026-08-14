@@ -2,10 +2,10 @@ package com.yunzhu.video_data_analysis.controller;
 
 import com.yunzhu.video_data_analysis.dto.SqlExecuteRequest;
 import com.yunzhu.video_data_analysis.dto.SqlExecuteResult;
+import com.yunzhu.video_data_analysis.dto.SqlGateResult;
 import com.yunzhu.video_data_analysis.dto.SqlValidateRequest;
-import com.yunzhu.video_data_analysis.dto.SqlValidateResult;
 import com.yunzhu.video_data_analysis.service.SqlExecutionService;
-import com.yunzhu.video_data_analysis.service.SqlValidationService;
+import com.yunzhu.video_data_analysis.service.SqlGateService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class InternalSqlController {
 
     private final SqlExecutionService sqlExecutionService;
-    private final SqlValidationService sqlValidationService;
+    private final SqlGateService sqlGateService;
 
     public InternalSqlController(SqlExecutionService sqlExecutionService,
-                                 SqlValidationService sqlValidationService) {
+                                 SqlGateService sqlGateService) {
         this.sqlExecutionService = sqlExecutionService;
-        this.sqlValidationService = sqlValidationService;
+        this.sqlGateService = sqlGateService;
     }
 
     @PostMapping("/execute")
@@ -31,7 +31,7 @@ public class InternalSqlController {
     }
 
     @PostMapping("/validate")
-    public SqlValidateResult validate(@RequestBody SqlValidateRequest request) {
-        return sqlValidationService.validate(request);
+    public SqlGateResult validate(@RequestBody SqlValidateRequest request) {
+        return sqlGateService.evaluate(request.sql(), request.allowHighRisk());
     }
 }
