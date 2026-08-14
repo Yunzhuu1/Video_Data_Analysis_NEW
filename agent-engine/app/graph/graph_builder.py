@@ -15,7 +15,6 @@ from app.graph.nodes import (
     sql_hard_guard_node,
     sql_soft_dq_node,
     sql_synthesize_node,
-    sql_validate_node,
 )
 from app.graph.state import DataAgentState
 
@@ -57,7 +56,6 @@ def traced(node_name: str):
                     "hard_guard_result": next_state.get("hard_guard_result"),
                     "hard_guard_feedback": next_state.get("hard_guard_feedback"),
                     "query_result": next_state.get("query_result"),
-                    "validation_feedback": next_state.get("validation_feedback"),
                     "dq_result": next_state.get("dq_result"),
                     "dq_feedback": next_state.get("dq_feedback"),
                     "final_report": next_state.get("final_report"),
@@ -152,8 +150,8 @@ def route_after_approval(state: DataAgentState) -> str:
     return "execute" if state.get("approval_status") == "approved" else "end"
 
 
-def route_after_validate(state: DataAgentState) -> str:
-    if state.get("validation_feedback") == "PASS":
+def route_after_execute(state: DataAgentState) -> str:
+    if state.get("execution_feedback") == "PASS":
         return "dq"
     if state.get("approval_status") == "approved":
         # Approved runs must not regenerate SQL (approval-object drift).
@@ -188,7 +186,6 @@ def build_graph(checkpointer):
     graph.add_node("SQL_GENERATE", traced("SQL_GENERATE")(sql_generate_node))
     graph.add_node("SQL_HARD_GUARD", traced("SQL_HARD_GUARD")(_hard_guard))
     graph.add_node("SQL_EXECUTE", traced("SQL_EXECUTE")(_execute))
-    graph.add_node("SQL_VALIDATE", traced("SQL_VALIDATE")(sql_validate_node))
     graph.add_node("SQL_SOFT_DQ", traced("SQL_SOFT_DQ")(_soft_dq))
     # APPROVAL is intentionally untraced: interrupt() pauses inside it and the
     # resume re-runs it, which would otherwise create duplicate trace rows.
@@ -225,10 +222,9 @@ def build_graph(checkpointer):
         route_after_approval,
         {"execute": "SQL_EXECUTE", "end": END},
     )
-    graph.add_edge("SQL_EXECUTE", "SQL_VALIDATE")
     graph.add_conditional_edges(
-        "SQL_VALIDATE",
-        route_after_validate,
+        "SQL_EXECUTE",
+        route_after_execute,
         {"dq": "SQL_SOFT_DQ", "answer": "ANSWER", "generate": "SQL_GENERATE"},
     )
     graph.add_conditional_edges(

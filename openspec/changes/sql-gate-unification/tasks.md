@@ -27,10 +27,10 @@
 
 ## 4. Python 图改造
 
-- [ ] 4.1 SQL_HARD_GUARD 按三态路由（PASS/RETRYABLE/APPROVAL_NEEDED）
-- [ ] 4.2 删除 SQL_VALIDATE 节点及其边；EXECUTE 直接承担成败判定；清理 state.py 的 validation_feedback 字段与 nodes.py 写入点
-- [ ] 4.3 移除 _requires_human_approval()（分类权威归 Java）
-- [ ] 4.4 图测试迁移到 gate 三态契约（test_graph_flow 9 处 validate_sql 引用 / 5 处 monkeypatch 点重写；4 处 validation_feedback 断言同步更新）
+- [x] 4.1 SQL_HARD_GUARD 按三态路由（PASS/RETRYABLE/APPROVAL_NEEDED）
+- [x] 4.2 删除 SQL_VALIDATE 节点及其边；EXECUTE 直接承担成败判定；清理 state.py 的 validation_feedback 字段与 nodes.py 写入点
+- [x] 4.3 移除 _requires_human_approval()（分类权威归 Java）
+- [x] 4.4 图测试迁移到 gate 三态契约（test_graph_flow 9 处 validate_sql 引用 / 5 处 monkeypatch 点重写；4 处 validation_feedback 断言同步更新）
 
 ## 5. 评测适配与回归
 

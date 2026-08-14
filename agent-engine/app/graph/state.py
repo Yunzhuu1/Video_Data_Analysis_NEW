@@ -39,7 +39,6 @@ class DataAgentState(TypedDict, total=False):
     hard_guard_result: dict[str, Any]
     hard_guard_feedback: str
     execution_feedback: str
-    validation_feedback: str
     dq_result: dict[str, Any]
     dq_feedback: str
     sql_retry_count: int

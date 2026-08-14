@@ -35,7 +35,7 @@ async def test_chatbi_graph_returns_final_report_without_attribution_branches():
     assert state["route"] == "complex"
     assert state["schema_context"] == "schema_context_disabled_for_test"
     assert state["query_result"]["success"] is True
-    assert state["validation_feedback"] == "PASS"
+    assert state["execution_feedback"] == "PASS"
     assert "rag_result" not in state
     assert "cross_validation" not in state
     assert state["final_report"]["summary"].startswith("ChatBI answered")
@@ -97,7 +97,7 @@ async def test_sql_retry_stops_after_success(monkeypatch):
     )
 
     assert calls["count"] == 2
-    assert state["validation_feedback"] == "PASS"
+    assert state["execution_feedback"] == "PASS"
     assert state["execution_feedback"] == "PASS"
     assert state["sql_retry_count"] == 1
 
@@ -115,24 +115,20 @@ async def test_hard_guard_retry_stops_after_success(monkeypatch):
         calls["guard"] += 1
         if calls["guard"] == 1:
             return {
-                "pass": False,
-                "sql": kwargs["sql"],
-                "riskLevel": "HIGH",
-                "errorCode": "SQL_NOT_SELECT",
+                "verdict": "RETRYABLE",
+                "code": "SQL_NOT_SELECT",
                 "reason": "Only SELECT statements are allowed.",
                 "suggestion": "Rewrite as SELECT.",
+                "riskLevel": "HIGH",
                 "accessedTables": [],
-                "violations": [{"code": "SQL_NOT_SELECT", "message": "Only SELECT"}],
             }
         return {
-            "pass": True,
-            "sql": kwargs["sql"],
-            "riskLevel": "LOW",
-            "errorCode": None,
+            "verdict": "PASS",
+            "code": None,
             "reason": None,
             "suggestion": None,
+            "riskLevel": "LOW",
             "accessedTables": ["metric_daily"],
-            "violations": [],
         }
 
     async def execute_sql(*args, **kwargs):
@@ -309,14 +305,12 @@ async def test_hard_guard_stops_after_max_retries(monkeypatch):
     async def always_reject_sql(*args, **kwargs):
         calls["guard"] += 1
         return {
-            "pass": False,
-            "sql": kwargs["sql"],
-            "riskLevel": "MEDIUM",
-            "errorCode": "SQL_RULE_WARNING",
+            "verdict": "RETRYABLE",
+            "code": "SQL_RULE_WARNING",
             "reason": "Aggregate query lacks required event_type filter.",
             "suggestion": "Add event_type filter.",
+            "riskLevel": "MEDIUM",
             "accessedTables": ["metric_daily"],
-            "violations": [{"code": "SQL_RULE_WARNING", "message": "missing event_type"}],
         }
 
     async def execute_sql(*args, **kwargs):
@@ -354,14 +348,12 @@ async def test_high_risk_sql_waits_for_approval_then_resumes(monkeypatch):
 
     async def high_risk_validate_sql(*args, **kwargs):
         return {
-            "pass": False,
-            "sql": kwargs["sql"],
-            "riskLevel": "HIGH",
-            "errorCode": "DETAIL_QUERY_WITHOUT_LIMIT",
+            "verdict": "APPROVAL_NEEDED",
+            "code": "DETAIL_QUERY_WITHOUT_LIMIT",
             "reason": "Detail table queries must include LIMIT.",
             "suggestion": "Approve only if the detail query is necessary.",
+            "riskLevel": "HIGH",
             "accessedTables": ["play_detail"],
-            "violations": [{"code": "DETAIL_QUERY_WITHOUT_LIMIT", "message": "missing LIMIT"}],
         }
 
     async def high_risk_execute_sql(*args, **kwargs):
@@ -405,7 +397,7 @@ async def test_high_risk_sql_waits_for_approval_then_resumes(monkeypatch):
 
     assert calls == {"execute": 1, "allow_high_risk": True}
     assert resumed_state["approval_status"] == "approved"
-    assert resumed_state["validation_feedback"] == "PASS"
+    assert resumed_state["execution_feedback"] == "PASS"
     assert resumed_state["final_report"]["summary"].startswith("ChatBI answered")
 
 
@@ -417,14 +409,12 @@ async def test_approval_rejection_returns_rejected_report(monkeypatch):
 
     async def high_risk_validate_sql(*args, **kwargs):
         return {
-            "pass": False,
-            "sql": kwargs["sql"],
-            "riskLevel": "HIGH",
-            "errorCode": "SQL_FULL_SCAN",
+            "verdict": "APPROVAL_NEEDED",
+            "code": "SQL_FULL_SCAN",
             "reason": "Full table scan.",
             "suggestion": "Approve only if necessary.",
+            "riskLevel": "HIGH",
             "accessedTables": ["play_detail"],
-            "violations": [{"code": "SQL_FULL_SCAN", "message": "full scan"}],
         }
 
     async def execute_sql(*args, **kwargs):
@@ -461,14 +451,12 @@ async def test_checkpoint_survives_process_restart(monkeypatch, tmp_path):
 
     async def high_risk_validate_sql(*args, **kwargs):
         return {
-            "pass": False,
-            "sql": kwargs["sql"],
-            "riskLevel": "HIGH",
-            "errorCode": "DETAIL_QUERY_WITHOUT_LIMIT",
+            "verdict": "APPROVAL_NEEDED",
+            "code": "DETAIL_QUERY_WITHOUT_LIMIT",
             "reason": "Detail table queries must include LIMIT.",
             "suggestion": "Approve only if necessary.",
+            "riskLevel": "HIGH",
             "accessedTables": ["play_detail"],
-            "violations": [{"code": "DETAIL_QUERY_WITHOUT_LIMIT", "message": "missing LIMIT"}],
         }
 
     async def execute_sql(*args, **kwargs):
@@ -514,5 +502,5 @@ async def test_checkpoint_survives_process_restart(monkeypatch, tmp_path):
     await saver2.conn.close()
 
     assert resumed_state["approval_status"] == "approved"
-    assert resumed_state["validation_feedback"] == "PASS"
+    assert resumed_state["execution_feedback"] == "PASS"
     assert resumed_state["final_report"]["summary"].startswith("ChatBI answered")
