@@ -183,16 +183,16 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
     start = time.perf_counter()
     async with httpx.AsyncClient(timeout=120) as client:
         response = await _get_analyze(client, case["question"])
-    payload = response.json()
-    debug = payload.get("debug") or {}
-    auto_released = False
-    # 非 risk 用例被门禁拦截（WAITING_APPROVAL）→ 自动放行补跑，验证审批后完整链路
-    if payload.get("status") == "WAITING_APPROVAL" and case.get("expected_status") != "WAITING_APPROVAL":
-        run_id = payload.get("runId") or payload.get("run_id")
-        approved = await _approve_and_get(client, run_id)  # 失败抛异常 → run_cases 标 ERROR
-        payload = approved
-        debug = payload.get("debug") or debug  # 保留原 debug（resolvedIntent 用于 L1~L4 评分）
-        auto_released = True
+        payload = response.json()
+        debug = payload.get("debug") or {}
+        auto_released = False
+        # 非 risk 用例被门禁拦截（WAITING_APPROVAL）→ 自动放行补跑，验证审批后完整链路
+        if payload.get("status") == "WAITING_APPROVAL" and case.get("expected_status") != "WAITING_APPROVAL":
+            run_id = payload.get("runId") or payload.get("run_id")
+            approved = await _approve_and_get(client, run_id)  # 失败抛异常 → run_cases 标 ERROR
+            payload = approved
+            debug = payload.get("debug") or debug  # 保留原 debug（resolvedIntent 用于 L1~L4 评分）
+            auto_released = True
     # Spring /api/agent/analyze 直接返回 AnalysisReport（无 finalReport 包装）
     final_report = payload.get("finalReport") or payload.get("final_report") or payload
     state = {

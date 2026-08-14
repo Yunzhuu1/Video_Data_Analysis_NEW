@@ -278,13 +278,13 @@ public class SqlStaticAnalyzer {
         boolean hasAggregation = !collectFunctionNames(select).isEmpty() || select.getGroupBy() != null;
         boolean hasEventTypeFilter = columnNames.contains("event_type");
 
-        // 聚合查询在 FACT 表上应带 event_type 过滤（MEDIUM，可重试修复）
-        boolean touchesFact = accessedTables.stream()
-                .map(TableType::classify)
-                .anyMatch(TableType.FACT::equals);
-        if (touchesFact && hasAggregation && !hasEventTypeFilter) {
+        // 聚合查询在 user_behavior_fact（唯一有 event_type 列的事实表）上应带 event_type 过滤
+        // （MEDIUM，可重试修复）；play_detail 无 event_type 列，不适用该规则，避免误伤。
+        boolean touchesEventFact = accessedTables.stream()
+                .anyMatch(t -> "user_behavior_fact".equalsIgnoreCase(t));
+        if (touchesEventFact && hasAggregation && !hasEventTypeFilter) {
             return SqlGateResult.retryable("SQL_RULE_WARNING",
-                    "Aggregate query on fact table may miss an event_type filter.",
+                    "Aggregate query on user_behavior_fact may miss an event_type filter.",
                     "Add an event_type filter (e.g. event_type = 'play') to avoid double counting.",
                     "MEDIUM", accessedTables);
         }

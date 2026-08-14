@@ -26,6 +26,6 @@
 
 ## 5. 回归与验收
 
-- [ ] 5.1 Python pytest + ruff 全绿；Java mvn test 全绿
-- [ ] 5.2 真实评测重跑：端到端 ≥ 90%；**同时记录 L2（避免选择性报告）**；c04/c06/c10 通过；c18 确定性拦截且核对 `debug.resolvedIntent.time_range.type=none`（归因：解析器 vs 门禁）；c11/c17 回答含 metrics/DQ 提示；auto_released 比例合理
-- [ ] 5.3 更新 docs/eval-report.md 与 docs/开发日志.md
+- [x] 5.1 Python pytest + ruff 全绿；Java mvn test 全绿
+- [x] 5.2 真实评测重跑：端到端 ≥ 90%；**同时记录 L2（避免选择性报告）**；c04/c06/c10 通过；c18 确定性拦截且核对 `debug.resolvedIntent.time_range.type=none`（归因：解析器 vs 门禁）；c11/c17 回答含 metrics/DQ 提示；auto_released 比例合理
+- [x] 5.3 更新 docs/eval-report.md 与 docs/开发日志.md
