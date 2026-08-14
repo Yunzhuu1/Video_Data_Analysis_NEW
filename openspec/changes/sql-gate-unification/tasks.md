@@ -19,11 +19,11 @@
 
 ## 3. 计划层（EXPLAIN + 表类型感知审批）
 
-- [ ] 3.1 PlanAnalyzer 接口（EXPLAIN 可桩，测试不依赖 DB）
-- [ ] 3.2 FULL_SCAN 按表类型分类：FACT→APPROVAL / AGGREGATE/DIM→PASS
-- [ ] 3.3 TEMP_TABLE/FILESORT→RETRYABLE（带建议）；大行数且 FACT→APPROVAL
-- [ ] 3.4 SqlExecutionService 收敛为只执行+熔断（删除重复 validate/SELECT/parse）
-- [ ] 3.5 审批放行不变式回归测试：审批通过的 SQL 即使再过 gate 会被拦也照样执行
+- [x] 3.1 PlanAnalyzer 接口（EXPLAIN 可桩，测试不依赖 DB）
+- [x] 3.2 FULL_SCAN 按表类型分类：FACT→APPROVAL / AGGREGATE/DIM→PASS
+- [x] 3.3 TEMP_TABLE/FILESORT→RETRYABLE（带建议）；大行数且 FACT→APPROVAL
+- [x] 3.4 SqlExecutionService 收敛为只执行+熔断（删除重复 validate/SELECT/parse）
+- [x] 3.5 审批放行不变式回归测试：审批通过的 SQL 即使再过 gate 会被拦也照样执行
 
 ## 4. Python 图改造
 

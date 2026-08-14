@@ -18,6 +18,21 @@ class SqlGateServiceTest {
     }
 
     @Test
+    void approvalOverrideWithAllowHighRiskPasses() {
+        // D8 审批放行不变式（Java 侧防御语义）：allowHighRisk=true 时 APPROVAL_NEEDED → PASS
+        SqlGateResult r = gate.evaluate(
+                "SELECT user_id FROM user_behavior_fact WHERE created_at > '2023-01-01' LIMIT 10", true);
+        assertThat(r.verdict()).isEqualTo("PASS");
+    }
+
+    @Test
+    void retryableStillBlocksEvenWithAllowHighRisk() {
+        // RETRYABLE（可修复）不因 allowHighRisk 放行——审批只覆盖高风险，不覆盖错误
+        SqlGateResult r = gate.evaluate("SELECT * FROM nonexistent_tbl", true);
+        assertThat(r.verdict()).isEqualTo("RETRYABLE");
+    }
+
+    @Test
     void passesValidAggregateOnMetricDaily() {
         String sql = "SELECT md.category AS category, SUM(total_plays) AS total_plays "
                 + "FROM metric_daily md GROUP BY md.category";
