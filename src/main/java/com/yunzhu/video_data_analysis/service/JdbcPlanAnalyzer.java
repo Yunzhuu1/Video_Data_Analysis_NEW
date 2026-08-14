@@ -72,16 +72,20 @@ public class JdbcPlanAnalyzer implements PlanAnalyzer {
                             accessedTables);
                 }
             }
-            if (info.temporary()) {
+            boolean touchesFact = info.tables().stream()
+                    .map(t -> TableType.classify(t.tableName()))
+                    .anyMatch(TableType.FACT::equals);
+            if (info.temporary() && touchesFact) {
                 return SqlGateResult.retryable("SQL_TEMP_TABLE",
-                        "Query uses a temporary table (GROUP BY/ORDER BY on non-indexed columns).",
+                        "Query uses a temporary table (GROUP BY/ORDER BY on non-indexed columns) on a fact table.",
                         "Simplify the query or add indexes for GROUP BY/ORDER BY columns.", "MEDIUM", accessedTables);
             }
-            if (info.filesort()) {
+            if (info.filesort() && touchesFact) {
                 return SqlGateResult.retryable("SQL_FILESORT",
-                        "Query uses filesort (ORDER BY on non-indexed column).",
+                        "Query uses filesort (ORDER BY on non-indexed column) on a fact table.",
                         "Add an index for the ORDER BY column.", "MEDIUM", accessedTables);
             }
+            // 仅聚合/维度表的临时表/排序：代价可忽略（表类型感知），放行
             return null;
         } catch (Exception e) {
             log.warn("Failed to parse EXPLAIN JSON: {}", e.getMessage());

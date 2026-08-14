@@ -34,7 +34,6 @@ ROUTER
   -> SQL_SYNTHESIZE        # 确定性合成 SQL
   -> SQL_HARD_GUARD
   -> SQL_EXECUTE
-  -> SQL_VALIDATE
   -> SQL_SOFT_DQ
   -> ANSWER
 
@@ -96,32 +95,29 @@ sql
 
 ### SQL_HARD_GUARD
 
-调用 Spring Boot 平台层 `/internal/sql/validate` 做硬校验。
+调用 Spring Boot 平台层 `/internal/sql/validate`（统一门禁 `SqlGateService`，唯一权威）做硬校验。
 
-校验结果分三类：
+门禁返回三态裁决 `verdict`：
 
-| 类型 | 行为 |
+| 裁决 | 行为 |
 |---|---|
-| PASS | 进入 SQL_EXECUTE |
-| retryable | 把失败原因反馈给 SQL_GENERATE 重试 |
-| approval-needed | 进入 `WAITING_APPROVAL`，等待人工审批 |
+| `PASS` | 进入 SQL_EXECUTE |
+| `RETRYABLE` | 把 `code/reason/suggestion` 反馈给 SQL_GENERATE 重试 |
+| `APPROVAL_NEEDED` | 进入 `WAITING_APPROVAL`，等待人工审批 |
 
-典型 retryable 问题：
+门禁内部两阶段：**静态语义层**（jsqlparser AST，基于语义层模型：schema.sql 解析的表-列注册表/表类型/敏感列，不依赖业务库）→ **计划层**（EXPLAIN，表类型感知：FACT 全扫/大扫描 → 审批，AGGREGATE/DIM 全扫 → 放行，TEMP_TABLE/FILESORT 且 FACT → 可重试）。
 
-- `SQL_EMPTY`
-- `SQL_NOT_SELECT`
-- `SQL_PARSE_ERROR`
-- `SQL_SYNTAX_ERROR`
-- `SQL_RULE_WARNING`
+典型 `RETRYABLE` 问题：
 
-典型 approval-needed 问题：
+- `SQL_EMPTY` / `SQL_NOT_SELECT` / `SQL_PARSE_ERROR`
+- `SQL_UNKNOWN_TABLE` / `SQL_UNKNOWN_COLUMN`
+- `SQL_RULE_WARNING` / `SQL_TEMP_TABLE` / `SQL_FILESORT`（FACT 表）
 
-- `DETAIL_QUERY_WITHOUT_LIMIT`
-- `DETAIL_QUERY_WITHOUT_TIME_RANGE`
-- `SQL_FULL_SCAN`
-- `SQL_LARGE_SCAN`
-- `SQL_CIRCUIT_BREAKER`
-- `SENSITIVE_FIELD_ACCESS`
+典型 `APPROVAL_NEEDED` 问题：
+
+- `DETAIL_QUERY_WITHOUT_LIMIT` / `DETAIL_QUERY_WITHOUT_TIME_RANGE`
+- `SQL_FULL_SCAN` / `SQL_LARGE_SCAN`（FACT 表）
+- `SENSITIVE_FIELD_ACCESS`（含 `SELECT *` 命中敏感列，如 `user_id`）
 
 ### SQL_EXECUTE
 
@@ -132,10 +128,6 @@ sql
 - Python 不直接连接数据库。
 - SQL 执行必须经过 Spring Boot 的统一安全入口。
 - 执行失败时错误信息回流到 SQL_GENERATE，触发重试。
-
-### SQL_VALIDATE
-
-对 SQL 执行后的结果做基础合理性检查。当前可作为轻量节点保留，后续可并入更完整的 Execution Guidance。
 
 ### SQL_SOFT_DQ
 
@@ -179,7 +171,9 @@ Content-Type: application/json
 {"approved": true}
 ```
 
-审批通过后，Agent Engine 使用同一条 SQL 继续执行，并设置 `allowHighRisk=true`，避免重新生成 SQL 导致审批对象漂移。
+审批通过后，Agent Engine 使用同一条 SQL 继续执行（`allowHighRisk=true`），避免重新生成 SQL 导致审批对象漂移。
+
+**审批放行不变式**：门禁只在 `SQL_HARD_GUARD` 调用一次；`SQL_EXECUTE` 永不重跑门禁（execute 只执行+熔断），因此已审批的 SQL 不会被二次拦截。
 
 ## 演进方向（规划，未实现）
 

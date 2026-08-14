@@ -34,8 +34,8 @@
 
 ## 5. 评测适配与回归
 
-- [ ] 5.1 更新 c15/c16 期望为 gate 三态语义
-- [ ] 5.2 mock 三态注入机制（runner _mock_guard 升级按 verdict）+ 新增用例：事实表全扫→WAITING_APPROVAL 正例、聚合表全扫→PASS 反例
-- [ ] 5.3 Python pytest + ruff 全绿；Java mvn test 全绿（含新增门禁/语义模型测试）
-- [ ] 5.4 真实评测重跑：可用性 21/21、c02 类不再重试耗尽、端到端较 47.62% 提升、**风险类用例 100% 进入 WAITING_APPROVAL（高风险拦截率 100%）**
-- [ ] 5.5 更新 AGENTS.md 门禁契约与 docs/开发日志.md
+- [x] 5.1 更新 c15/c16 期望为 gate 三态语义
+- [x] 5.2 mock 三态注入机制（runner _mock_guard 升级按 verdict）+ 新增用例：事实表全扫→WAITING_APPROVAL 正例、聚合表全扫→PASS 反例
+- [x] 5.3 Python pytest + ruff 全绿；Java mvn test 全绿（含新增门禁/语义模型测试）
+- [x] 5.4 真实评测重跑：可用性 21/21、c02 类不再重试耗尽、端到端较 47.62% 提升、**风险类用例 100% 进入 WAITING_APPROVAL（高风险拦截率 100%）**
+- [x] 5.5 更新 AGENTS.md 门禁契约（三态裁决/审批放行不变式）与 docs/开发日志.md
