@@ -169,14 +169,30 @@ async def _get_analyze(client: httpx.AsyncClient, question: str) -> httpx.Respon
     raise last_exc  # pragma: no cover
 
 
+async def _approve_and_get(client: httpx.AsyncClient, run_id: str) -> dict[str, Any]:
+    """自动放行：调用 Spring 审批接口恢复执行，返回最终报告。失败抛异常 → 由调用方按 ERROR 处理。"""
+    url = f"{settings.platform_base_url.rstrip('/')}/api/agent/runs/{run_id}/approval"
+    response = await client.post(url, json={"approved": True})
+    response.raise_for_status()
+    return response.json()
+
+
 async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
     if httpx is None:
         raise RuntimeError("httpx is required for platform=real")
     start = time.perf_counter()
     async with httpx.AsyncClient(timeout=120) as client:
         response = await _get_analyze(client, case["question"])
-    payload = response.json()
-    debug = payload.get("debug") or {}
+        payload = response.json()
+        debug = payload.get("debug") or {}
+        auto_released = False
+        # 非 risk 用例被门禁拦截（WAITING_APPROVAL）→ 自动放行补跑，验证审批后完整链路
+        if payload.get("status") == "WAITING_APPROVAL" and case.get("expected_status") != "WAITING_APPROVAL":
+            run_id = payload.get("runId") or payload.get("run_id")
+            approved = await _approve_and_get(client, run_id)  # 失败抛异常 → run_cases 标 ERROR
+            payload = approved
+            debug = payload.get("debug") or debug  # 保留原 debug（resolvedIntent 用于 L1~L4 评分）
+            auto_released = True
     # Spring /api/agent/analyze 直接返回 AnalysisReport（无 finalReport 包装）
     final_report = payload.get("finalReport") or payload.get("final_report") or payload
     state = {
@@ -201,6 +217,7 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "retry_count": int(state.get("sql_retry_count", 0)),
         "sql_source": state.get("sql_source"),
         "spec_score": _score_dict(score),
+        "auto_released": auto_released,
     }
 
 
@@ -363,6 +380,8 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     auto_fix = sum(1 for r in retried if r["passed"])
     risk = [r for r in results if r["type"] == "risk"]
     risk_ok = sum(1 for r in risk if r["status"] == "WAITING_APPROVAL")
+    auto_released = [r for r in evaluated if r.get("auto_released")]
+    unexpected_intercepts = [r for r in evaluated if r.get("auto_released") and not r["passed"]]
 
     scores = [
         SpecScore(
@@ -388,6 +407,9 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "auto_fix_total": len(retried),
         "risk_interception": _percent(risk_ok, len(risk)),
         "risk_total": len(risk),
+        "auto_released": len(auto_released),
+        "auto_released_ratio": _percent(len(auto_released), len(evaluated)),
+        "unexpected_intercepts": len(unexpected_intercepts),
         "judged": len(scores),
         "core_accuracy": layer["core"],
         "core_hits": sum(1 for s in scores if s.core_ok),
@@ -429,6 +451,8 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 平均字段匹配率 (L3) | {agg['avg_field_match']:.2%} | judged={agg['judged']} |",
         f"| 自动修复成功率 | {agg['auto_fix']:.2%} | {agg['auto_fix_total']} cases retried |",
         f"| 高风险拦截率 | {agg['risk_interception']:.2%} | {agg['risk_total']} cases |",
+        f"| 自动放行（auto_released） | {agg['auto_released_ratio']:.2%} | {agg['auto_released']}/{agg['evaluated']}（非 risk 用例被拦截后自动放行） |",
+        f"| 意外拦截数 | {agg['unexpected_intercepts']} | 自动放行后仍失败的用例（门禁过度拦截信号） |",
         f"| 延迟 p50 / p95 | {agg['latency_p50']}ms / {agg['latency_p95']:.0f}ms | - |",
         "",
         "## 分项正确率 (L4)",

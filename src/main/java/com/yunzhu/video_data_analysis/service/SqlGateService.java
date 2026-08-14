@@ -31,9 +31,9 @@ public class SqlGateService {
         this.planAnalyzer = planAnalyzer;
     }
 
-    public SqlGateResult evaluate(String sql, boolean allowHighRisk) {
+    public SqlGateResult evaluate(String sql, boolean allowHighRisk, String intent, String intentTimeRangeType) {
         List<String> accessedTables = extractAccessedTables(sql);
-        SqlGateResult staticResult = staticAnalyzer.analyze(sql, accessedTables);
+        SqlGateResult staticResult = staticAnalyzer.analyze(sql, accessedTables, intent, intentTimeRangeType);
         if (staticResult != null) {
             return allowHighRisk && "APPROVAL_NEEDED".equals(staticResult.verdict())
                     ? SqlGateResult.pass(sql, accessedTables)

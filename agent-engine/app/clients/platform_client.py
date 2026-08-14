@@ -101,6 +101,8 @@ class PlatformClient:
         sql: str,
         purpose: str,
         allow_high_risk: bool = False,
+        intent: str | None = None,
+        intent_time_range_type: str | None = None,
     ) -> dict:
         if not settings.platform_calls_enabled:
             return {
@@ -122,6 +124,8 @@ class PlatformClient:
                     "question": question,
                     "sql": sql,
                     "purpose": purpose,
+                    "intent": intent,
+                    "intentTimeRangeType": intent_time_range_type,
                     "allowHighRisk": allow_high_risk,
                 },
             )

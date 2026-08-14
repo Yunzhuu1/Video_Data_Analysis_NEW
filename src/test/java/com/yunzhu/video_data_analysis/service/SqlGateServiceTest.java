@@ -14,21 +14,25 @@ class SqlGateServiceTest {
             (sql, tables) -> null);
 
     private SqlGateResult eval(String sql) {
-        return gate.evaluate(sql, false);
+        return gate.evaluate(sql, false, null, null);
+    }
+
+    private SqlGateResult eval(String sql, String intent, String intentTimeRangeType) {
+        return gate.evaluate(sql, false, intent, intentTimeRangeType);
     }
 
     @Test
     void approvalOverrideWithAllowHighRiskPasses() {
         // D8 审批放行不变式（Java 侧防御语义）：allowHighRisk=true 时 APPROVAL_NEEDED → PASS
         SqlGateResult r = gate.evaluate(
-                "SELECT user_id FROM user_behavior_fact WHERE created_at > '2023-01-01' LIMIT 10", true);
+                "SELECT user_id FROM user_behavior_fact WHERE created_at > '2023-01-01' LIMIT 10", true, null, null);
         assertThat(r.verdict()).isEqualTo("PASS");
     }
 
     @Test
     void retryableStillBlocksEvenWithAllowHighRisk() {
         // RETRYABLE（可修复）不因 allowHighRisk 放行——审批只覆盖高风险，不覆盖错误
-        SqlGateResult r = gate.evaluate("SELECT * FROM nonexistent_tbl", true);
+        SqlGateResult r = gate.evaluate("SELECT * FROM nonexistent_tbl", true, null, null);
         assertThat(r.verdict()).isEqualTo("RETRYABLE");
     }
 
@@ -138,6 +142,53 @@ class SqlGateServiceTest {
         SqlGateResult r = eval("SELECT SUM(value) AS total_plays FROM user_behavior_fact ubf "
                 + "WHERE event_type = 'play' AND timestamp > '2023-01-01' LIMIT 10");
         assertThat(r.verdict()).isEqualTo("PASS");
+    }
+
+    @Test
+    void detailIntentWithoutTimeRangeApprovesEvenIfSqlCompliant() {
+        // R1/1.2: intent=detail 且 time_range.type=none → 无条件审批（即使 SQL 合规）
+        SqlGateResult r = eval(
+                "SELECT * FROM user_behavior_fact WHERE timestamp > '2023-01-01' LIMIT 10",
+                "detail", "none");
+        assertThat(r.verdict()).isEqualTo("APPROVAL_NEEDED");
+        assertThat(r.code()).isEqualTo("DETAIL_QUERY_WITHOUT_TIME_RANGE");
+    }
+
+    @Test
+    void detailIntentWithTimeRangeNotUnconditionallyBlocked() {
+        // intent=detail 但带时间范围 → 不无条件拦截（走 SQL 检查）
+        SqlGateResult r = eval(
+                "SELECT content_id FROM user_behavior_fact WHERE timestamp > '2023-01-01' LIMIT 10",
+                "detail", "absolute");
+        assertThat(r.verdict()).isEqualTo("PASS");
+    }
+
+    @Test
+    void aggregateIntentExemptsLimitRequirement() {
+        // 1.3: 聚合意图/聚合 SQL 无 LIMIT → 不再误伤（时间范围合规则 PASS）
+        SqlGateResult r = eval(
+                "SELECT AVG(value) FROM user_behavior_fact ubf "
+                + "WHERE event_type = 'play' AND timestamp > '2023-01-01'",
+                "aggregate", "absolute");
+        assertThat(r.verdict()).isEqualTo("PASS");
+    }
+
+    @Test
+    void aggregateWithoutTimeRangeStillApproves() {
+        // 1.4: 聚合但无时间范围 → 时间范围规则仍生效（静态层拦截）
+        SqlGateResult r = eval("SELECT AVG(value) FROM user_behavior_fact ubf", "aggregate", "none");
+        assertThat(r.verdict()).isEqualTo("APPROVAL_NEEDED");
+        assertThat(r.code()).isEqualTo("DETAIL_QUERY_WITHOUT_TIME_RANGE");
+    }
+
+    @Test
+    void aggregateIntentMismatchedDetailShapeRetryable() {
+        // 1.5: 聚合意图但 SQL 为明细形态触碰 FACT → RETRYABLE
+        SqlGateResult r = eval(
+                "SELECT * FROM user_behavior_fact WHERE timestamp > '2023-01-01' LIMIT 10",
+                "aggregate", "absolute");
+        assertThat(r.verdict()).isEqualTo("RETRYABLE");
+        assertThat(r.code()).isEqualTo("SQL_RULE_WARNING");
     }
 
     @Test

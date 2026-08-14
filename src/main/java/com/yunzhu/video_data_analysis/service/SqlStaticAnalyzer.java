@@ -57,7 +57,10 @@ public class SqlStaticAnalyzer {
         this.registry = registry;
     }
 
-    public SqlGateResult analyze(String sql, List<String> accessedTables) {
+    private static final Set<String> AGGREGATE_INTENTS = Set.of("aggregate", "trend", "ranking");
+
+    public SqlGateResult analyze(String sql, List<String> accessedTables,
+                                 String intent, String intentTimeRangeType) {
         if (sql == null || sql.isBlank()) {
             return SqlGateResult.retryable("SQL_EMPTY", "SQL must not be empty.",
                     "Regenerate a SELECT query from the current schema context.", "HIGH", accessedTables);
@@ -91,10 +94,26 @@ public class SqlStaticAnalyzer {
             return null;
         }
 
-        // 明细表规则
-        SqlGateResult detail = checkDetailTables(plainSelect, accessedTables);
+        // 意图层风险：intent=detail 且意图无时间范围 → 无条件审批（与 SQL 形态无关）
+        boolean intentDetailNoTimeRange = "detail".equalsIgnoreCase(intent)
+                && (intentTimeRangeType == null || "none".equalsIgnoreCase(intentTimeRangeType));
+        if (intentDetailNoTimeRange) {
+            return SqlGateResult.approvalNeeded("DETAIL_QUERY_WITHOUT_TIME_RANGE",
+                    "Detail intent without a time range in the resolved intent.",
+                    "Add a time range to the request, or approve this detail query via HITL.",
+                    accessedTables);
+        }
+
+        // 明细表规则（聚合意图豁免 LIMIT）
+        SqlGateResult detail = checkDetailTables(plainSelect, accessedTables, intent);
         if (detail != null) {
             return detail;
+        }
+
+        // 意图-形态一致性：聚合意图但 SQL 为明细形态且触碰 FACT → RETRYABLE
+        SqlGateResult shape = checkIntentShape(plainSelect, intent, accessedTables);
+        if (shape != null) {
+            return shape;
         }
 
         Map<String, String> aliasToTable = buildAliasMap(plainSelect);
@@ -113,18 +132,24 @@ public class SqlStaticAnalyzer {
     // 明细表规则
     // ------------------------------------------------------------------
 
-    private SqlGateResult checkDetailTables(PlainSelect select, List<String> accessedTables) {
+    private SqlGateResult checkDetailTables(PlainSelect select, List<String> accessedTables, String intent) {
         boolean touchesFact = accessedTables.stream()
                 .map(TableType::classify)
                 .anyMatch(TableType.FACT::equals);
         if (!touchesFact) {
             return null;
         }
-        boolean hasLimit = select.getLimit() != null && select.getLimit().getRowCount() != null;
-        if (!hasLimit) {
-            return SqlGateResult.approvalNeeded("DETAIL_QUERY_WITHOUT_LIMIT",
-                    "Detail table queries must include LIMIT.",
-                    "Add LIMIT or rewrite the query as an aggregate query.", accessedTables);
+        boolean sqlAggregate = !collectFunctionNames(select).isEmpty() || select.getGroupBy() != null;
+        boolean aggregateIntent = intent != null && AGGREGATE_INTENTS.contains(intent.toLowerCase(Locale.ROOT));
+        // 聚合意图或 SQL 本身聚合 → 豁免 LIMIT（聚合不返回明细行）；时间范围规则仍生效
+        boolean isAggregate = aggregateIntent || sqlAggregate;
+        if (!isAggregate) {
+            boolean hasLimit = select.getLimit() != null && select.getLimit().getRowCount() != null;
+            if (!hasLimit) {
+                return SqlGateResult.approvalNeeded("DETAIL_QUERY_WITHOUT_LIMIT",
+                        "Detail table queries must include LIMIT.",
+                        "Add LIMIT or rewrite the query as an aggregate query.", accessedTables);
+            }
         }
         Set<String> whereColumns = collectColumnNames(select.getWhere());
         boolean hasTimeFilter = whereColumns.stream().anyMatch(TIME_COLUMNS::contains);
@@ -134,6 +159,27 @@ public class SqlStaticAnalyzer {
                     "Add a date/created_at/timestamp filter to reduce scan scope.", accessedTables);
         }
         return null;
+    }
+
+    /** 意图-形态一致性：语义说聚合、SQL 却是明细形态且触碰 FACT → RETRYABLE（LLM 写错，重写）。 */
+    private SqlGateResult checkIntentShape(PlainSelect select, String intent, List<String> accessedTables) {
+        if (intent == null || !AGGREGATE_INTENTS.contains(intent.toLowerCase(Locale.ROOT))) {
+            return null;
+        }
+        boolean sqlAggregate = !collectFunctionNames(select).isEmpty() || select.getGroupBy() != null;
+        if (sqlAggregate) {
+            return null;
+        }
+        boolean touchesFact = accessedTables.stream()
+                .map(TableType::classify)
+                .anyMatch(TableType.FACT::equals);
+        if (!touchesFact) {
+            return null;
+        }
+        return SqlGateResult.retryable("SQL_RULE_WARNING",
+                "Aggregate intent but SQL is a detail-shaped query on a fact table.",
+                "Rewrite as an aggregate query (GROUP BY / aggregate function) matching the resolved intent.",
+                "MEDIUM", accessedTables);
     }
 
     // ------------------------------------------------------------------
@@ -232,13 +278,13 @@ public class SqlStaticAnalyzer {
         boolean hasAggregation = !collectFunctionNames(select).isEmpty() || select.getGroupBy() != null;
         boolean hasEventTypeFilter = columnNames.contains("event_type");
 
-        // 聚合查询在 FACT 表上应带 event_type 过滤（MEDIUM，可重试修复）
-        boolean touchesFact = accessedTables.stream()
-                .map(TableType::classify)
-                .anyMatch(TableType.FACT::equals);
-        if (touchesFact && hasAggregation && !hasEventTypeFilter) {
+        // 聚合查询在 user_behavior_fact（唯一有 event_type 列的事实表）上应带 event_type 过滤
+        // （MEDIUM，可重试修复）；play_detail 无 event_type 列，不适用该规则，避免误伤。
+        boolean touchesEventFact = accessedTables.stream()
+                .anyMatch(t -> "user_behavior_fact".equalsIgnoreCase(t));
+        if (touchesEventFact && hasAggregation && !hasEventTypeFilter) {
             return SqlGateResult.retryable("SQL_RULE_WARNING",
-                    "Aggregate query on fact table may miss an event_type filter.",
+                    "Aggregate query on user_behavior_fact may miss an event_type filter.",
                     "Add an event_type filter (e.g. event_type = 'play') to avoid double counting.",
                     "MEDIUM", accessedTables);
         }
