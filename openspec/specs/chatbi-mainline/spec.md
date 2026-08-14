@@ -99,3 +99,7 @@ Java 平台层 SHALL 提供统一的 SQL 门禁（`SqlGateService`），对候�
 #### Scenario: 明细表无时间范围需审批
 - **WHEN** 候选 SQL 访问明细表且无时间范围过滤
 - **THEN** 门禁返回 `APPROVAL_NEEDED`（与评测 c19 期望一致）
+
+#### Scenario: 意图感知的明细规则
+- **WHEN** 门禁收到 `intent` 入参
+- **THEN** `intent=detail` 且 `intent.time_range` 缺失或 `type == "none"` → 无条件 `APPROVAL_NEEDED`（与 SQL 形态无关）；聚合意图豁免 LIMIT（`DETAIL_QUERY_WITHOUT_LIMIT` 不适用），时间范围规则仍生效；意图-形态不一致（聚合意图但 SQL 为明细形态触碰 FACT）→ `RETRYABLE`
