@@ -8,8 +8,8 @@
 
 ## 2. Python 透传 intent
 
-- [ ] 2.1 PlatformClient.validate_sql 增加 intent 参数并透传
-- [ ] 2.2 nodes.py SQL_HARD_GUARD 从 resolved_intent 取 intent 传入 validate_sql
+- [x] 2.1 PlatformClient.validate_sql 增加 intent 参数并透传
+- [x] 2.2 nodes.py SQL_HARD_GUARD 从 resolved_intent 取 intent 传入 validate_sql
 
 ## 3. 评测语义
 

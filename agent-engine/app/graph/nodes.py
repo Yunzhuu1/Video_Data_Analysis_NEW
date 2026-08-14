@@ -132,6 +132,8 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
 
 async def sql_hard_guard_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
     attempt = state["sql_attempts"][-1]
+    resolved = state.get("resolved_intent") or {}
+    tr = resolved.get("time_range") or {}
     result = await platform.validate_sql(
         run_id=state["run_id"],
         user_id=state["user_id"],
@@ -139,6 +141,8 @@ async def sql_hard_guard_node(state: DataAgentState, platform: PlatformClient) -
         sql=attempt["sql"],
         purpose=attempt.get("purpose") or "LangGraph SQL hard guard",
         allow_high_risk=False,
+        intent=resolved.get("intent"),
+        intent_time_range_type=tr.get("type"),
     )
     state["hard_guard_result"] = result
     attempt["hard_guard_result"] = result
