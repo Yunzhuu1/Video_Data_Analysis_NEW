@@ -29,15 +29,9 @@ public class SqlExecutionService {
     private final SqlAuditService sqlAuditService;
     private final AtomicInteger consecutiveFailures = new AtomicInteger(0);
 
-    private final ThreadLocal<String> lastExecutedSql = ThreadLocal.withInitial(() -> "");
-
     public SqlExecutionService(JdbcTemplate jdbcTemplate, SqlAuditService sqlAuditService) {
         this.jdbcTemplate = jdbcTemplate;
         this.sqlAuditService = sqlAuditService;
-    }
-
-    public String getLastExecutedSql() {
-        return lastExecutedSql.get();
     }
 
     public SqlExecuteResult execute(SqlExecuteRequest request) {
@@ -53,7 +47,6 @@ public class SqlExecutionService {
                     "HIGH", accessedTables, start));
         }
 
-        lastExecutedSql.set(sql);
         try {
             List<Map<String, Object>> results = jdbcTemplate.query(
                     connection -> {

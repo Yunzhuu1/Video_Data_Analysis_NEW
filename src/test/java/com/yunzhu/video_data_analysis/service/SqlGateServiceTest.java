@@ -124,6 +124,23 @@ class SqlGateServiceTest {
     }
 
     @Test
+    void approvesSelectStarWithAliasOnSensitiveTable() {
+        // F1: 别名形式的 t.* 不得绕过敏感列检查
+        SqlGateResult r = eval("SELECT ubf.* FROM user_behavior_fact ubf "
+                + "WHERE timestamp > '2023-01-01' LIMIT 10");
+        assertThat(r.verdict()).isEqualTo("APPROVAL_NEEDED");
+        assertThat(r.code()).isEqualTo("SENSITIVE_FIELD_ACCESS");
+    }
+
+    @Test
+    void resolvesBareColumnWithSingleAliasedTable() {
+        // F2: 单表带别名时裸列应解析到该表（而非恒跳过）
+        SqlGateResult r = eval("SELECT SUM(value) AS total_plays FROM user_behavior_fact ubf "
+                + "WHERE event_type = 'play' AND timestamp > '2023-01-01' LIMIT 10");
+        assertThat(r.verdict()).isEqualTo("PASS");
+    }
+
+    @Test
     void warnsJoinWithoutOn() {
         SqlGateResult r = eval("SELECT * FROM metric_daily md JOIN content_dim cd");
         assertThat(r.verdict()).isEqualTo("RETRYABLE");

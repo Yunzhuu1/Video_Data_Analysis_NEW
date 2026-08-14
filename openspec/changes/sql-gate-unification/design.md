@@ -43,7 +43,9 @@ record SqlGateResult(String verdict,       // PASS | RETRYABLE | APPROVAL_NEEDED
 按序短路：
 1. 语法解析（现有 `SqlParserValidator` 保留）
 2. SELECT-only（AST 类型判断，替换三处正则/关键字表）
-3. 表存在性（AST `Table` 节点 vs `TableSchemaRegistry`）
+3. 表存在性（实现：`SqlGateService.extractAccessedTables` 正则提取 FROM/JOIN 表名 vs `TableSchemaRegistry`；
+   与"AST Table 节点"口径等价——正则也会命中子查询内表做存在性检查，符合"子查询只查表存在性"设计；
+   design 记录此实现选择，避免 spec 与代码口径漂移）
 4. 字段存在性（AST `Column` 节点 vs 表-列注册表；**最大实现风险，raw LLM 降级路径产出任意 SQL**）：
    - 别名解析：从 FROM/JOIN 的 `Table.getAlias()` 建 `别名→表` 映射，`a.col` 经映射解析
    - 子查询/派生表/CTE：只做外层表存在性，**列检查整体跳过**（内部列无法对注册表检查）

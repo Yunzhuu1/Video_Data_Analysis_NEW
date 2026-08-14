@@ -97,14 +97,16 @@ public class SqlStaticAnalyzer {
             return detail;
         }
 
-        // 敏感列（SELECT * / 表通配 / 显式列）
-        SqlGateResult sensitive = checkSensitiveColumns(plainSelect, accessedTables);
+        Map<String, String> aliasToTable = buildAliasMap(plainSelect);
+
+        // 敏感列（SELECT * / 表通配 / 显式列；别名需解析）
+        SqlGateResult sensitive = checkSensitiveColumns(plainSelect, accessedTables, aliasToTable);
         if (sensitive != null) {
             return sensitive;
         }
 
         // 字段存在性 + 逻辑规则
-        return checkColumnsAndRules(plainSelect, accessedTables);
+        return checkColumnsAndRules(plainSelect, accessedTables, aliasToTable);
     }
 
     // ------------------------------------------------------------------
@@ -138,24 +140,29 @@ public class SqlStaticAnalyzer {
     // 敏感列
     // ------------------------------------------------------------------
 
-    private SqlGateResult checkSensitiveColumns(PlainSelect select, List<String> accessedTables) {
+    private SqlGateResult checkSensitiveColumns(PlainSelect select, List<String> accessedTables,
+                                                Map<String, String> aliasToTable) {
         for (SelectItem<?> item : select.getSelectItems()) {
             Expression expr = item.getExpression();
-            if (expr instanceof AllColumns) {
+            if (expr instanceof AllTableColumns allTableColumns) {
+                // t.* —— 只检查该表（别名需解析到真实表名）
+                Table tableRef = allTableColumns.getTable();
+                String table = tableRef != null
+                        ? aliasToTable.get(tableRef.getName().toLowerCase(Locale.ROOT))
+                        : null;
+                if (table != null && registry.columnsOf(table).stream().anyMatch(SensitiveColumns::isSensitive)) {
+                    return SqlGateResult.approvalNeeded("SENSITIVE_FIELD_ACCESS",
+                            "SELECT " + allTableColumns.getTable().getName() + ".* exposes sensitive columns.",
+                            "Select only non-sensitive columns explicitly.", accessedTables);
+                }
+            } else if (expr instanceof AllColumns) {
+                // SELECT * —— 保守：任一访问表含敏感列即审批
                 for (String table : accessedTables) {
                     if (registry.columnsOf(table).stream().anyMatch(SensitiveColumns::isSensitive)) {
                         return SqlGateResult.approvalNeeded("SENSITIVE_FIELD_ACCESS",
                                 "SELECT * exposes sensitive columns (e.g. user_id) on table '" + table + "'.",
                                 "Select only non-sensitive columns explicitly.", accessedTables);
                     }
-                }
-            } else if (expr instanceof AllTableColumns allTableColumns) {
-                Table t = allTableColumns.getTable();
-                String table = t != null ? t.getName() : null;
-                if (table != null && registry.columnsOf(table).stream().anyMatch(SensitiveColumns::isSensitive)) {
-                    return SqlGateResult.approvalNeeded("SENSITIVE_FIELD_ACCESS",
-                            "SELECT " + table + ".* exposes sensitive columns.",
-                            "Select only non-sensitive columns explicitly.", accessedTables);
                 }
             } else {
                 List<Column> columns = new ArrayList<>();
@@ -176,9 +183,11 @@ public class SqlStaticAnalyzer {
     // 字段存在性 + 逻辑规则
     // ------------------------------------------------------------------
 
-    private SqlGateResult checkColumnsAndRules(PlainSelect select, List<String> accessedTables) {
-        Map<String, String> aliasToTable = buildAliasMap(select);
-        String singleTable = aliasToTable.size() == 1 ? aliasToTable.values().iterator().next() : null;
+    private SqlGateResult checkColumnsAndRules(PlainSelect select, List<String> accessedTables,
+                                               Map<String, String> aliasToTable) {
+        // F2: 唯一真实表数 == 1 时裸列可解析（别名也计入 key，须按值去重）
+        Set<String> uniqueTables = new HashSet<>(aliasToTable.values());
+        String singleTable = uniqueTables.size() == 1 ? uniqueTables.iterator().next() : null;
 
         List<Column> columns = new ArrayList<>();
         collectSelectColumns(select, columns);
