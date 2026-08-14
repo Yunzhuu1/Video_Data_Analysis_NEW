@@ -20,9 +20,9 @@
 
 ## 4. 回答质量兜底
 
-- [ ] 4.1 AnswerAgent：LLM 回答 metrics 为空时用查询结果 _basic_metrics 兜底
-- [ ] 4.2 AnswerAgent：DQ 警告强制并入回答 warnings
-- [ ] 4.3 单测：缺 metrics 兜底、DQ 警告必含
+- [x] 4.1 AnswerAgent：LLM 回答 metrics 为空时用查询结果 _basic_metrics 兜底
+- [x] 4.2 AnswerAgent：DQ 警告强制并入回答 warnings
+- [x] 4.3 单测：缺 metrics 兜底、DQ 警告必含
 
 ## 5. 回归与验收
 

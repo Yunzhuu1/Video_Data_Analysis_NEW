@@ -29,6 +29,7 @@ class AnswerAgent:
                     await self.llm_client.complete_json(ANSWER_SYSTEM_PROMPT, user_prompt),
                     sql,
                     warnings,
+                    query_result,
                 )
             except Exception as exc:  # noqa: BLE001 - fallback on any LLM failure
                 fallback = self._fallback(question, query_result, sql, warnings)
@@ -38,15 +39,27 @@ class AnswerAgent:
         return self._fallback(question, query_result, sql, warnings)
 
     @staticmethod
-    def _normalize(result: dict[str, Any], sql: str | None, warnings: list[str]) -> dict[str, Any]:
+    def _normalize(
+        result: dict[str, Any],
+        sql: str | None,
+        warnings: list[str],
+        query_result: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         normalized_warnings = list(result.get("warnings") or [])
         for warning in warnings:
             if warning not in normalized_warnings:
                 normalized_warnings.append(warning)
+        metrics = AnswerAgent._sanitize_metrics(result.get("metrics"))
+        # 4.1 兜底：LLM 回答 metrics 为空时用查询结果生成基本指标
+        if not metrics and query_result:
+            metrics = _basic_metrics(
+                query_result.get("columns") or [],
+                query_result.get("rows") or [],
+            )
         return {
             "summary": str(result.get("summary") or "No summary generated."),
             "sql": result.get("sql") or sql,
-            "metrics": AnswerAgent._sanitize_metrics(result.get("metrics")),
+            "metrics": metrics,
             "charts": AnswerAgent._sanitize_charts(result.get("charts")),
             "recommendations": AnswerAgent._sanitize_strings(result.get("recommendations")),
             "warnings": normalized_warnings,
