@@ -32,6 +32,7 @@ public class InternalSqlController {
 
     @PostMapping("/validate")
     public SqlGateResult validate(@RequestBody SqlValidateRequest request) {
-        return sqlGateService.evaluate(request.sql(), request.allowHighRisk());
+        return sqlGateService.evaluate(request.sql(), request.allowHighRisk(),
+                request.intent(), request.intentTimeRangeType());
     }
 }

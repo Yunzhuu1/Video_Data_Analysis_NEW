@@ -7,5 +7,7 @@ public record SqlValidateRequest(
         String question,
         String sql,
         String purpose,
-        boolean allowHighRisk
+        boolean allowHighRisk,
+        String intent,
+        String intentTimeRangeType
 ) {}
