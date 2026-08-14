@@ -8,14 +8,14 @@
 
 ## 2. SqlGateService 静态层（jsqlparser AST）
 
-- [ ] 2.1 SqlGateResult 三态 DTO + /internal/sql/validate 升级为 gate 契约
-- [ ] 2.2 AST 规则：语法/SELECT-only/表存在性/字段存在性（替换三处重复检查）
-- [ ] 2.3 AST 规则：明细表 LIMIT/时间范围（替换正则）
-- [ ] 2.4 AST 规则：敏感列访问 → APPROVAL_NEEDED
-- [ ] 2.5 迁移 SqlRulesChecker 5 条逻辑规则为 AST 规则，退役 yml 字符串检查
-- [ ] 2.6 字段存在性：别名解析（别名→表映射）、子查询/CTE 跳过列检查、表达式只查裸列、**裸列规则（单表解析/多表跳过）**；测试覆盖合成器事实路径 `SELECT SUM(value) FROM user_behavior_fact ubf` 与 raw LLM 任意 SQL
-- [ ] 2.7 SELECT * / 表通配且表含敏感列 → APPROVAL_NEEDED，含测试
-- [ ] 2.8 未知表 → RETRYABLE（suggestion 提示），含测试
+- [x] 2.1 SqlGateResult 三态 DTO + /internal/sql/validate 升级为 gate 契约
+- [x] 2.2 AST 规则：语法/SELECT-only/表存在性/字段存在性（替换三处重复检查）
+- [x] 2.3 AST 规则：明细表 LIMIT/时间范围（替换正则）
+- [x] 2.4 AST 规则：敏感列访问 → APPROVAL_NEEDED
+- [x] 2.5 迁移 SqlRulesChecker 5 条逻辑规则为 AST 规则，退役 yml 字符串检查
+- [x] 2.6 字段存在性：别名解析（别名→表映射）、子查询/CTE 跳过列检查、表达式只查裸列、**裸列规则（单表解析/多表跳过）**；测试覆盖合成器事实路径 `SELECT SUM(value) FROM user_behavior_fact ubf` 与 raw LLM 任意 SQL
+- [x] 2.7 SELECT * / 表通配且表含敏感列 → APPROVAL_NEEDED，含测试
+- [x] 2.8 未知表 → RETRYABLE（suggestion 提示），含测试
 
 ## 3. 计划层（EXPLAIN + 表类型感知审批）
 
