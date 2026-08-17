@@ -1,0 +1,465 @@
+{
+  "eval_date": "2023-10-14",
+  "cases": [
+    {
+      "id": "s01",
+      "source_case": "c02_category_total",
+      "question": "统计不同分类的观看量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s02",
+      "source_case": "c02_category_total",
+      "question": "各分类的播放次数汇总",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s03",
+      "source_case": "c09_likes_trend",
+      "question": "各类别点赞数量",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s04",
+      "source_case": "c09_likes_trend",
+      "question": "不同分类的赞数走势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s05",
+      "source_case": "c01_category_trend",
+      "question": "分析各类别的播放走势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s06",
+      "source_case": "c01_category_trend",
+      "question": "不同分类的播放趋势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s07",
+      "source_case": "c01_category_trend",
+      "question": "按分类看播放量变化",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s08",
+      "source_case": "c01_category_trend",
+      "question": "分类维度下的播放量趋势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s09",
+      "source_case": "c03_last7d_daily_plays",
+      "question": "过去一周每天的播放量",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s10",
+      "source_case": "c03_last7d_daily_plays",
+      "question": "近七天的播放量",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s11",
+      "source_case": "c13_lastweek_plays",
+      "question": "最近一周逐日播放量",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s12",
+      "source_case": "c03_last7d_daily_plays",
+      "question": "最近7天的每日播放量",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s13",
+      "source_case": "c05_food_plays",
+      "question": "美食相关的视频总播放量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s14",
+      "source_case": "c05_food_plays",
+      "question": "餐饮类视频播放量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s15",
+      "source_case": "c06_top10_videos",
+      "question": "播放量前十的视频",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
+      }
+    },
+    {
+      "id": "s16",
+      "source_case": "c06_top10_videos",
+      "question": "播放量最高的十个内容",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
+      }
+    },
+    {
+      "id": "s17",
+      "source_case": "c07_compare_food_game_trend",
+      "question": "比较美食与游戏两类内容的播放走势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s18",
+      "source_case": "c07_compare_food_game_trend",
+      "question": "美食和游戏的播放趋势对比",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s19",
+      "source_case": "c07_compare_food_game_trend",
+      "question": "美食与游戏分类的播放变化比较",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "s20",
+      "source_case": "c07_compare_food_game_trend",
+      "question": "对比这两个分类的播放量走向",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      }
+    }
+  ]
+}

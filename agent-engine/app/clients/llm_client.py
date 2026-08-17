@@ -3,6 +3,7 @@ from typing import Any
 
 import httpx
 
+from app.clients.token_meter import meter
 from app.settings import settings
 
 
@@ -59,5 +60,7 @@ class LLMClient:
                 },
             )
             response.raise_for_status()
-            content = response.json()["choices"][0]["message"]["content"]
+            payload = response.json()
+            content = payload["choices"][0]["message"]["content"]
+            meter.record(payload.get("usage") or {})
             return json.loads(content)
