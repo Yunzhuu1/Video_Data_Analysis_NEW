@@ -13,6 +13,7 @@ try:
 except ModuleNotFoundError:  # pragma: no cover
     httpx = None
 
+from app.clients.token_meter import meter
 from app.eval.comparator import SpecScore, aggregate_scores, compare_spec
 from app.eval.metrics import contains_all, required_fields_present
 from app.graph import graph_builder
@@ -77,12 +78,13 @@ async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_d
     by_id = {c["id"]: c for c in cases}
     for case in cases:
         try:
+            before = meter.snapshot()
             is_memory_case = bool(case.get("repeat_of") or case.get("memory_setup"))
             if is_memory_case and not settings.memory_enabled:
                 results.append({"id": case["id"], "type": case.get("type", "memory"),
                                 "passed": True, "reason": "SKIPPED (memory off)", "status": "SUCCESS",
                                 "retry_count": 0, "latency_ms": 0, "sql_source": None,
-                                "spec_score": None, "memory_hit": False})
+                                "spec_score": None, "memory_hit": False, "tokens": 0})
                 continue
             if case.get("repeat_of"):
                 results.append(await run_repeat_pair(by_id[case["repeat_of"]], case, platform, eval_date))
@@ -90,9 +92,138 @@ async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_d
                 results.append(await run_counterexample(case, platform, eval_date))
             else:
                 results.append(await run_case(case, llm, platform, eval_date))
+            after = meter.snapshot()
+            results[-1]["tokens"] = after["total_tokens"] - before["total_tokens"]
         except Exception as exc:  # noqa: BLE001 - environment failure isolation
             results.append(error_result(case, exc))
     return results
+
+
+async def _compute_synonym_bands(questions: list[str], namespace: str, platform: str) -> dict[str, str]:
+    """运行时 band 分层：取 eval namespace 实际条目，对每条同义问题真实 retriever.search 取 top-1 band。"""
+    import difflib
+
+    from app.memory.retriever import normalize_question
+    from app.memory.store import MemoryEntry
+
+    entries: list[MemoryEntry] = []
+    if platform == "real":
+        async with httpx.AsyncClient(timeout=30) as client:
+            resp = await client.get(
+                "http://localhost:8090/internal/memory/entries",
+                params={"namespace": namespace},
+                headers={"X-Internal-Token": settings.internal_api_token})
+            resp.raise_for_status()
+            for e in resp.json().get("entries", []):
+                entries.append(MemoryEntry(norm_question=e["norm_question"],
+                                           resolved_intent={}, metric_codes=e.get("metric_codes", []),
+                                           resolver_hash="", id=e["id"]))
+    else:
+        from app.graph import nodes
+        if nodes.memory is not None:
+            entries = await nodes.memory.all(namespace)
+    bands: dict[str, str] = {}
+    for q in questions:
+        norm = normalize_question(q)
+        best_band = "miss"
+        best_score = 0.0
+        for e in entries:
+            score = difflib.SequenceMatcher(None, norm, e.norm_question).ratio()
+            if score >= settings.memory_hit_threshold:
+                band = "hit"
+            elif score >= settings.memory_inject_threshold:
+                band = "inject"
+            else:
+                band = "miss"
+            if score > best_score:
+                best_score = score
+                best_band = band
+        bands[q] = best_band
+    return bands
+
+
+async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memory_on: bool,
+                                 eval_date: str) -> dict:
+    """同义集实验（自包含，进程内跑图 + runner 本地记忆 store）：
+    组 A（无记忆基线）vs 组 B（有记忆：先沉淀 source cases 再跑同义集）。
+    按运行时 band 分层报告（hit/inject/miss），inject 子集 < 8 显式标注样本不足。"""
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    from app.eval.comparator import compare_spec
+    from app.graph.graph_builder import init_memory, run_chatbi_graph
+
+    graph_builder.init_graph(InMemorySaver())
+    source_by_id = {}
+    if memory_on:
+        _d, golden = load_cases(DEFAULT_CASES)
+        for c in golden:
+            if c.get("golden_spec"):
+                source_by_id[c["id"]] = c
+
+    results: list[dict] = []
+
+    # 组 A：memory off，空记忆跑同义集（纯 LLM 基线）
+    settings.memory_enabled = False
+    for s in synonym_cases:
+        state = await run_chatbi_graph({
+            "run_id": f"synA_{s['id']}", "user_id": "eval", "question": s["question"],
+            "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+            "warnings": [], "errors": []})
+        score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        a_ok = bool(score and score.core_ok)
+        results.append({"id": s["id"], "question": s["question"], "a_l1": a_ok})
+
+    # 组 B：memory on，先沉淀 source cases（写路径参与），再跑同义集
+    if memory_on:
+        settings.memory_enabled = True
+        await init_memory(":memory:")  # 实验自包含，不碰磁盘记忆
+        # 沉淀：跑 source cases 的语义路径（写钩子写入 nodes.memory）
+        for s in synonym_cases:
+            src = source_by_id.get(s.get("source_case"))
+            if src is None:
+                continue
+            await run_chatbi_graph({
+                "run_id": f"seed_{src['id']}", "user_id": "eval", "question": src["question"],
+                "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+                "warnings": [], "errors": []})
+        # 运行时 band 分层（沉淀后，对每条同义问题真实 retriever.search 取 top-1）
+        bands = await _compute_synonym_bands([s["question"] for s in synonym_cases],
+                                             settings.memory_namespace, "mock")
+        for r in results:
+            r["band"] = bands[r["question"]]
+        for s in synonym_cases:
+            state = await run_chatbi_graph({
+                "run_id": f"synB_{s['id']}", "user_id": "eval", "question": s["question"],
+                "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+                "warnings": [], "errors": []})
+            score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+            r = next(x for x in results if x["id"] == s["id"])
+            r["b_l1"] = bool(score and score.core_ok)
+            r["sql_source"] = state.get("sql_source")
+    else:
+        for r in results:
+            r["band"] = "miss"  # memory off：无记忆，全 miss
+            r["b_l1"] = r["a_l1"]
+
+    n = {"hit": sum(1 for r in results if r["band"] == "hit"),
+         "inject": sum(1 for r in results if r["band"] == "inject"),
+         "miss": sum(1 for r in results if r["band"] == "miss")}
+    inject_sub = [r for r in results if r["band"] == "inject"]
+    a_ok = sum(1 for r in results if r["a_l1"])
+    inject_b_ok = sum(1 for r in inject_sub if r.get("b_l1"))
+    inject_a_ok = sum(1 for r in inject_sub if r["a_l1"])
+    inject_n = len(inject_sub)
+    sample_warn = inject_n < 8
+    return {
+        "n_band": n, "synonym_total": len(results),
+        "group_a_l1": a_ok / len(results) if results else 0,
+        "inject_n": inject_n,
+        "inject_a_l1": inject_a_ok / inject_n if inject_n else 0,
+        "inject_b_l1": inject_b_ok / inject_n if inject_n else 0,
+        "inject_b_gain": (inject_b_ok - inject_a_ok) / inject_n if inject_n else 0,
+        "sample_warning": sample_warn,
+        "per_item": results,
+    }
 
 
 async def run_repeat_pair(base_case: dict[str, Any], meta: dict[str, Any],
@@ -197,6 +328,7 @@ def error_result(case: dict[str, Any], exc: Exception) -> dict[str, Any]:
         "sql_source": None,
         "spec_score": None,
         "error": True,
+        "tokens": 0,
     }
 
 
@@ -531,6 +663,9 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "memory_hit_rate": _percent(sum(1 for r in evaluated if r.get("memory_hit")), len(evaluated)),
         "memory_inject": sum(1 for r in evaluated if r.get("memory_band") == "inject"),
         "memory_inject_rate": _percent(sum(1 for r in evaluated if r.get("memory_band") == "inject"), len(evaluated)),
+        "tokens_total": sum(r.get("tokens", 0) for r in evaluated),
+        "tokens_hit_avg": _avg_tokens([r for r in evaluated if r.get("memory_hit")]),
+        "tokens_miss_avg": _avg_tokens([r for r in evaluated if not r.get("memory_hit")]),
         "judged": len(scores),
         "core_accuracy": layer["core"],
         "core_hits": sum(1 for s in scores if s.core_ok),
@@ -541,6 +676,12 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "latency_p50": statistics.median(latencies) if latencies else 0,
         "latency_p95": _percentile(latencies, 0.95),
     }
+
+
+def _avg_tokens(results: list[dict]) -> float:
+    if not results:
+        return 0.0
+    return sum(r.get("tokens", 0) for r in results) / len(results)
 
 
 def _percentile(sorted_values: list[float], p: float) -> float:
@@ -575,6 +716,7 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 自动放行（auto_released） | {agg['auto_released_ratio']:.2%} | {agg['auto_released']}/{agg['evaluated']}（非 risk 用例被拦截后自动放行） |",
         f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
         f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
+        f"| Token 总消耗 | {agg['tokens_total']} | 命中均值 {agg['tokens_hit_avg']:.0f} / 未命中均值 {agg['tokens_miss_avg']:.0f} |",
         f"| 意外拦截数 | {agg['unexpected_intercepts']} | 自动放行后仍失败的用例（门禁过度拦截信号） |",
         f"| 延迟 p50 / p95 | {agg['latency_p50']}ms / {agg['latency_p95']:.0f}ms | - |",
         "",
@@ -656,6 +798,8 @@ async def main() -> None:
     parser.add_argument("--memory", choices=["off", "on"], default="off",
                         help="语义记忆开关（默认 off，回归隔离；on 需配合独立记忆库）")
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
+    parser.add_argument("--synonym-cases", type=Path, default=None,
+                        help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
     args = parser.parse_args()
 
     if args.compare:
@@ -667,6 +811,20 @@ async def main() -> None:
     run_config = apply_run_config(args.llm, args.platform, args.cassette, args.memory)
     eval_date, cases = load_cases(args.cases)
     run_config["eval_date"] = eval_date
+
+    if args.synonym_cases:
+        _date, syn_cases = load_cases(args.synonym_cases)
+        exp = await run_synonym_experiment(syn_cases, run_config["platform"],
+                                           settings.memory_enabled, eval_date)
+        print(f"[synonym] N_hit={exp['n_band']['hit']} N_inject={exp['n_band']['inject']} "
+              f"N_miss={exp['n_band']['miss']}")
+        print(f"[synonym] 组A L1={exp['group_a_l1']:.2%} | inject 子集 B L1={exp['inject_b_l1']:.2%} "
+              f"增益={exp['inject_b_gain']:+.2%}")
+        if exp["sample_warning"]:
+            print("[synonym] WARNING: inject 子集样本不足(<8)，结论仅方向性")
+        import json as _json
+        print(_json.dumps(exp, ensure_ascii=False, indent=2))
+        return
 
     from app.graph.checkpoints import create_checkpointer
 

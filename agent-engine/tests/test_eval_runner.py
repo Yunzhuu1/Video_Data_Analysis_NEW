@@ -2,6 +2,7 @@ import pytest
 
 from app.eval import runner
 from app.eval.runner import (
+    _avg_tokens,
     aggregate,
     apply_run_config,
     compare_reports,
@@ -194,3 +195,8 @@ async def test_run_real_case_parses_observability(monkeypatch):
     assert r["sql_source"] == "semantic"
     assert r["passed"] is True
     assert r["spec_score"]["core_ok"] is True
+
+def test_avg_tokens():
+    assert _avg_tokens([]) == 0.0
+    assert _avg_tokens([{"tokens": 10}, {"tokens": 30}]) == 20.0
+    assert _avg_tokens([{"tokens": 0}]) == 0.0
