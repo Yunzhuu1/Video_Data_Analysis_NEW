@@ -4,22 +4,27 @@
     "platform": "real",
     "model": "deepseek-v4-flash",
     "eval_date": "2023-10-14",
-    "cassette": "-"
+    "cassette": "-",
+    "memory": "off"
   },
   "eval_date": "2023-10-14",
   "metrics": {
-    "total": 23,
-    "evaluated": 23,
+    "total": 25,
+    "evaluated": 25,
     "error_count": 0,
-    "passed": 22,
-    "end_to_end": 0.9565217391304348,
-    "auto_fix": 0.0,
-    "auto_fix_total": 0,
+    "passed": 24,
+    "end_to_end": 0.96,
+    "auto_fix": 1.0,
+    "auto_fix_total": 1,
     "risk_interception": 1.0,
     "risk_total": 3,
     "auto_released": 4,
-    "auto_released_ratio": 0.17391304347826086,
+    "auto_released_ratio": 0.16,
     "unexpected_intercepts": 0,
+    "memory_hit": 0,
+    "memory_hit_rate": 0.0,
+    "memory_inject": 0,
+    "memory_inject_rate": 0.0,
     "judged": 13,
     "core_accuracy": 1.0,
     "core_hits": 13,
@@ -34,8 +39,8 @@
       "filters": 1.0,
       "ordering": 1.0
     },
-    "latency_p50": 18096,
-    "latency_p95": 43475.49999999999
+    "latency_p50": 13735,
+    "latency_p95": 30469.599999999984
   },
   "cases": [
     {
@@ -43,7 +48,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 7743,
+      "latency_ms": 21060,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -61,14 +66,35 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c02_category_total",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 7242,
+      "latency_ms": 8305,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -86,14 +112,35 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c03_last7d_daily_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 31518,
+      "latency_ms": 14498,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -111,14 +158,36 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c04_completion_rate",
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6151,
+      "latency_ms": 5219,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -136,14 +205,33 @@
           "ordering": true
         }
       },
-      "auto_released": true
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c05_food_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6801,
+      "latency_ms": 4966,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -161,14 +249,39 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c06_top10_videos",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 18096,
+      "latency_ms": 11779,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -186,14 +299,39 @@
           "ordering": true
         }
       },
-      "auto_released": true
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c07_compare_food_game_trend",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19182,
+      "latency_ms": 19522,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -211,14 +349,44 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c08_oct1to7_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 27351,
+      "latency_ms": 13735,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -236,14 +404,36 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "relative": null,
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c09_likes_trend",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 24537,
+      "latency_ms": 25868,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -261,14 +451,35 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c10_engagement_rate",
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9969,
+      "latency_ms": 14837,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -286,14 +497,31 @@
           "ordering": true
         }
       },
-      "auto_released": true
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c11_shares_total",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8180,
+      "latency_ms": 7459,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -311,14 +539,35 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_shares"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c12_food_trend",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 15747,
+      "latency_ms": 17627,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -336,14 +585,39 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c13_lastweek_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 22560,
+      "latency_ms": 19571,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -361,127 +635,397 @@
           "ordering": true
         }
       },
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c14_answer_structure",
       "type": "answer_quality",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9796,
+      "latency_ms": 10932,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c15_hard_guard_retry",
       "type": "hard_guard",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19363,
+      "latency_ms": 19546,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c16_dq_retry",
       "type": "dq",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 43785,
+      "latency_ms": 9481,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c17_dq_warning",
       "type": "dq",
       "passed": false,
       "reason": "final report missing expected keywords",
-      "latency_ms": 13560,
+      "latency_ms": 10020,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c18_detail_playback",
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19912,
+      "latency_ms": 10370,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
-      "sql_source": "fallback",
+      "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.7,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c19_detail_without_time",
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 40690,
+      "latency_ms": 31620,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c20_open_analysis",
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 57843,
+      "latency_ms": 63484,
       "status": "SUCCESS",
-      "retry_count": 0,
+      "retry_count": 1,
       "sql_source": "fallback",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c21_open_reason",
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 7943,
+      "latency_ms": 15631,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": true
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c22_fact_full_scan_approval",
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 30639,
+      "latency_ms": 15888,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.2,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null
     },
     {
       "id": "c23_aggregate_full_scan_pass",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9195,
+      "latency_ms": 6485,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": null,
-      "auto_released": false
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null
+    },
+    {
+      "id": "c24_memory_repeat",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false
+    },
+    {
+      "id": "c25_memory_counterexample",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false
     }
   ]
 }

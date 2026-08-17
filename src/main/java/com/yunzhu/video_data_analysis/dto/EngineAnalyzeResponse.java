@@ -11,5 +11,7 @@ public record EngineAnalyzeResponse(
         String approvalReason,
         Map<String, Object> resolvedIntent,
         Integer sqlRetryCount,
-        String sqlSource
+        String sqlSource,
+        Boolean memoryHit,
+        String memoryBand
 ) {}
