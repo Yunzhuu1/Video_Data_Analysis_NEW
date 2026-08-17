@@ -99,6 +99,17 @@ async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_d
     return results
 
 
+async def _close_memory() -> None:
+    """关闭实验内建的内存记忆 store，避免 aiosqlite 连接残留导致进程不退出。"""
+    from app.graph import nodes
+    if nodes.memory is not None:
+        try:
+            await nodes.memory.close()
+        except Exception:  # noqa: BLE001, S110 - 关闭失败静默即可
+            pass
+        nodes.memory = None
+
+
 async def _compute_synonym_bands(questions: list[str], namespace: str, platform: str) -> dict[str, str]:
     """运行时 band 分层：取 eval namespace 实际条目，对每条同义问题真实 retriever.search 取 top-1 band。"""
     import difflib
@@ -171,7 +182,8 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
             "warnings": [], "errors": []})
         score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
         a_ok = bool(score and score.core_ok)
-        results.append({"id": s["id"], "question": s["question"], "a_l1": a_ok})
+        results.append({"id": s["id"], "question": s["question"], "a_l1": a_ok,
+                        "a_intent": state.get("resolved_intent")})
 
     # 组 B：memory on，先沉淀 source cases（写路径参与），再跑同义集
     if memory_on:
@@ -199,6 +211,7 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
             score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
             r = next(x for x in results if x["id"] == s["id"])
             r["b_l1"] = bool(score and score.core_ok)
+            r["b_intent"] = state.get("resolved_intent")
             r["sql_source"] = state.get("sql_source")
     else:
         for r in results:
@@ -214,6 +227,7 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
     inject_a_ok = sum(1 for r in inject_sub if r["a_l1"])
     inject_n = len(inject_sub)
     sample_warn = inject_n < 8
+    await _close_memory()
     return {
         "n_band": n, "synonym_total": len(results),
         "group_a_l1": a_ok / len(results) if results else 0,
@@ -226,12 +240,104 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
     }
 
 
+async def run_cold_hot_experiment(synonym_cases: list[dict], platform: str,
+                              eval_date: str) -> dict:
+    """冷热启动实验（3.3，检索侧，与注入实验区分）：
+    冷 = 空记忆（纯 LLM 基线）；热 = 直接 seed 预置 golden intent 进 eval namespace
+    （消除写路径方差，只测检索侧收益）。按运行时 band 分层报告延迟/L1 差。"""
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    from app.eval.comparator import compare_spec
+    from app.graph.graph_builder import init_memory, run_chatbi_graph
+
+    graph_builder.init_graph(InMemorySaver())
+    _d, golden = load_cases(DEFAULT_CASES)
+    source_by_id = {c["id"]: c for c in golden if c.get("golden_spec")}
+
+    results: list[dict] = []
+
+    # 冷：空记忆，纯 LLM 基线（记忆 off，同义集逐条）
+    settings.memory_enabled = False
+    for s in synonym_cases:
+        start = time.perf_counter()
+        state = await run_chatbi_graph({
+            "run_id": f"cold_{s['id']}", "user_id": "eval", "question": s["question"],
+            "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+            "warnings": [], "errors": []})
+        latency = int((time.perf_counter() - start) * 1000)
+        score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        results.append({"id": s["id"], "question": s["question"],
+                        "cold_l1": bool(score and score.core_ok),
+                        "cold_latency_ms": latency})
+
+    # 热：seed 预置（直接写 store，不走图/写钩子 → 消除写路径方差）
+    settings.memory_enabled = True
+    await init_memory(":memory:")
+    for s in synonym_cases:
+        src = source_by_id.get(s.get("source_case"))
+        if src is None:
+            continue
+        await _seed_memory(
+            question=src["question"],
+            intent=src["golden_spec"],
+            metric_codes=[str(m) for m in (src.get("golden_spec") or {}).get("metrics", [])],
+            namespace=settings.memory_namespace, platform="mock")
+    # 运行时 band 分层（与注入实验一致：对每条同义问题真实 retriever top-1）
+    bands = await _compute_synonym_bands([s["question"] for s in synonym_cases],
+                                         settings.memory_namespace, "mock")
+    for s in synonym_cases:
+        start = time.perf_counter()
+        state = await run_chatbi_graph({
+            "run_id": f"hot_{s['id']}", "user_id": "eval", "question": s["question"],
+            "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+            "warnings": [], "errors": []})
+        latency = int((time.perf_counter() - start) * 1000)
+        score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        r = next(x for x in results if x["id"] == s["id"])
+        r["band"] = bands[s["question"]]
+        r["hot_l1"] = bool(score and score.core_ok)
+        r["hot_latency_ms"] = latency
+        r["sql_source"] = state.get("sql_source")
+        r["memory_hit"] = bool(state.get("memory_hit"))
+
+    n = {"hit": sum(1 for r in results if r["band"] == "hit"),
+         "inject": sum(1 for r in results if r["band"] == "inject"),
+         "miss": sum(1 for r in results if r["band"] == "miss")}
+    cold_ok = sum(1 for r in results if r["cold_l1"])
+    hot_ok = sum(1 for r in results if r.get("hot_l1"))
+    cold_lats = sorted(r["cold_latency_ms"] for r in results)
+    hot_lats = sorted(r["hot_latency_ms"] for r in results)
+    await _close_memory()
+    return {
+        "n_band": n, "synonym_total": len(results),
+        "cold_l1": cold_ok / len(results) if results else 0,
+        "hot_l1": hot_ok / len(results) if results else 0,
+        "l1_gain": (hot_ok - cold_ok) / len(results) if results else 0,
+        "cold_latency_p50": statistics.median(cold_lats) if cold_lats else 0,
+        "hot_latency_p50": statistics.median(hot_lats) if hot_lats else 0,
+        "hot_hit_count": sum(1 for r in results if r.get("memory_hit")),
+        "per_item": results,
+    }
+
+
 async def run_repeat_pair(base_case: dict[str, Any], meta: dict[str, Any],
                           platform: str, eval_date: str) -> dict[str, Any]:
-    """重复问题对：同一 question 连续跑两遍，断言第二遍命中且 intent 逐字段一致（口径=两遍都成功）。"""
+    """重复问题对：同一 question 连续跑两遍，断言第二遍命中且 intent 逐字段一致（口径=两遍都成功）。
+
+    直通收益（3.1）：逐遍记录延迟与用例总 token，返回 r1 vs r2 差值——
+    命中路径只消除解析阶段 LLM（AnswerAgent 仍调 LLM），收益 = 用例总 token 差/延迟差（≈ 解析阶段消除）。
+    """
     start = time.perf_counter()
+    before = meter.snapshot()
     r1 = await run_case(base_case, "real", platform, eval_date)
+    after = meter.snapshot()
+    r1_tokens = after["total_tokens"] - before["total_tokens"]
+    r1_latency_ms = int(r1.get("latency_ms", 0))
+    before = meter.snapshot()
     r2 = await run_case(base_case, "real", platform, eval_date)
+    after = meter.snapshot()
+    r2_tokens = after["total_tokens"] - before["total_tokens"]
+    r2_latency_ms = int(r2.get("latency_ms", 0))
     latency_ms = int((time.perf_counter() - start) * 1000)
     both_ok = r1["passed"] and r2["passed"] and r1["status"] != "ERROR" and r2["status"] != "ERROR"
     hit = bool(r2.get("memory_hit"))
@@ -251,6 +357,12 @@ async def run_repeat_pair(base_case: dict[str, Any], meta: dict[str, Any],
         "sql_source": r2.get("sql_source"), "spec_score": r2.get("spec_score"),
         "resolved_intent": r2.get("resolved_intent"),
         "memory_hit": hit, "memory_band": r2.get("memory_band"),
+        # 直通收益计量（3.1）
+        "r1_latency_ms": r1_latency_ms, "r2_latency_ms": r2_latency_ms,
+        "latency_delta_ms": r1_latency_ms - r2_latency_ms,
+        "r1_tokens": r1_tokens, "r2_tokens": r2_tokens,
+        "token_delta": r1_tokens - r2_tokens,
+        "direct_hit": hit,
     }
 
 
@@ -666,6 +778,12 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "tokens_total": sum(r.get("tokens", 0) for r in evaluated),
         "tokens_hit_avg": _avg_tokens([r for r in evaluated if r.get("memory_hit")]),
         "tokens_miss_avg": _avg_tokens([r for r in evaluated if not r.get("memory_hit")]),
+        "repeat_pairs": sum(1 for r in evaluated if "r1_tokens" in r),
+        "direct_hit_pairs": sum(1 for r in evaluated if r.get("direct_hit") and "r1_tokens" in r),
+        "direct_hit_avg_token_delta": _avg_key(
+            [r for r in evaluated if r.get("direct_hit") and "r1_tokens" in r], "token_delta"),
+        "direct_hit_avg_latency_delta": _avg_key(
+            [r for r in evaluated if r.get("direct_hit") and "r1_tokens" in r], "latency_delta_ms"),
         "judged": len(scores),
         "core_accuracy": layer["core"],
         "core_hits": sum(1 for s in scores if s.core_ok),
@@ -682,6 +800,12 @@ def _avg_tokens(results: list[dict]) -> float:
     if not results:
         return 0.0
     return sum(r.get("tokens", 0) for r in results) / len(results)
+
+
+def _avg_key(results: list[dict], key: str) -> float:
+    if not results:
+        return 0.0
+    return sum(r.get(key, 0) for r in results) / len(results)
 
 
 def _percentile(sorted_values: list[float], p: float) -> float:
@@ -717,6 +841,7 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
         f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
         f"| Token 总消耗 | {agg['tokens_total']} | 命中均值 {agg['tokens_hit_avg']:.0f} / 未命中均值 {agg['tokens_miss_avg']:.0f} |",
+        f"| 直通收益（重复对） | token 差均值 {agg['direct_hit_avg_token_delta']:.0f} / 延迟差均值 {agg['direct_hit_avg_latency_delta']:.0f}ms | {agg['direct_hit_pairs']}/{agg['repeat_pairs']} 对命中直通（≈ 解析阶段消除） |",
         f"| 意外拦截数 | {agg['unexpected_intercepts']} | 自动放行后仍失败的用例（门禁过度拦截信号） |",
         f"| 延迟 p50 / p95 | {agg['latency_p50']}ms / {agg['latency_p95']:.0f}ms | - |",
         "",
@@ -800,6 +925,8 @@ async def main() -> None:
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     parser.add_argument("--synonym-cases", type=Path, default=None,
                         help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
+    parser.add_argument("--cold-hot", action="store_true", default=False,
+                        help="冷热启动实验（需 --synonym-cases）：空记忆 vs seed 预置记忆，测检索侧收益")
     args = parser.parse_args()
 
     if args.compare:
@@ -814,14 +941,22 @@ async def main() -> None:
 
     if args.synonym_cases:
         _date, syn_cases = load_cases(args.synonym_cases)
-        exp = await run_synonym_experiment(syn_cases, run_config["platform"],
-                                           settings.memory_enabled, eval_date)
-        print(f"[synonym] N_hit={exp['n_band']['hit']} N_inject={exp['n_band']['inject']} "
-              f"N_miss={exp['n_band']['miss']}")
-        print(f"[synonym] 组A L1={exp['group_a_l1']:.2%} | inject 子集 B L1={exp['inject_b_l1']:.2%} "
-              f"增益={exp['inject_b_gain']:+.2%}")
-        if exp["sample_warning"]:
-            print("[synonym] WARNING: inject 子集样本不足(<8)，结论仅方向性")
+        if args.cold_hot:
+            exp = await run_cold_hot_experiment(syn_cases, run_config["platform"], eval_date)
+            print(f"[cold-hot] N_hit={exp['n_band']['hit']} N_inject={exp['n_band']['inject']} "
+                  f"N_miss={exp['n_band']['miss']}")
+            print(f"[cold-hot] 冷 L1={exp['cold_l1']:.2%} | 热 L1={exp['hot_l1']:.2%} "
+                  f"增益={exp['l1_gain']:+.2%} | 延迟 p50 {exp['cold_latency_p50']}ms → {exp['hot_latency_p50']}ms "
+                  f"| 热命中 {exp['hot_hit_count']}/{exp['synonym_total']}")
+        else:
+            exp = await run_synonym_experiment(syn_cases, run_config["platform"],
+                                               settings.memory_enabled, eval_date)
+            print(f"[synonym] N_hit={exp['n_band']['hit']} N_inject={exp['n_band']['inject']} "
+                  f"N_miss={exp['n_band']['miss']}")
+            print(f"[synonym] 组A L1={exp['group_a_l1']:.2%} | inject 子集 B L1={exp['inject_b_l1']:.2%} "
+                  f"增益={exp['inject_b_gain']:+.2%}")
+            if exp["sample_warning"]:
+                print("[synonym] WARNING: inject 子集样本不足(<8)，结论仅方向性")
         import json as _json
         print(_json.dumps(exp, ensure_ascii=False, indent=2))
         return

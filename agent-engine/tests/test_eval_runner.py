@@ -2,6 +2,7 @@ import pytest
 
 from app.eval import runner
 from app.eval.runner import (
+    _avg_key,
     _avg_tokens,
     aggregate,
     apply_run_config,
@@ -200,3 +201,74 @@ def test_avg_tokens():
     assert _avg_tokens([]) == 0.0
     assert _avg_tokens([{"tokens": 10}, {"tokens": 30}]) == 20.0
     assert _avg_tokens([{"tokens": 0}]) == 0.0
+
+def test_avg_key():
+    assert _avg_key([], "x") == 0.0
+    assert _avg_key([{"x": 10}, {"x": 30}], "x") == 20.0
+    assert _avg_key([{"x": 0}], "x") == 0.0
+
+
+@pytest.mark.asyncio
+async def test_run_repeat_pair_records_direct_hit_metrics(monkeypatch):
+    from app.clients.token_meter import meter
+
+    meter.reset()
+
+    calls = {"n": 0}
+
+    async def fake_run(case, llm, platform, eval_date):
+        # 第一遍模拟完整 LLM 调用（30 token / 100ms），第二遍命中直通（10 token / 30ms，仅 AnswerAgent）
+        calls["n"] += 1
+        if calls["n"] == 2:
+            meter.record({"prompt_tokens": 5, "completion_tokens": 5, "total_tokens": 10})
+            return {"id": case["id"], "passed": True, "status": "SUCCESS", "latency_ms": 30,
+                    "memory_hit": True, "memory_band": "hit",
+                    "resolved_intent": {"intent": "aggregate"}, "sql_source": "memory",
+                    "spec_score": None}
+        meter.record({"prompt_tokens": 20, "completion_tokens": 10, "total_tokens": 30})
+        return {"id": case["id"], "passed": True, "status": "SUCCESS", "latency_ms": 100,
+                "memory_hit": False, "memory_band": None,
+                "resolved_intent": {"intent": "aggregate"}, "sql_source": "semantic",
+                "spec_score": None}
+
+    monkeypatch.setattr(runner, "run_case", fake_run)
+    base = {"id": "c02_category_total", "question": "统计各分类总播放量",
+            "golden_spec": {"intent": "aggregate", "metrics": ["total_plays"], "dimensions": ["category"],
+                            "time_range": {"type": "none", "granularity": None}, "filters": [], "ordering": None}}
+    meta = {"id": "c24_memory_repeat", "type": "memory", "repeat_of": "c02_category_total"}
+    r = await runner.run_repeat_pair(base, meta, "mock", "2023-10-14")
+
+    assert r["r1_tokens"] == 30
+    assert r["r2_tokens"] == 10
+    assert r["token_delta"] == 20
+    assert r["latency_delta_ms"] == 70
+    assert r["direct_hit"] is True
+    assert r["passed"] is True
+    meter.reset()
+
+
+def test_aggregate_direct_hit_fields():
+    hit = {
+        "id": "c24_memory_repeat", "type": "memory", "passed": True, "status": "SUCCESS",
+        "retry_count": 0, "latency_ms": 130, "sql_source": "memory", "spec_score": None,
+        "memory_hit": True, "r1_tokens": 30, "r2_tokens": 10, "token_delta": 20,
+        "r1_latency_ms": 100, "r2_latency_ms": 30, "latency_delta_ms": 70, "direct_hit": True,
+    }
+    agg = aggregate([hit])
+    assert agg["repeat_pairs"] == 1
+    assert agg["direct_hit_pairs"] == 1
+    assert agg["direct_hit_avg_token_delta"] == 20
+    assert agg["direct_hit_avg_latency_delta"] == 70
+
+
+def test_render_report_direct_hit_row():
+    run_config = {"llm": "real", "platform": "mock", "model": "deepseek-chat", "eval_date": "2023-10-14", "cassette": "-"}
+    md = render_report([{
+        "id": "c24_memory_repeat", "type": "memory", "passed": True, "reason": "PASS",
+        "status": "SUCCESS", "retry_count": 0, "latency_ms": 130, "sql_source": "memory",
+        "spec_score": None, "memory_hit": True, "r1_tokens": 30, "r2_tokens": 10, "token_delta": 20,
+        "r1_latency_ms": 100, "r2_latency_ms": 30, "latency_delta_ms": 70, "direct_hit": True,
+    }], run_config, "2023-10-14")
+
+    assert "直通收益" in md
+    assert "1/1" in md
