@@ -4,5 +4,6 @@ public record EngineAnalyzeRequest(
         String runId,
         String userId,
         String question,
-        boolean bypassCache
+        boolean bypassCache,
+        String memoryNamespace
 ) {}

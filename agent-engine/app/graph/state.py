@@ -35,6 +35,7 @@ class DataAgentState(TypedDict, total=False):
     sql_source: Literal["semantic", "fallback", "memory"]
     memory_hit: bool
     memory_band: Literal["hit", "inject", "hit_rejected"]
+    memory_namespace: str
 
     sql_attempts: list[dict[str, Any]]
     query_result: dict[str, Any]

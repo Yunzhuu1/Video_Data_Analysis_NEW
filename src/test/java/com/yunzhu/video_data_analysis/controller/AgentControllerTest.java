@@ -16,7 +16,9 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import org.mockito.ArgumentCaptor;
 
 /** 契约测试：includeDebug 默认关闭时业务响应不变，开启时 debug 携带观测数据。 */
 class AgentControllerTest {
@@ -50,7 +52,7 @@ class AgentControllerTest {
         when(agentRunTraceService.startRun("demo", "q")).thenReturn("run-1");
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(successResponse());
 
-        AnalysisReport report = controller.analyze("demo", "q", false, false);
+        AnalysisReport report = controller.analyze("demo", "q", false, false, "default");
 
         assertThat(report.getRunId()).isEqualTo("run-1");
         assertThat(report.getStatus()).isEqualTo("SUCCESS");
@@ -62,7 +64,7 @@ class AgentControllerTest {
         when(agentRunTraceService.startRun("demo", "q")).thenReturn("run-1");
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(successResponse());
 
-        AnalysisReport report = controller.analyze("demo", "q", false, true);
+        AnalysisReport report = controller.analyze("demo", "q", false, true, "default");
 
         assertThat(report.getDebug()).isNotNull();
         assertThat(report.getDebug()).containsEntry(
@@ -89,7 +91,7 @@ class AgentControllerTest {
         );
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(waiting);
 
-        AnalysisReport report = controller.analyze("demo", "q", false, true);
+        AnalysisReport report = controller.analyze("demo", "q", false, true, "default");
 
         assertThat(report.getStatus()).isEqualTo("WAITING_APPROVAL");
         assertThat(report.getSummary()).contains("waiting for human approval");
@@ -98,5 +100,17 @@ class AgentControllerTest {
                 "resolvedIntent", Map.of("intent", "aggregate", "metrics", List.of("total_plays")));
         assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
         assertThat(report.getDebug()).containsEntry("memoryHit", true);
+    }
+
+    @Test
+    void analyzePassesThroughMemoryNamespace() {
+        when(agentRunTraceService.startRun("demo", "q")).thenReturn("run-1");
+        when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(successResponse());
+
+        controller.analyze("demo", "q", false, false, "eval-2026-08-17-1234");
+
+        ArgumentCaptor<EngineAnalyzeRequest> captor = ArgumentCaptor.forClass(EngineAnalyzeRequest.class);
+        verify(langGraphClient).analyze(captor.capture());
+        assertThat(captor.getValue().memoryNamespace()).isEqualTo("eval-2026-08-17-1234");
     }
 }

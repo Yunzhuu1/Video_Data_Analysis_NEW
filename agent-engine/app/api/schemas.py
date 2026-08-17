@@ -9,6 +9,7 @@ class AnalyzeRequest(BaseModel):
     question: str
     bypass_cache: bool = Field(default=False, alias="bypassCache")
     graph_mode: Literal["chatbi"] = Field(default="chatbi", alias="graphMode")
+    memory_namespace: str = Field(default="default", alias="memoryNamespace")
 
     model_config = {"populate_by_name": True}
 

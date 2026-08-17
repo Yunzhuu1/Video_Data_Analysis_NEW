@@ -123,26 +123,55 @@ async def run_repeat_pair(base_case: dict[str, Any], meta: dict[str, Any],
     }
 
 
-async def run_counterexample(case: dict[str, Any], platform: str, eval_date: str) -> dict[str, Any]:
-    """相似反例：预置记忆（如播放量），查询语义不同问题（点赞量）断言不命中。"""
+async def _seed_memory(question: str, intent: dict, metric_codes: list[str],
+                        namespace: str, platform: str) -> bool:
+    """预置记忆：real 走服务器 API（POST /internal/memory/seed），mock 写本地 store。"""
     from app.graph import nodes
     from app.memory.retriever import normalize_question
     from app.memory.store import compute_resolver_hash
 
+    try:
+        if platform == "real":
+            async with httpx.AsyncClient(timeout=30) as client:
+                # 记忆控制端点在 agent-engine（localhost:8090），与 Spring 平台端口不同
+                resp = await client.post(
+                    "http://localhost:8090/internal/memory/seed",
+                    headers={"X-Internal-Token": settings.internal_api_token},
+                    json={"namespace": namespace, "question": question,
+                          "intent": intent, "metric_codes": metric_codes})
+                resp.raise_for_status()
+        else:
+            if nodes.memory is None:
+                return False
+            await nodes.memory.upsert(normalize_question(question), intent, metric_codes,
+                                      compute_resolver_hash(), namespace=namespace)
+        return True
+    except Exception:  # noqa: BLE001
+        return False
+
+
+async def run_counterexample(case: dict[str, Any], platform: str, eval_date: str) -> dict[str, Any]:
+    """毒化变体反例：预置"问题文本与 intent 指标不一致"的毒条目，查询同文本（相似度 1.0 → 直通候选）
+    断言 metrics 一致性校验拦截（band != hit）——同时验证 seed 毒化防护与 metrics 校验路径。"""
     start = time.perf_counter()
     setup = case.get("memory_setup") or {}
-    seed_ok = False
-    if nodes.memory is not None and settings.memory_enabled:
-        try:
-            await nodes.memory.upsert(
-                normalize_question(str(setup.get("question") or "")),
-                setup.get("intent") or {}, setup.get("metric_codes") or [],
-                compute_resolver_hash())
-            seed_ok = True
-        except Exception:  # noqa: BLE001
-            seed_ok = False
+    seed_ok = await _seed_memory(
+        question=str(setup.get("question") or case["question"]),
+        intent=setup.get("intent") or {}, metric_codes=setup.get("metric_codes") or [],
+        namespace=settings.memory_namespace, platform=platform)
     if not seed_ok:
         return {**error_result(case, RuntimeError("memory seeding failed")), "memory_band": None}
+    r = await run_case(case, "real", platform, eval_date)
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    r["id"] = case["id"]
+    r["type"] = case.get("type", "memory")
+    r["latency_ms"] = latency_ms
+    # 毒化变体断言：同文本相似度 1.0 应进直通候选，但 metrics 一致性校验必须拦截 → band != hit
+    not_hit = not bool(r.get("memory_hit"))
+    r["passed"] = r["passed"] and not_hit
+    if not not_hit:
+        r["reason"] = "counterexample: poison entry unexpectedly passed metrics check (hit)"
+    return r
     r = await run_case(case, "real", platform, eval_date)
     latency_ms = int((time.perf_counter() - start) * 1000)
     r["id"] = case["id"]
@@ -194,6 +223,7 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
                 "user_id": "eval",
                 "question": case["question"],
                 "graph_mode": "chatbi",
+                "memory_namespace": settings.memory_namespace,
                 "warnings": [],
                 "errors": [],
             }
@@ -234,7 +264,8 @@ def _is_retryable(exc: Exception) -> bool:
 
 async def _get_analyze(client: httpx.AsyncClient, question: str) -> httpx.Response:
     url = f"{settings.platform_base_url.rstrip('/')}/api/agent/analyze"
-    params = {"userId": "eval", "message": question, "nocache": "true", "includeDebug": "true"}
+    params = {"userId": "eval", "message": question, "nocache": "true", "includeDebug": "true",
+              "memoryNamespace": settings.memory_namespace}
     last_exc: Exception | None = None
     for attempt in range(2):
         try:
@@ -643,10 +674,24 @@ async def main() -> None:
     checkpointer = await create_checkpointer(db_path)
     graph_builder.init_graph(checkpointer)
 
-    # 记忆初始化：--memory on 时注入独立记忆库（mock 用 :memory:，real 需外部 MEMORY_DB_PATH）
+    # 记忆初始化：--memory on 时用 per-eval namespace（eval-<eval_date>-<start_ts>），启动时 clear
     if settings.memory_enabled:
+        import time as _t
+        settings.memory_namespace = f"eval-{eval_date}-{int(_t.time())}"
         memory_db = ":memory:" if run_config["platform"] == "mock" else settings.memory_db_path
         await graph_builder.init_memory(memory_db)
+        # 清空 eval namespace（real 走 API / mock 走本地）
+        if run_config["platform"] == "real":
+            async with httpx.AsyncClient(timeout=30) as client:
+                resp = await client.post(
+                    "http://localhost:8090/internal/memory/clear",
+                    headers={"X-Internal-Token": settings.internal_api_token},
+                    json={"namespace": settings.memory_namespace})
+                resp.raise_for_status()
+        else:
+            from app.graph import nodes as _nodes
+            if _nodes.memory is not None:
+                await _nodes.memory.clear(settings.memory_namespace)
 
     results = await run_cases(cases, run_config["llm"], run_config["platform"], eval_date)
     await checkpointer.conn.close()

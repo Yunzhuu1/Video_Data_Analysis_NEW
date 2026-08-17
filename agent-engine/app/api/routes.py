@@ -1,7 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Header, HTTPException
+from pydantic import BaseModel, Field
 
 from app.api.schemas import AnalyzeRequest, AnalyzeResponse, ApprovalRequest, HealthResponse
+from app.graph import nodes
 from app.graph.graph_builder import resume_graph, run_chatbi_graph
+from app.memory.retriever import normalize_question
 from app.settings import settings
 
 router = APIRouter()
@@ -10,6 +13,66 @@ router = APIRouter()
 @router.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
     return HealthResponse(status="UP", service=settings.service_name)
+
+
+# ---------------------------------------------------------------------------
+# 记忆控制 API（内部，仅评测验证/调试用，不参与运行时读路径）
+# ---------------------------------------------------------------------------
+class MemorySeedRequest(BaseModel):
+    namespace: str = Field(default="default")
+    question: str
+    intent: dict
+    metric_codes: list[str] = []
+
+
+class MemoryClearRequest(BaseModel):
+    namespace: str = "default"
+
+
+def _check_internal_token(x_internal_token: str | None) -> None:
+    if x_internal_token != settings.internal_api_token:
+        raise HTTPException(status_code=403, detail="invalid internal token")
+
+
+@router.post("/internal/memory/seed")
+async def memory_seed(req: MemorySeedRequest, x_internal_token: str | None = Header(default=None)) -> dict:
+    """预置记忆条目。拒绝 default namespace（生产记忆仅由写钩子沉淀，防毒化）。"""
+    _check_internal_token(x_internal_token)
+    if req.namespace == "default":
+        raise HTTPException(status_code=400, detail="seed into default namespace is forbidden")
+    if not req.intent or not req.intent.get("metrics"):
+        raise HTTPException(status_code=400, detail="intent must contain metrics")
+    if nodes.memory is None:
+        raise HTTPException(status_code=503, detail="memory not initialized")
+    from app.memory.store import compute_resolver_hash
+    entry_id = await nodes.memory.upsert(
+        normalize_question(req.question), req.intent, req.metric_codes,
+        compute_resolver_hash(), namespace=req.namespace)
+    return {"entryId": entry_id, "namespace": req.namespace}
+
+
+@router.post("/internal/memory/clear")
+async def memory_clear(req: MemoryClearRequest, x_internal_token: str | None = Header(default=None)) -> dict:
+    """清空某 namespace（幂等：不存在也返回成功）。"""
+    _check_internal_token(x_internal_token)
+    if nodes.memory is None:
+        raise HTTPException(status_code=503, detail="memory not initialized")
+    await nodes.memory.clear(req.namespace)
+    return {"cleared": req.namespace}
+
+
+@router.get("/internal/memory/entries")
+async def memory_entries(namespace: str = "default",
+                         x_internal_token: str | None = Header(default=None)) -> dict:
+    """查看某 namespace 条目（仅评测验证/调试）。"""
+    _check_internal_token(x_internal_token)
+    if nodes.memory is None:
+        raise HTTPException(status_code=503, detail="memory not initialized")
+    entries = await nodes.memory.all(namespace)
+    return {"namespace": namespace, "count": len(entries),
+            "entries": [{"id": e.id, "norm_question": e.norm_question,
+                         "metric_codes": e.metric_codes, "hit_count": e.hit_count}
+                        for e in entries]}
 
 
 @router.post("/analyze", response_model=AnalyzeResponse)
@@ -21,6 +84,7 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
             "question": request.question,
             "bypass_cache": request.bypass_cache,
             "graph_mode": "chatbi",
+            "memory_namespace": request.memory_namespace,
             "warnings": [],
             "errors": [],
         }

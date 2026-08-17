@@ -19,6 +19,7 @@ import aiosqlite
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS semantic_memory (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    namespace TEXT NOT NULL DEFAULT 'default',
     norm_question TEXT NOT NULL,
     resolved_intent TEXT NOT NULL,
     metric_codes TEXT NOT NULL,
@@ -27,7 +28,12 @@ CREATE TABLE IF NOT EXISTS semantic_memory (
     resolver_hash TEXT NOT NULL,
     created_at TEXT NOT NULL
 );
-CREATE INDEX IF NOT EXISTS idx_norm ON semantic_memory(norm_question);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_norm_ns ON semantic_memory(namespace, norm_question);
+"""
+
+# 存量迁移：老库无 namespace 列 → ALTER 补列（默认 'default'）
+MIGRATION = """
+ALTER TABLE semantic_memory ADD COLUMN namespace TEXT NOT NULL DEFAULT 'default';
 """
 
 
@@ -50,6 +56,7 @@ class MemoryEntry:
     resolved_intent: dict[str, Any]
     metric_codes: list[str]
     resolver_hash: str
+    namespace: str = "default"
     hit_count: int = 1
     id: int | None = None
     last_hit_at: str = field(default_factory=_now)
@@ -58,12 +65,13 @@ class MemoryEntry:
     def from_row(cls, row: tuple) -> MemoryEntry:
         return cls(
             id=row[0],
-            norm_question=row[1],
-            resolved_intent=json.loads(row[2]),
-            metric_codes=json.loads(row[3]),
-            hit_count=row[4],
-            last_hit_at=row[5],
-            resolver_hash=row[6],
+            namespace=row[1],
+            norm_question=row[2],
+            resolved_intent=json.loads(row[3]),
+            metric_codes=json.loads(row[4]),
+            hit_count=row[5],
+            last_hit_at=row[6],
+            resolver_hash=row[7],
         )
 
 
@@ -75,7 +83,13 @@ class MemoryStore:
     async def init(self) -> None:
         self._conn = await aiosqlite.connect(self.db_path)
         await self._conn.executescript(SCHEMA)
-        await self._conn.commit()
+        # 存量迁移：老库无 namespace 列 → 补列；有则忽略
+        try:
+            await self._conn.executescript(MIGRATION)
+            await self._conn.commit()
+        except Exception as exc:  # noqa: BLE001 - 列已存在（新库）视为正常
+            if "duplicate column" not in str(exc).lower():
+                print(f"[memory] migration skipped: {exc}")
 
     async def close(self) -> None:
         if self._conn is not None:
@@ -83,20 +97,22 @@ class MemoryStore:
             self._conn = None
 
     async def upsert(self, norm_question: str, resolved_intent: dict[str, Any],
-                     metric_codes: list[str], resolver_hash: str) -> int:
-        """新条目沉淀；同 norm_question 已存在则更新 hit_count/last_hit_at，返回 entry_id。"""
+                     metric_codes: list[str], resolver_hash: str,
+                     namespace: str = "default") -> int:
+        """新条目沉淀；同 (namespace, norm_question) 已存在则更新 hit_count/last_hit_at，返回 entry_id。"""
         conn = self._conn
         if conn is None:
             raise RuntimeError("MemoryStore not initialized")
         now = _now()
         cursor = await conn.execute(
-            "SELECT id, hit_count FROM semantic_memory WHERE norm_question = ?", (norm_question,))
+            "SELECT id, hit_count FROM semantic_memory WHERE namespace = ? AND norm_question = ?",
+            (namespace, norm_question))
         row = await cursor.fetchone()
         if row is None:
             cur = await conn.execute(
-                "INSERT INTO semantic_memory (norm_question, resolved_intent, metric_codes,"
-                " hit_count, last_hit_at, resolver_hash, created_at) VALUES (?,?,?,1,?,?,?)",
-                (norm_question, json.dumps(resolved_intent, ensure_ascii=False),
+                "INSERT INTO semantic_memory (namespace, norm_question, resolved_intent, metric_codes,"
+                " hit_count, last_hit_at, resolver_hash, created_at) VALUES (?,?,?,?,1,?,?,?)",
+                (namespace, norm_question, json.dumps(resolved_intent, ensure_ascii=False),
                  json.dumps(metric_codes), now, resolver_hash, now))
             entry_id = cur.lastrowid
         else:
@@ -116,19 +132,34 @@ class MemoryStore:
             (_now(), entry_id))
         await self._conn.commit()
 
-    async def find_by_question(self, norm_question: str) -> MemoryEntry | None:
+    async def find_by_question(self, norm_question: str, namespace: str = "default") -> MemoryEntry | None:
         if self._conn is None:
             raise RuntimeError("MemoryStore not initialized")
         cursor = await self._conn.execute(
-            "SELECT * FROM semantic_memory WHERE norm_question = ?", (norm_question,))
+            "SELECT * FROM semantic_memory WHERE namespace = ? AND norm_question = ?",
+            (namespace, norm_question))
         row = await cursor.fetchone()
         return MemoryEntry.from_row(row) if row else None
 
-    async def all(self) -> list[MemoryEntry]:
+    async def all(self, namespace: str | None = None) -> list[MemoryEntry]:
         if self._conn is None:
             raise RuntimeError("MemoryStore not initialized")
-        cursor = await self._conn.execute("SELECT * FROM semantic_memory")
+        if namespace is None:
+            cursor = await self._conn.execute("SELECT * FROM semantic_memory")
+        else:
+            cursor = await self._conn.execute(
+                "SELECT * FROM semantic_memory WHERE namespace = ?", (namespace,))
         return [MemoryEntry.from_row(r) for r in await cursor.fetchall()]
+
+    async def clear(self, namespace: str | None = None) -> None:
+        """清空某 namespace（幂等）；namespace=None 清全部。"""
+        if self._conn is None:
+            raise RuntimeError("MemoryStore not initialized")
+        if namespace is None:
+            await self._conn.execute("DELETE FROM semantic_memory")
+        else:
+            await self._conn.execute("DELETE FROM semantic_memory WHERE namespace = ?", (namespace,))
+        await self._conn.commit()
 
     async def delete(self, entry_id: int) -> None:
         if self._conn is None:
@@ -136,7 +167,3 @@ class MemoryStore:
         await self._conn.execute("DELETE FROM semantic_memory WHERE id = ?", (entry_id,))
         await self._conn.commit()
 
-    async def clear(self) -> None:
-        if self._conn is not None:
-            await self._conn.execute("DELETE FROM semantic_memory")
-            await self._conn.commit()
