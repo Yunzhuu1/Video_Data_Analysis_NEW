@@ -260,7 +260,7 @@
       "type": "memory",
       "question": "最近7天点赞量是多少",
       "memory_setup": {
-        "question": "最近7天播放量是多少",
+        "question": "最近7天点赞量是多少",
         "intent": {"intent": "trend", "metrics": ["total_plays"], "dimensions": [], "filters": [], "ordering": null},
         "metric_codes": ["total_plays"]
       }

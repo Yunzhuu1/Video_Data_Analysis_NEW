@@ -61,10 +61,10 @@ class TextSimilarityRetriever:
         self.hit_threshold = hit_threshold
         self.inject_threshold = inject_threshold
 
-    async def search(self, question: str, limit: int = 3) -> list[MemoryHit]:
+    async def search(self, question: str, limit: int = 3, namespace: str = "default") -> list[MemoryHit]:
         norm = normalize_question(question)
         candidates: list[MemoryHit] = []
-        for entry in await self.store.all():
+        for entry in await self.store.all(namespace):
             score = difflib.SequenceMatcher(None, norm, entry.norm_question).ratio()
             band = _MISS
             if score >= self.hit_threshold:

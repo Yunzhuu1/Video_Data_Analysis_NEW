@@ -30,6 +30,7 @@ if BaseSettings is not None:
         memory_enabled: bool = True
         memory_hit_threshold: float = 0.95
         memory_inject_threshold: float = 0.85
+        memory_namespace: str = "default"
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -50,6 +51,7 @@ else:
             self.memory_enabled = _env_bool("MEMORY_ENABLED", True)
             self.memory_hit_threshold = float(os.getenv("MEMORY_HIT_THRESHOLD", "0.95"))
             self.memory_inject_threshold = float(os.getenv("MEMORY_INJECT_THRESHOLD", "0.85"))
+            self.memory_namespace = os.getenv("MEMORY_NAMESPACE", "default")
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 

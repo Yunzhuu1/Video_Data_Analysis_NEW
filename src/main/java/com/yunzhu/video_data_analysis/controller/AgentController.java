@@ -55,11 +55,12 @@ public class AgentController {
     @GetMapping("/analyze")
     public AnalysisReport analyze(@RequestParam String userId, @RequestParam String message,
                                   @RequestParam(defaultValue = "false") boolean nocache,
-                                  @RequestParam(defaultValue = "false") boolean includeDebug) {
+                                  @RequestParam(defaultValue = "false") boolean includeDebug,
+                                  @RequestParam(defaultValue = "default") String memoryNamespace) {
         String runId = agentRunTraceService.startRun(userId, message);
         try {
             EngineAnalyzeResponse response = langGraphClient.analyze(
-                    new EngineAnalyzeRequest(runId, userId, message, nocache));
+                    new EngineAnalyzeRequest(runId, userId, message, nocache, memoryNamespace));
             if ("WAITING_APPROVAL".equalsIgnoreCase(response.status())) {
                 AnalysisReport waiting = waitingApprovalReport(runId, response.approvalReason());
                 waiting.setStatus("WAITING_APPROVAL");

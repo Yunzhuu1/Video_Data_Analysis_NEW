@@ -99,7 +99,7 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
     try:
         retriever = TextSimilarityRetriever(
             memory, settings.memory_hit_threshold, settings.memory_inject_threshold)
-        hits = await retriever.search(state["question"])
+        hits = await retriever.search(state["question"], namespace=state.get("memory_namespace", "default"))
         if not hits:
             return None
         best = hits[0]
@@ -352,6 +352,7 @@ async def _memory_write_hook(state: DataAgentState) -> None:
             intent,
             codes,
             compute_resolver_hash(),
+            namespace=state.get("memory_namespace", "default"),
         )
     except Exception as exc:  # noqa: BLE001 - 记忆失败不打断主链路
         logger.warning("memory write hook failed: %s", exc)
