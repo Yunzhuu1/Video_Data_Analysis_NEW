@@ -1,13 +1,23 @@
+import logging
+
 from app.agents.answer_agent import AnswerAgent
 from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
+from app.memory.retriever import TextSimilarityRetriever, metrics_consistent, normalize_question
+from app.memory.store import MemoryStore, compute_resolver_hash
+from app.settings import settings
 from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
 
 sql_generation_agent = SQLGenerationAgent()
 answer_agent = AnswerAgent()
 semantic_resolver = SemanticResolver()
+
+# 语义记忆（由 graph_builder.init_memory 在启动时注入；None = 未启用）
+memory: MemoryStore | None = None
+
+logger = logging.getLogger(__name__)
 
 
 async def router_node(state: DataAgentState) -> DataAgentState:
@@ -68,13 +78,78 @@ async def sql_generate_node(state: DataAgentState) -> DataAgentState:
     state["sql_source"] = "fallback"
     return state
 
+def _acceptable_intent(intent: dict) -> bool:
+    return bool(
+        intent.get("metrics")
+        and intent.get("intent") in {"aggregate", "trend", "ranking", "detail"}
+        and float(intent.get("confidence") or 0.0) >= 0.5
+    )
+
+
+def _catalog_valid(entry, catalog: list[dict]) -> bool:
+    """存储条目的 metric_codes 必须都在当前 catalog 中（口径变更即失效）。"""
+    codes = {str(m.get("metricCode")) for m in catalog}
+    return all(code in codes for code in (entry.metric_codes or []))
+
+
+async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
+    """记忆前置：hit → 直通复用；inject → few-shot；失败静默降级。返回处理后的 state 或 None。"""
+    if memory is None or not settings.memory_enabled:
+        return None
+    try:
+        retriever = TextSimilarityRetriever(
+            memory, settings.memory_hit_threshold, settings.memory_inject_threshold)
+        hits = await retriever.search(state["question"])
+        if not hits:
+            return None
+        best = hits[0]
+        if best.band == "hit" and _catalog_valid(best.entry, catalog) \
+                and metrics_consistent(state["question"], best.entry, catalog):
+            intent = best.entry.resolved_intent
+            if _acceptable_intent(intent):
+                state["resolved_intent"] = intent
+                state["semantic_ok"] = True
+                state["sql_source"] = "memory"
+                state["memory_hit"] = True
+                state["memory_band"] = "hit"
+                if best.entry.id is not None:
+                    await memory.record_hit(best.entry.id)
+                return state
+            # acceptable 复检不过 → 降级 miss（走正常 LLM）
+            state["memory_band"] = "hit_rejected"
+            return None
+        if best.band == "inject":
+            examples = [(h.entry.norm_question, h.entry.resolved_intent) for h in hits[:3]]
+            state["memory_band"] = "inject"
+            try:
+                intent = await semantic_resolver.resolve(
+                    question=state["question"], catalog=catalog, dimensions=DIMENSIONS,
+                    examples=examples)
+            except Exception:  # noqa: BLE001
+                intent = None
+            if intent is None:
+                state["semantic_ok"] = False
+                return state
+            acceptable = _acceptable_intent(intent)
+            state["resolved_intent"] = intent
+            state["semantic_ok"] = acceptable
+            return state
+    except Exception:  # noqa: BLE001 - 记忆失败不打断主链路
+        return None
+    return None
+
+
 async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
     """LLM 只做语义匹配：把问题解析为结构化 ResolvedIntent（不写 SQL）。"""
     catalog = await platform.metric_catalog()
+    catalog = catalog or []
+    handled = await _memory_pre_resolve(state, catalog)
+    if handled is not None:
+        return handled
     try:
         intent = await semantic_resolver.resolve(
             question=state["question"],
-            catalog=catalog or [],
+            catalog=catalog,
             dimensions=DIMENSIONS,
         )
     except Exception:  # noqa: BLE001 - degrade to raw SQL generation
@@ -83,11 +158,7 @@ async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient)
         state["semantic_ok"] = False
         return state
 
-    acceptable = bool(
-        intent.get("metrics")
-        and intent.get("intent") in {"aggregate", "trend", "ranking", "detail"}
-        and float(intent.get("confidence") or 0.0) >= 0.5
-    )
+    acceptable = _acceptable_intent(intent)
     state["resolved_intent"] = intent
     state["semantic_ok"] = acceptable
     return state
@@ -126,7 +197,9 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
             "source": "semantic",
         }
     )
-    state["sql_source"] = "semantic"
+    if state.get("sql_source") != "memory":
+        # 记忆命中的 intent 复用后仍走确定性合成，但来源标记为 memory（不覆盖）
+        state["sql_source"] = "semantic"
     return state
 
 
@@ -257,6 +330,33 @@ def _execution_suggestion(error_code: str, error: str) -> str:
     return "Regenerate SQL according to the error and schema_context."
 
 
+async def _memory_write_hook(state: DataAgentState) -> None:
+    """写钩子：仅全链路成功的语义路径沉淀新条目（sql_source=semantic）。命中 run 走 record_hit 独立路径。"""
+    if memory is None or not settings.memory_enabled:
+        return
+    if state.get("sql_source") != "semantic":
+        return
+    query_result = state.get("query_result") or {}
+    if not query_result.get("success"):
+        return
+    dq = state.get("dq_feedback")
+    if dq not in (None, "PASS") and not str(dq or "").startswith("WARNING"):
+        return
+    intent = state.get("resolved_intent")
+    if not intent:
+        return
+    try:  # 记忆失败不打断主链路
+        codes = [str(m) for m in (intent.get("metrics") or [])]
+        await memory.upsert(
+            normalize_question(state["question"]),
+            intent,
+            codes,
+            compute_resolver_hash(),
+        )
+    except Exception as exc:  # noqa: BLE001 - 记忆失败不打断主链路
+        logger.warning("memory write hook failed: %s", exc)
+
+
 async def answer_node(state: DataAgentState) -> DataAgentState:
     query_result = state.get("query_result") or {}
     attempts = state.get("sql_attempts") or []
@@ -292,4 +392,5 @@ async def answer_node(state: DataAgentState) -> DataAgentState:
         )
     report["dq"] = state.get("dq_result")
     state["final_report"] = report
+    await _memory_write_hook(state)
     return state

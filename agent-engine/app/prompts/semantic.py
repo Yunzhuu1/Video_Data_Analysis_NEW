@@ -46,7 +46,8 @@ SEMANTIC_SYSTEM_PROMPT = """你是一个指标语义解析器。基于给定的�
 """
 
 
-def build_semantic_user_prompt(question: str, catalog: list[dict], dimensions: list[dict]) -> str:
+def build_semantic_user_prompt(question: str, catalog: list[dict], dimensions: list[dict],
+                              examples: list[tuple[str, dict]] | None = None) -> str:
     metric_lines = "\n".join(
         f"- {m.get('metricCode')} | {m.get('metricName')} | {m.get('businessDefinition')}"
         f" | 维度: {','.join(_dimension_list(m.get('dimensions')))}"
@@ -56,6 +57,14 @@ def build_semantic_user_prompt(question: str, catalog: list[dict], dimensions: l
         f"- {d['code']} | {d['name']} | {d.get('description', '')}"
         for d in dimensions
     )
+    examples_text = ""
+    if examples:
+        lines = ["参考示例（仅作参考，仍须按契约输出 ResolvedIntent）："]
+        for q, intent in examples[:3]:
+            lines.append(f"- 问题：{q}")
+            lines.append(f"  意图：{json.dumps(intent, ensure_ascii=False)}")
+        examples_text = "\n".join(lines) + "\n\n"
+
     return f"""用户问题：
 {question}
 
@@ -65,5 +74,5 @@ def build_semantic_user_prompt(question: str, catalog: list[dict], dimensions: l
 维度清单：
 {dim_lines or '(空)'}
 
-请输出 ResolvedIntent JSON。
+{examples_text}请输出 ResolvedIntent JSON。
 """

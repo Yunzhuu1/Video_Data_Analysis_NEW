@@ -34,13 +34,16 @@ def load_cases(path: Path) -> tuple[str, list[dict[str, Any]]]:
     return str(data.get("eval_date") or "2023-10-14"), list(data.get("cases") or [])
 
 
-def apply_run_config(llm: str | None, platform: str | None, cassette: str | None) -> dict[str, str]:
-    """把 --llm / --platform 落到 settings 并校验非法组合，返回自描述运行配置。"""
+def apply_run_config(llm: str | None, platform: str | None, cassette: str | None,
+                    memory: str | None = None) -> dict[str, str]:
+    """把 --llm / --platform / --memory 落到 settings，返回自描述运行配置。"""
     if llm is not None:
         settings.eval_llm_mode = llm
     if platform is not None:
         settings.platform_calls_enabled = platform == "real"
     platform_real = settings.platform_calls_enabled
+    memory_on = (memory or "off").lower() in ("on", "1", "true")
+    settings.memory_enabled = memory_on
 
     if settings.eval_llm_mode == "record" and platform_real:
         raise SystemExit("illegal combination: --llm record requires platform=mock")
@@ -54,6 +57,7 @@ def apply_run_config(llm: str | None, platform: str | None, cassette: str | None
         "model": settings.ai_model,
         "eval_date": "",
         "cassette": settings.eval_llm_cassette if settings.eval_llm_mode in ("record", "replay") else "-",
+        "memory": "on" if memory_on else "off",
     }
 
 
@@ -70,12 +74,86 @@ async def run_case(case: dict[str, Any], llm: str, platform: str, eval_date: str
 async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_date: str) -> list[dict[str, Any]]:
     """逐用例隔离执行：环境性异常标 ERROR，不中断整场评测。"""
     results: list[dict[str, Any]] = []
+    by_id = {c["id"]: c for c in cases}
     for case in cases:
         try:
-            results.append(await run_case(case, llm, platform, eval_date))
+            is_memory_case = bool(case.get("repeat_of") or case.get("memory_setup"))
+            if is_memory_case and not settings.memory_enabled:
+                results.append({"id": case["id"], "type": case.get("type", "memory"),
+                                "passed": True, "reason": "SKIPPED (memory off)", "status": "SUCCESS",
+                                "retry_count": 0, "latency_ms": 0, "sql_source": None,
+                                "spec_score": None, "memory_hit": False})
+                continue
+            if case.get("repeat_of"):
+                results.append(await run_repeat_pair(by_id[case["repeat_of"]], case, platform, eval_date))
+            elif case.get("memory_setup"):
+                results.append(await run_counterexample(case, platform, eval_date))
+            else:
+                results.append(await run_case(case, llm, platform, eval_date))
         except Exception as exc:  # noqa: BLE001 - environment failure isolation
             results.append(error_result(case, exc))
     return results
+
+
+async def run_repeat_pair(base_case: dict[str, Any], meta: dict[str, Any],
+                          platform: str, eval_date: str) -> dict[str, Any]:
+    """重复问题对：同一 question 连续跑两遍，断言第二遍命中且 intent 逐字段一致（口径=两遍都成功）。"""
+    start = time.perf_counter()
+    r1 = await run_case(base_case, "real", platform, eval_date)
+    r2 = await run_case(base_case, "real", platform, eval_date)
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    both_ok = r1["passed"] and r2["passed"] and r1["status"] != "ERROR" and r2["status"] != "ERROR"
+    hit = bool(r2.get("memory_hit"))
+    same = (r1.get("resolved_intent") or {}) == (r2.get("resolved_intent") or {})
+    passed = both_ok and hit and same
+    reason = "PASS"
+    if not both_ok:
+        reason = f"repeat pair: r1={r1['reason']} | r2={r2['reason']}"
+    elif not hit:
+        reason = "repeat pair: second run did not hit memory"
+    elif not same:
+        reason = "repeat pair: resolved_intent differs between runs"
+    return {
+        "id": meta["id"], "type": meta.get("type", "memory"),
+        "passed": passed, "reason": reason, "latency_ms": latency_ms,
+        "status": "SUCCESS" if passed else "FAIL", "retry_count": 0,
+        "sql_source": r2.get("sql_source"), "spec_score": r2.get("spec_score"),
+        "resolved_intent": r2.get("resolved_intent"),
+        "memory_hit": hit, "memory_band": r2.get("memory_band"),
+    }
+
+
+async def run_counterexample(case: dict[str, Any], platform: str, eval_date: str) -> dict[str, Any]:
+    """相似反例：预置记忆（如播放量），查询语义不同问题（点赞量）断言不命中。"""
+    from app.graph import nodes
+    from app.memory.retriever import normalize_question
+    from app.memory.store import compute_resolver_hash
+
+    start = time.perf_counter()
+    setup = case.get("memory_setup") or {}
+    seed_ok = False
+    if nodes.memory is not None and settings.memory_enabled:
+        try:
+            await nodes.memory.upsert(
+                normalize_question(str(setup.get("question") or "")),
+                setup.get("intent") or {}, setup.get("metric_codes") or [],
+                compute_resolver_hash())
+            seed_ok = True
+        except Exception:  # noqa: BLE001
+            seed_ok = False
+    if not seed_ok:
+        return {**error_result(case, RuntimeError("memory seeding failed")), "memory_band": None}
+    r = await run_case(case, "real", platform, eval_date)
+    latency_ms = int((time.perf_counter() - start) * 1000)
+    r["id"] = case["id"]
+    r["type"] = case.get("type", "memory")
+    r["latency_ms"] = latency_ms
+    # 反例断言：不得命中（band != hit）
+    not_hit = not bool(r.get("memory_hit"))
+    r["passed"] = r["passed"] and not_hit
+    if not not_hit:
+        r["reason"] = "counterexample: unexpectedly hit memory"
+    return r
 
 
 def error_result(case: dict[str, Any], exc: Exception) -> dict[str, Any]:
@@ -138,6 +216,9 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
         "retry_count": int(state.get("sql_retry_count", 0)),
         "sql_source": state.get("sql_source"),
         "spec_score": _score_dict(score),
+        "resolved_intent": state.get("resolved_intent"),
+        "memory_hit": bool(state.get("memory_hit")),
+        "memory_band": state.get("memory_band"),
     }
 
 
@@ -203,6 +284,8 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "final_report": final_report,
         "resolved_intent": debug.get("resolvedIntent") or payload.get("resolvedIntent") or payload.get("resolved_intent"),
         "sql_source": debug.get("sqlSource") or payload.get("sqlSource"),
+        "memory_hit": debug.get("memoryHit") or payload.get("memoryHit"),
+        "memory_band": debug.get("memoryBand") or payload.get("memoryBand"),
     }
     latency_ms = int((time.perf_counter() - start) * 1000)
     passed, reason = evaluate_case(case, state)
@@ -218,6 +301,9 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "sql_source": state.get("sql_source"),
         "spec_score": _score_dict(score),
         "auto_released": auto_released,
+        "resolved_intent": state.get("resolved_intent"),
+        "memory_hit": bool(state.get("memory_hit")),
+        "memory_band": state.get("memory_band"),
     }
 
 
@@ -410,6 +496,10 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "auto_released": len(auto_released),
         "auto_released_ratio": _percent(len(auto_released), len(evaluated)),
         "unexpected_intercepts": len(unexpected_intercepts),
+        "memory_hit": sum(1 for r in evaluated if r.get("memory_hit")),
+        "memory_hit_rate": _percent(sum(1 for r in evaluated if r.get("memory_hit")), len(evaluated)),
+        "memory_inject": sum(1 for r in evaluated if r.get("memory_band") == "inject"),
+        "memory_inject_rate": _percent(sum(1 for r in evaluated if r.get("memory_band") == "inject"), len(evaluated)),
         "judged": len(scores),
         "core_accuracy": layer["core"],
         "core_hits": sum(1 for s in scores if s.core_ok),
@@ -452,6 +542,8 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 自动修复成功率 | {agg['auto_fix']:.2%} | {agg['auto_fix_total']} cases retried |",
         f"| 高风险拦截率 | {agg['risk_interception']:.2%} | {agg['risk_total']} cases |",
         f"| 自动放行（auto_released） | {agg['auto_released_ratio']:.2%} | {agg['auto_released']}/{agg['evaluated']}（非 risk 用例被拦截后自动放行） |",
+        f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
+        f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
         f"| 意外拦截数 | {agg['unexpected_intercepts']} | 自动放行后仍失败的用例（门禁过度拦截信号） |",
         f"| 延迟 p50 / p95 | {agg['latency_p50']}ms / {agg['latency_p95']:.0f}ms | - |",
         "",
@@ -530,6 +622,8 @@ async def main() -> None:
         help="platform source: mock|real (default: PLATFORM_CALLS_ENABLED)",
     )
     parser.add_argument("--cassette", default=None)
+    parser.add_argument("--memory", choices=["off", "on"], default="off",
+                        help="语义记忆开关（默认 off，回归隔离；on 需配合独立记忆库）")
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     args = parser.parse_args()
 
@@ -539,7 +633,7 @@ async def main() -> None:
         print(compare_reports(a, b))
         return
 
-    run_config = apply_run_config(args.llm, args.platform, args.cassette)
+    run_config = apply_run_config(args.llm, args.platform, args.cassette, args.memory)
     eval_date, cases = load_cases(args.cases)
     run_config["eval_date"] = eval_date
 
@@ -549,8 +643,19 @@ async def main() -> None:
     checkpointer = await create_checkpointer(db_path)
     graph_builder.init_graph(checkpointer)
 
+    # 记忆初始化：--memory on 时注入独立记忆库（mock 用 :memory:，real 需外部 MEMORY_DB_PATH）
+    if settings.memory_enabled:
+        memory_db = ":memory:" if run_config["platform"] == "mock" else settings.memory_db_path
+        await graph_builder.init_memory(memory_db)
+
     results = await run_cases(cases, run_config["llm"], run_config["platform"], eval_date)
     await checkpointer.conn.close()
+    from app.graph import nodes
+    if nodes.memory is not None:
+        try:
+            await nodes.memory.close()
+        except Exception as exc:  # noqa: BLE001
+            print(f"[eval] memory close failed: {exc}")
 
     args.report.parent.mkdir(parents=True, exist_ok=True)
     args.report.write_text(render_report(results, run_config, eval_date), encoding="utf-8")

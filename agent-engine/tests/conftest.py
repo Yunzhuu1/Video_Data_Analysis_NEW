@@ -16,4 +16,5 @@ from app.settings import settings
 @pytest.fixture(autouse=True)
 def hermetic_llm_mode():
     settings.eval_llm_mode = "mock"
+    settings.memory_enabled = False
     yield

@@ -23,6 +23,20 @@ MAX_SQL_RETRIES = 3
 platform = PlatformClient()
 
 
+async def init_memory(db_path: str) -> None:
+    """启动时注入语义记忆（nodes.memory）。失败仅告警，不阻断服务。"""
+    from app.graph import nodes
+    from app.memory.store import MemoryStore
+
+    try:
+        store = MemoryStore(db_path)
+        await store.init()
+        nodes.memory = store
+    except Exception as exc:  # noqa: BLE001
+        print(f"[memory] init failed, memory disabled: {exc}")
+        nodes.memory = None
+
+
 # ---------------------------------------------------------------------------
 # Trace wrapper: keeps the Run Trace contract (start/finish/fail callbacks).
 # ---------------------------------------------------------------------------

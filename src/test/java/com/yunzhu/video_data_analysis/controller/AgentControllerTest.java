@@ -39,7 +39,9 @@ class AgentControllerTest {
                 null,
                 Map.of("intent", "aggregate", "metrics", List.of("total_plays")),
                 2,
-                "semantic"
+                "semantic",
+                false,
+                null
         );
     }
 
@@ -67,6 +69,7 @@ class AgentControllerTest {
                 "resolvedIntent", Map.of("intent", "aggregate", "metrics", List.of("total_plays")));
         assertThat(report.getDebug()).containsEntry("sqlRetryCount", 2);
         assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
+        assertThat(report.getDebug()).containsEntry("memoryHit", false);
     }
 
     @Test
@@ -80,7 +83,9 @@ class AgentControllerTest {
                 "SQL_LARGE_SCAN",
                 Map.of("intent", "aggregate", "metrics", List.of("total_plays")),
                 0,
-                "semantic"
+                "semantic",
+                true,
+                "hit"
         );
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(waiting);
 
@@ -92,5 +97,6 @@ class AgentControllerTest {
         assertThat(report.getDebug()).containsEntry(
                 "resolvedIntent", Map.of("intent", "aggregate", "metrics", List.of("total_plays")));
         assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
+        assertThat(report.getDebug()).containsEntry("memoryHit", true);
     }
 }

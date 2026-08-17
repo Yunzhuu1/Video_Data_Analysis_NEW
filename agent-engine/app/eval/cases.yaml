@@ -249,6 +249,21 @@
       "question": "统计各分类总播放量",
       "mock_guard_verdict": "PASS",
       "expected_status": "SUCCESS"
+    },
+    {
+      "id": "c24_memory_repeat",
+      "type": "memory",
+      "repeat_of": "c02_category_total"
+    },
+    {
+      "id": "c25_memory_counterexample",
+      "type": "memory",
+      "question": "最近7天点赞量是多少",
+      "memory_setup": {
+        "question": "最近7天播放量是多少",
+        "intent": {"intent": "trend", "metrics": ["total_plays"], "dimensions": [], "filters": [], "ordering": null},
+        "metric_codes": ["total_plays"]
+      }
     }
   ]
 }

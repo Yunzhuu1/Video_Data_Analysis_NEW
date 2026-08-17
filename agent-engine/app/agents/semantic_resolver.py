@@ -15,10 +15,11 @@ class SemanticResolver:
         question: str,
         catalog: list[dict[str, Any]],
         dimensions: list[dict[str, Any]],
+        examples: list[tuple[str, dict[str, Any]]] | None = None,
     ) -> dict[str, Any] | None:
         if not self.llm_client.enabled():
             return None
-        user_prompt = build_semantic_user_prompt(question, catalog, dimensions)
+        user_prompt = build_semantic_user_prompt(question, catalog, dimensions, examples)
         try:
             result = await self.llm_client.complete_json(SEMANTIC_SYSTEM_PROMPT, user_prompt)
             return self._apply_fallbacks(question, self._normalize(result))

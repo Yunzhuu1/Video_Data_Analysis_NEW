@@ -108,6 +108,8 @@ public class AgentController {
         debug.put("resolvedIntent", response.resolvedIntent());
         debug.put("sqlRetryCount", response.sqlRetryCount());
         debug.put("sqlSource", response.sqlSource());
+        debug.put("memoryHit", response.memoryHit());
+        debug.put("memoryBand", response.memoryBand());
         return debug;
     }
 
