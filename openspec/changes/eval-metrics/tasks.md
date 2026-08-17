@@ -18,7 +18,7 @@
 
 ## 4. 指标报告
 
-- [ ] 4.1 整理历史轨迹表（端到端/L1/拦截率/命中率逐轮，附 commit）
-- [ ] 4.2 撰写 docs/metrics-report.md（正确性/安全/效率/记忆价值按波段分层 + 实验协议 + **局限说明** + 逐条审计四列表 + **检索器/阈值/embedding 模型三变量配置** + **各波段样本量 N_hit/N_inject/N_miss 并列输出**）
-- [ ] 4.3 真实评测跑实验：直通/注入/冷热（--memory on/off 各基线）
-- [ ] 4.4 Python pytest + ruff 全绿；更新 docs/开发日志.md
+- [x] 4.1 整理历史轨迹表（端到端/L1/拦截率/命中率逐轮，附 commit）
+- [x] 4.2 撰写 docs/metrics-report.md（正确性/安全/效率/记忆价值按波段分层 + 实验协议 + **局限说明** + 逐条审计四列表 + **检索器/阈值/embedding 模型三变量配置** + **各波段样本量 N_hit/N_inject/N_miss 并列输出**）
+- [x] 4.3 真实评测跑实验：直通/注入/冷热（--memory on/off 各基线）
+- [x] 4.4 Python pytest + ruff 全绿；更新 docs/开发日志.md
