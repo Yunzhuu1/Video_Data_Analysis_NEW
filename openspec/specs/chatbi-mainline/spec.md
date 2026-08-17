@@ -103,3 +103,14 @@ Java 平台层 SHALL 提供统一的 SQL 门禁（`SqlGateService`），对候�
 #### Scenario: 意图感知的明细规则
 - **WHEN** 门禁收到 `intent` 入参
 - **THEN** `intent=detail` 且 `intent.time_range` 缺失或 `type == "none"` → 无条件 `APPROVAL_NEEDED`（与 SQL 形态无关）；聚合意图豁免 LIMIT（`DETAIL_QUERY_WITHOUT_LIMIT` 不适用），时间范围规则仍生效；意图-形态不一致（聚合意图但 SQL 为明细形态触碰 FACT）→ `RETRYABLE`
+
+### Requirement: 分析请求透传记忆命名空间
+`/api/agent/analyze` SHALL 接收可选的 `memoryNamespace` 参数（默认 `"default"`），并经 `LangGraphClient` 透传给 Python `/analyze`，使主链路请求可按 namespace 隔离语义记忆。
+
+#### Scenario: 默认命名空间
+- **WHEN** 客户端调用 `/api/agent/analyze` 且不传 `memoryNamespace`
+- **THEN** 引擎记忆读写使用 `"default"` namespace
+
+#### Scenario: 指定命名空间透传
+- **WHEN** 客户端调用 `/api/agent/analyze` 并传 `memoryNamespace=eval-xxx`
+- **THEN** Spring 将该参数透传给 Python `/analyze`，引擎按该 namespace 读写记忆
