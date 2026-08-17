@@ -674,10 +674,11 @@ async def main() -> None:
     checkpointer = await create_checkpointer(db_path)
     graph_builder.init_graph(checkpointer)
 
-    # 记忆初始化：--memory on 时用 per-eval namespace（eval-<eval_date>-<start_ts>），启动时 clear
+    # 记忆隔离：无论 on/off，eval 都用 per-eval namespace（eval-<eval_date>-<start_ts>）
+    # —— 即使 --memory off，服务器写钩子也会写；隔离到 eval namespace 可避免污染 default 真实记忆
+    import time as _t
+    settings.memory_namespace = f"eval-{eval_date}-{int(_t.time())}"
     if settings.memory_enabled:
-        import time as _t
-        settings.memory_namespace = f"eval-{eval_date}-{int(_t.time())}"
         memory_db = ":memory:" if run_config["platform"] == "mock" else settings.memory_db_path
         await graph_builder.init_memory(memory_db)
         # 清空 eval namespace（real 走 API / mock 走本地）

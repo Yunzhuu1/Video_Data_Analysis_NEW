@@ -29,7 +29,9 @@
 
 ## 5. 评测与回归
 
-- [ ] 5.1 Python pytest + ruff 全绿；Java mvn test 全绿
-- [ ] 5.2 全量 --memory on 自隔离重跑（重复对 PASS、反例真预置 PASS、命中率 > 0、L1-L4 不回退）；default 记忆前后不变
-- [ ] 5.3 --memory off 回归 L1-L4 100% 不回退
-- [ ] 5.4 更新 docs/eval-report.md 与 docs/开发日志.md
+- [x] 5.1 Python pytest + ruff 全绿；Java mvn test 全绿
+- [x] 5.2 全量 --memory on 自隔离重跑（重复对 PASS、反例真预置 PASS、命中率 > 0、L1-L4 不回退）；default 记忆前后不变
+  - 实测：--memory on 命中率 20%、c24 重复对 PASS、c25 毒化反例 PASS、default 零污染；--memory off L1-L3 100%、default 零污染（runner 始终用 eval namespace）
+- [x] 5.3 --memory off 回归 L1-L4 100% 不回退
+  - 实测：--memory on 命中率 20%、c24 重复对 PASS、c25 毒化反例 PASS、default 零污染；--memory off L1-L3 100%、default 零污染（runner 始终用 eval namespace）
+- [x] 5.4 更新 docs/eval-report.md 与 docs/开发日志.md
