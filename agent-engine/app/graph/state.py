@@ -32,7 +32,9 @@ class DataAgentState(TypedDict, total=False):
 
     resolved_intent: ResolvedIntent
     semantic_ok: bool
-    sql_source: Literal["semantic", "fallback"]
+    sql_source: Literal["semantic", "fallback", "memory"]
+    memory_hit: bool
+    memory_band: Literal["hit", "inject", "hit_rejected"]
 
     sql_attempts: list[dict[str, Any]]
     query_result: dict[str, Any]

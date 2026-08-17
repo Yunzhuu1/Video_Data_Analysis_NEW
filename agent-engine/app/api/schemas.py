@@ -22,6 +22,8 @@ class AnalyzeResponse(BaseModel):
     resolved_intent: dict[str, Any] | None = Field(default=None, alias="resolvedIntent")
     sql_retry_count: int | None = Field(default=None, alias="sqlRetryCount")
     sql_source: str | None = Field(default=None, alias="sqlSource")
+    memory_hit: bool | None = Field(default=None, alias="memoryHit")
+    memory_band: str | None = Field(default=None, alias="memoryBand")
 
     model_config = {"populate_by_name": True}
 

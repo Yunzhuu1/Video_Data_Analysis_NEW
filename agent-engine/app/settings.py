@@ -26,6 +26,10 @@ if BaseSettings is not None:
         ai_model: str = "deepseek-chat"
         checkpoint_db_path: str = "checkpoints.sqlite"
         eval_llm_mode: str = "real"  # real | record | replay | mock
+        memory_db_path: str = "memory.sqlite"
+        memory_enabled: bool = True
+        memory_hit_threshold: float = 0.95
+        memory_inject_threshold: float = 0.85
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -42,6 +46,10 @@ else:
             self.ai_model = os.getenv("AI_MODEL", "deepseek-chat")
             self.checkpoint_db_path = os.getenv("CHECKPOINT_DB_PATH", "checkpoints.sqlite")
             self.eval_llm_mode = os.getenv("EVAL_LLM_MODE", "real")
+            self.memory_db_path = os.getenv("MEMORY_DB_PATH", "memory.sqlite")
+            self.memory_enabled = _env_bool("MEMORY_ENABLED", True)
+            self.memory_hit_threshold = float(os.getenv("MEMORY_HIT_THRESHOLD", "0.95"))
+            self.memory_inject_threshold = float(os.getenv("MEMORY_INJECT_THRESHOLD", "0.85"))
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 

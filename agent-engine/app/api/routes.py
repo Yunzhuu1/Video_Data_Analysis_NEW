@@ -37,6 +37,8 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
         resolvedIntent=state.get("resolved_intent"),
         sqlRetryCount=state.get("sql_retry_count"),
         sqlSource=state.get("sql_source"),
+        memoryHit=state.get("memory_hit"),
+        memoryBand=state.get("memory_band"),
     )
 
 
@@ -56,4 +58,6 @@ async def approve_run(run_id: str, request: ApprovalRequest) -> AnalyzeResponse:
         resolvedIntent=state.get("resolved_intent"),
         sqlRetryCount=state.get("sql_retry_count"),
         sqlSource=state.get("sql_source"),
+        memoryHit=state.get("memory_hit"),
+        memoryBand=state.get("memory_band"),
     )

@@ -12,6 +12,7 @@ from app.settings import settings
 async def lifespan(app: FastAPI):
     checkpointer = await create_checkpointer(settings.checkpoint_db_path)
     graph_builder.init_graph(checkpointer)
+    await graph_builder.init_memory(settings.memory_db_path)
     yield
 
 
