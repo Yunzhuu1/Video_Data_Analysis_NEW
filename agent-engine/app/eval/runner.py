@@ -547,6 +547,7 @@ async def run_real_session_experiment(cases: list[dict[str, Any]], platform: str
     from app.eval.comparator import compare_spec
     from app.graph.graph_builder import init_memory
 
+    settings.memory_enabled = True  # real-session 协议隐含 --memory on（测的就是记忆）
     _d, syn_cases = load_cases(Path(__file__).with_name("synonym_cases.yaml"))
     sessions = _pick_real_sessions(cases, session_count)
     llm = settings.eval_llm_mode
@@ -568,6 +569,13 @@ async def run_real_session_experiment(cases: list[dict[str, Any]], platform: str
         after1 = meter.snapshot()
         # mock 弱验证：close → reopen 同一路径（文件持久化 claim）
         if platform == "mock":
+            from app.graph import nodes as _n
+            _first_rows = 0
+            if _n.memory is not None:
+                try:
+                    _first_rows = len(await _n.memory.all(namespace=settings.memory_namespace))
+                except Exception:  # noqa: BLE001
+                    _first_rows = -1
             await _close_memory()
             await init_memory(memory_path)
         # 二问：期望命中（mock 下已跨 reopen）
@@ -591,6 +599,8 @@ async def run_real_session_experiment(cases: list[dict[str, Any]], platform: str
             "id": sid,
             "question": s["question"],
             "intent_type": (s.get("golden_spec") or {}).get("intent"),
+            "first_sql_source": r1.get("sql_source"),
+            "first_store_rows": _first_rows if platform == "mock" else None,
             "first_hit": bool(r1.get("memory_hit")),
             "first_l1": bool(score1 and score1.core_ok),
             "second_hit": hit2,

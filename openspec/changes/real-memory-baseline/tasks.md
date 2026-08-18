@@ -22,9 +22,9 @@
 ## 5. 评测与回归
 
 - [x] 5.1 Python pytest + ruff 全绿
-- [ ] 5.2 `--memory off` 全量回归（N=45 基线不回退）
-- [ ] 5.3 real-session 真实评测（--llm real --platform real，或 real+mock 组合）：真实命中率/一致率 + 报告；强验证（real 模式两遍 /analyze + 重启服务器，同一 MEMORY_LANCE_PATH）记录 `real_persist_hits_strong`
-- [ ] 5.4 metrics-report 新增「真实路径基线」章节；开发日志追加本次评测
+- [x] 5.2 `--memory off` 全量回归（N=45 基线不回退）
+- [x] 5.3 real-session 真实评测（--llm real --platform real，或 real+mock 组合）：真实命中率/一致率 + 报告；强验证（real 模式两遍 /analyze + 重启服务器，同一 MEMORY_LANCE_PATH）记录 `real_persist_hits_strong`
+- [x] 5.4 metrics-report 新增「真实路径基线」章节；开发日志追加本次评测
 
 ## 6. 收尾
 
