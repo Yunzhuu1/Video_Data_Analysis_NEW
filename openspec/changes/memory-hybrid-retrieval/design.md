@@ -55,10 +55,12 @@ search(question, namespace)
 - **为何 LanceDB 而非 SQLite JSON / FAISS / Qdrant**：选型矩阵与代价见 `docs/记忆系统设计.md` §5.3——嵌入式无服务端、原生混合检索、磁盘列式 1k→百万条不迁移；分布式能力弱是已知代价，`VectorStore` 接口抽象保证可迁 Qdrant。
 
 ### D4：融合评分与阈值重标定（离线脚本，可复现）
-- **评分来源**：LanceDB hybrid 查询产出（向量相似度 + BM25 FTS 融合打分）；**标定公式（P2-1，归一化写死，保证可复现）**：
+- **评分来源（P1，2026-08-18 定死为路径 B，禁止"或"）**：**不消费 LanceDB 引擎的 hybrid 融合分**——LanceDB 只当"向量索引 + FTS 检索器"用（向量 search 与 FTS search 分开查），**融合由我们自己按 D4 公式算**。理由：①保留 w 权重控制（报告三变量含 w）；②与标定脚本公式一致，可复现；③"抄机制不抄框架"哲学的延续。
+- **标定公式（P2-1，归一化写死，保证可复现）**：
   - `cos_norm = max(0.0, cos)`（cosine ∈ [-1,1] 裁剪到 [0,1]）
   - `bm25_norm = bm25_score / top1_bm25_score`（候选集内除以最高分 → [0,1]；BM25 无界，用候选集内相对分）
-  - `score = w·cos_norm + (1−w)·bm25_norm`（w 初值 0.7，标定后定；若直接消费引擎 hybrid score，则标定其阈值而非公式）
+  - `score = w·cos_norm + (1−w)·bm25_norm`（w 初值 0.7，标定后定）
+- **FTS 质量兜底（P3 确认）**：即使 LanceDB FTS 对中文切分不佳，BM25 只是辅信号（w=0.7 语义为主），最坏情况 hybrid 退化为准纯向量——可存活；task 1.2 验证 + 回退自研 BM25/sparse 已覆盖。
 - **标定方法**（沿用 design 既有方法论，落地为脚本 `app/eval/calibrate_thresholds.py`）：
   - hit 阈值 = 「毒化对（点赞量 vs 播放量）全部落在 hit 之下」的最小值
   - inject 阈值 = 「期望注入的同义条目全部落在 inject 区间」的最大值
@@ -70,6 +72,7 @@ search(question, namespace)
 
 ### D5：runner/实验一致性——band 必须取自真实检索器
 - `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**实例化真实 retriever（与 nodes.py 同一工厂）**对每条同义问题 search 取 top-1 band——实验测的就是线上跑的。
+- **降级可观测性（P2-2）**：真实实验（--memory on + real）先探测 EmbeddingProvider 可用性；不可用 → 实验标记 **DEGRADED**，报告显式标注"本实验以 difflib 降级运行，N_inject=0 不代表混合检索失败"——防止"N_inject=0"被误读为"混合检索分不开"。
 - 报告配置三变量补全：`difflib/0.95-0.85/-` → `hybrid(doubao-embedding-<model>)/hit_t-inject_t/w=0.7`。
 - **近重复 hit 召回数值目标（P3）**：标定后自适应定——「近重复对 hit 数较 difflib 基线提升 ≥50%」（验收可判定，简历数字更硬）。
 
@@ -87,6 +90,7 @@ search(question, namespace)
 | API 调用延迟 | 查询只 embed 1 条（存量写时缓存）；单次 ~100-300ms 相对 LLM 秒级可忽略；回填有界（≤10 条/search） |
 | key 泄露/误用 | 只存本地 .env，不落库不打印；仅 agent-engine 进程读取 |
 | API 计费异常 | 本规模 <1 分钱；settings 可配开关/阈值，超量可降级 difflib |
+| 实验时 API 不可用 → 静默降级 difflib，N_inject=0 归因污染 | runner 先探测 embedding 可用性，不可用标 DEGRADED 并显式写入报告（P2-2） |
 | LanceDB 分布式/多节点能力弱（较 Qdrant/Milvus） | 单节点定位符合现状；`VectorStore` 接口抽象 + 数据导出，多实例/多租户时迁 Qdrant（docs §5.3 触发条件明确） |
 | LanceDB 相对较新（社区 < Qdrant/Milvus） | 生产在用 + pyarrow/DataFusion 生态；纳入评测回归门禁，异常可回退 difflib |
 | 阈值/权重拍脑袋 | D4 离线标定脚本出分布；三变量随报告列出；同义/毒化/近重复三组对照 |

@@ -9,7 +9,7 @@
 
 #### Scenario: 同义集注入收益（按波段分层，band 运行时取自检索器）
 - **WHEN** 以同义表达问题集（YAML 存 question/golden/source_case，不静态标 band）运行无记忆（--memory off）与有记忆（--memory on，先沉淀后同义集）两组，band 由 runner 对每条同义问题执行**与线上同一实现**的检索（取 top-1）
-- **THEN** 报告对比 **inject 波段子集**的 L1 口径成功率与 inject 命中率；miss 波段子集单独报告（LLM 自身泛化）；hit 波段归直通实验；报告注明**检索器实现/阈值/embedding 模型**三变量（如 `hybrid(bge-small-zh-v1.5)/0.92-0.80/w=0.7`）
+- **THEN** 报告对比 **inject 波段子集**的 L1 口径成功率与 inject 命中率；miss 波段子集单独报告（LLM 自身泛化）；hit 波段归直通实验；报告注明**检索器实现/阈值/embedding 模型**三变量（如 `hybrid(doubao-embedding-vision-251215)/0.92-0.80/w=0.7`）
 
 #### Scenario: 冷热启动（检索侧）
 - **WHEN** 以空记忆（冷）与预置记忆 seed（热）分别运行同义集
