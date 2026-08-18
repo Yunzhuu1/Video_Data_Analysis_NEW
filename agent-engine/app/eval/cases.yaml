@@ -6,13 +6,27 @@
       "type": "text2sql",
       "question": "分析各分类播放量趋势",
       "expected_route": "complex",
-      "expected_sql_contains": ["metric_daily", "total_plays"],
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_sql_contains": [
+        "metric_daily",
+        "total_plays"
+      ],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_plays"],
-        "dimensions": ["category"],
-        "time_range": {"type": "none", "granularity": "day"},
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
         "filters": [],
         "ordering": null
       }
@@ -21,12 +35,23 @@
       "id": "c02_category_total",
       "type": "text2sql",
       "question": "统计各分类总播放量",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["total_plays"],
-        "dimensions": ["category"],
-        "time_range": {"type": "none", "granularity": null},
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
         "filters": [],
         "ordering": null
       }
@@ -35,12 +60,25 @@
       "id": "c03_last7d_daily_plays",
       "type": "text2sql",
       "question": "最近7天每天播放量是多少",
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_plays"],
+        "metrics": [
+          "total_plays"
+        ],
         "dimensions": [],
-        "time_range": {"type": "relative", "relative": {"amount": 7, "unit": "day"}, "granularity": "day"},
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
         "filters": [],
         "ordering": null
       }
@@ -49,12 +87,21 @@
       "id": "c04_completion_rate",
       "type": "metric",
       "question": "完播率是多少",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["completion_rate"],
+        "metrics": [
+          "completion_rate"
+        ],
         "dimensions": [],
-        "time_range": {"type": "none", "granularity": null},
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
         "filters": [],
         "ordering": null
       }
@@ -63,13 +110,28 @@
       "id": "c05_food_plays",
       "type": "text2sql",
       "question": "美食类视频总播放量是多少",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["total_plays"],
+        "metrics": [
+          "total_plays"
+        ],
         "dimensions": [],
-        "time_range": {"type": "none", "granularity": null},
-        "filters": [{"field": "category", "op": "=", "value": "美食"}],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
         "ordering": null
       }
     },
@@ -77,27 +139,61 @@
       "id": "c06_top10_videos",
       "type": "text2sql",
       "question": "播放量最高的10个视频",
-      "expected_report_fields": ["summary", "sql"],
+      "expected_report_fields": [
+        "summary",
+        "sql"
+      ],
       "golden_spec": {
         "intent": "ranking",
-        "metrics": ["total_plays"],
-        "dimensions": ["content"],
-        "time_range": {"type": "none", "granularity": null},
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
         "filters": [],
-        "ordering": {"field": "total_plays", "direction": "desc", "limit": 10}
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
       }
     },
     {
       "id": "c07_compare_food_game_trend",
       "type": "text2sql",
       "question": "对比美食和游戏分类的播放趋势",
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_plays"],
-        "dimensions": ["category"],
-        "time_range": {"type": "none", "granularity": "day"},
-        "filters": [{"field": "category", "op": "in", "value": ["美食", "游戏"]}],
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
         "ordering": null
       }
     },
@@ -105,12 +201,25 @@
       "id": "c08_oct1to7_plays",
       "type": "text2sql",
       "question": "10月1日到10月7日播放量是多少",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["total_plays"],
+        "metrics": [
+          "total_plays"
+        ],
         "dimensions": [],
-        "time_range": {"type": "absolute", "absolute": {"start": "2023-10-01", "end": "2023-10-07"}, "granularity": null},
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
         "filters": [],
         "ordering": null
       }
@@ -119,12 +228,23 @@
       "id": "c09_likes_trend",
       "type": "text2sql",
       "question": "各分类点赞量趋势",
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_likes"],
-        "dimensions": ["category"],
-        "time_range": {"type": "none", "granularity": "day"},
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
         "filters": [],
         "ordering": null
       }
@@ -133,12 +253,21 @@
       "id": "c10_engagement_rate",
       "type": "metric",
       "question": "互动率是多少",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["engagement_rate"],
+        "metrics": [
+          "engagement_rate"
+        ],
         "dimensions": [],
-        "time_range": {"type": "none", "granularity": null},
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
         "filters": [],
         "ordering": null
       }
@@ -147,12 +276,23 @@
       "id": "c11_shares_total",
       "type": "text2sql",
       "question": "统计各分类总分享量",
-      "expected_report_fields": ["summary", "sql", "metrics"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics"
+      ],
       "golden_spec": {
         "intent": "aggregate",
-        "metrics": ["total_shares"],
-        "dimensions": ["category"],
-        "time_range": {"type": "none", "granularity": null},
+        "metrics": [
+          "total_shares"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
         "filters": [],
         "ordering": null
       }
@@ -161,13 +301,28 @@
       "id": "c12_food_trend",
       "type": "text2sql",
       "question": "美食类视频播放量趋势",
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_plays"],
+        "metrics": [
+          "total_plays"
+        ],
         "dimensions": [],
-        "time_range": {"type": "none", "granularity": "day"},
-        "filters": [{"field": "category", "op": "=", "value": "美食"}],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
         "ordering": null
       }
     },
@@ -175,12 +330,25 @@
       "id": "c13_lastweek_plays",
       "type": "text2sql",
       "question": "最近一周每天播放量",
-      "expected_report_fields": ["summary", "sql", "charts"],
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "charts"
+      ],
       "golden_spec": {
         "intent": "trend",
-        "metrics": ["total_plays"],
+        "metrics": [
+          "total_plays"
+        ],
         "dimensions": [],
-        "time_range": {"type": "relative", "relative": {"amount": 1, "unit": "week"}, "granularity": "day"},
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 1,
+            "unit": "week"
+          },
+          "granularity": "day"
+        },
         "filters": [],
         "ordering": null
       }
@@ -189,7 +357,12 @@
       "id": "c14_answer_structure",
       "type": "answer_quality",
       "question": "对比美食和游戏分类的播放量",
-      "expected_report_fields": ["summary", "sql", "metrics", "charts"]
+      "expected_report_fields": [
+        "summary",
+        "sql",
+        "metrics",
+        "charts"
+      ]
     },
     {
       "id": "c15_hard_guard_retry",
@@ -210,7 +383,9 @@
       "type": "dq",
       "question": "对比美食和游戏分类播放量",
       "mock_dq_warning": true,
-      "expected_report_keywords": ["partial data"]
+      "expected_report_keywords": [
+        "partial data"
+      ]
     },
     {
       "id": "c18_detail_playback",
@@ -261,8 +436,555 @@
       "question": "最近7天点赞量是多少",
       "memory_setup": {
         "question": "最近7天点赞量是多少",
-        "intent": {"intent": "trend", "metrics": ["total_plays"], "dimensions": [], "filters": [], "ordering": null},
-        "metric_codes": ["total_plays"]
+        "intent": {
+          "intent": "trend",
+          "metrics": [
+            "total_plays"
+          ],
+          "dimensions": [],
+          "filters": [],
+          "ordering": null
+        },
+        "metric_codes": [
+          "total_plays"
+        ]
+      }
+    },
+    {
+      "id": "n01_multi_metric",
+      "type": "text2sql",
+      "category": "multi_metric",
+      "difficulty": "normal",
+      "question": "统计各分类的播放量和点赞量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays",
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n02_multi_metric",
+      "type": "text2sql",
+      "category": "multi_metric",
+      "difficulty": "normal",
+      "question": "各分类的完播率和互动率",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate",
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n04_multi_filter",
+      "type": "text2sql",
+      "category": "multi_filter",
+      "difficulty": "hard",
+      "question": "美食类最近7天的播放量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n05_multi_filter",
+      "type": "text2sql",
+      "category": "multi_filter",
+      "difficulty": "hard",
+      "question": "游戏类最近30天每天的播放量趋势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 30,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n06_multi_filter",
+      "type": "text2sql",
+      "category": "multi_filter",
+      "difficulty": "hard",
+      "question": "10月1日到10月7日美食类的点赞量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n07_multi_filter",
+      "type": "text2sql",
+      "category": "multi_filter",
+      "difficulty": "hard",
+      "question": "最近7天美食和游戏的完播率",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n09_ranked_time",
+      "type": "text2sql",
+      "category": "ranked_time",
+      "difficulty": "hard",
+      "question": "最近7天播放量最高的5个视频",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 5
+        }
+      }
+    },
+    {
+      "id": "n10_ranked_time",
+      "type": "text2sql",
+      "category": "ranked_time",
+      "difficulty": "hard",
+      "question": "最近30天点赞量最高的10个视频",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 30,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_likes",
+          "direction": "desc",
+          "limit": 10
+        }
+      }
+    },
+    {
+      "id": "n11_ranked_time",
+      "type": "text2sql",
+      "category": "ranked_time",
+      "difficulty": "hard",
+      "question": "最近一周互动率最高的分类",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 1,
+            "unit": "week"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 1
+        }
+      }
+    },
+    {
+      "id": "n12_ranked_time",
+      "type": "text2sql",
+      "category": "ranked_time",
+      "difficulty": "hard",
+      "question": "播放量最高的3个创作者",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        }
+      }
+    },
+    {
+      "id": "n14_cross_table",
+      "type": "text2sql",
+      "category": "cross_table",
+      "difficulty": "hard",
+      "question": "按创作者统计总播放量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n15_cross_table",
+      "type": "text2sql",
+      "category": "cross_table",
+      "difficulty": "hard",
+      "question": "各创作者的视频完播率",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n16_cross_table",
+      "type": "text2sql",
+      "category": "cross_table",
+      "difficulty": "hard",
+      "question": "每个视频的点赞量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n17_cross_table",
+      "type": "text2sql",
+      "category": "cross_table",
+      "difficulty": "hard",
+      "question": "美食类创作者的总播放量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n19_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "哪些视频最受欢迎",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 10
+        }
+      }
+    },
+    {
+      "id": "n20_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "游戏区完播表现怎么样",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n21_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "播放量前三的视频是哪几个",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        }
+      }
+    },
+    {
+      "id": "n22_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "昨天到今天的播放量变化",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 2,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n23_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "各分类最近7天的观看热度",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
+      }
+    },
+    {
+      "id": "n25_longtail",
+      "type": "text2sql",
+      "category": "longtail_ambiguous",
+      "difficulty": "hard",
+      "question": "最近7天看的人有多少",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
       }
     }
   ]

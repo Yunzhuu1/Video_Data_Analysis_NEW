@@ -19,7 +19,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s02",
@@ -39,7 +40,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s03",
@@ -59,7 +61,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s04",
@@ -79,7 +82,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s05",
@@ -99,7 +103,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s06",
@@ -119,7 +124,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s07",
@@ -139,7 +145,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s08",
@@ -159,7 +166,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s09",
@@ -181,7 +189,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s10",
@@ -203,7 +212,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s11",
@@ -225,7 +235,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s12",
@@ -247,7 +258,8 @@
         },
         "filters": [],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s13",
@@ -271,7 +283,8 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s14",
@@ -295,7 +308,8 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s15",
@@ -319,7 +333,8 @@
           "direction": "desc",
           "limit": 10
         }
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s16",
@@ -343,7 +358,8 @@
           "direction": "desc",
           "limit": 10
         }
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s17",
@@ -372,7 +388,8 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s18",
@@ -401,7 +418,8 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s19",
@@ -430,7 +448,8 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
     },
     {
       "id": "s20",
@@ -459,7 +478,380 @@
           }
         ],
         "ordering": null
-      }
+      },
+      "difficulty": "easy"
+    },
+    {
+      "id": "h01",
+      "source_case": "n20_longtail",
+      "question": "游戏区完播情况如何",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h02",
+      "source_case": "c04_completion_rate",
+      "question": "整体观看完成度如何",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h03",
+      "source_case": "c10_engagement_rate",
+      "question": "用户互动活跃度怎么样",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h04",
+      "source_case": "n19_longtail",
+      "question": "哪些内容最受观众青睐",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 10
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h05",
+      "source_case": "c09_likes_trend",
+      "question": "不同分区点赞数的走势",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h06",
+      "source_case": "n21_longtail",
+      "question": "哪个视频的播放量位居前三",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h07",
+      "source_case": "n11_ranked_time",
+      "question": "近7天互动最火热的分类",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 1,
+            "unit": "week"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 1
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h08",
+      "source_case": "c06_top10_videos",
+      "question": "哪些视频的点击量最高",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h09",
+      "source_case": "n25_longtail",
+      "question": "近一周观看人次是多少",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h10",
+      "source_case": "c05_food_plays",
+      "question": "美食分区累计观看数",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h11",
+      "source_case": "n12_ranked_time",
+      "question": "哪个博主的播放量最靠前",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h12",
+      "source_case": "c07_compare_food_game_trend",
+      "question": "比较美食区与游戏区的流量走向",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h13",
+      "source_case": "n23_longtail",
+      "question": "各品类一周内的热度排行",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        }
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h14",
+      "source_case": "n04_multi_filter",
+      "question": "美食内容近一周的播放表现",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null
+      },
+      "difficulty": "hard"
+    },
+    {
+      "id": "h15",
+      "source_case": "c08_oct1to7_plays",
+      "question": "国庆假期第一周的播放总量",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "difficulty": "hard"
     }
   ]
 }

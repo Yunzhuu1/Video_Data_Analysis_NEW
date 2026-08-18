@@ -190,7 +190,9 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
             "warnings": [], "errors": []})
         score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
         a_ok = bool(score and score.core_ok)
-        results.append({"id": s["id"], "question": s["question"], "a_l1": a_ok,
+        results.append({"id": s["id"], "question": s["question"],
+                        "difficulty": s.get("difficulty", "easy"),
+                        "golden": s.get("golden_spec"), "a_l1": a_ok,
                         "a_intent": state.get("resolved_intent")})
 
     # 组 B：memory on，先沉淀 source cases（写路径参与），再跑同义集
@@ -237,6 +239,24 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
     inject_a_ok = sum(1 for r in inject_sub if r["a_l1"])
     inject_n = len(inject_sub)
     sample_warn = inject_n < 8
+    # 按难度分层（easy/hard）
+    by_diff: dict[str, dict] = {}
+    for r in results:
+        d = by_diff.setdefault(r.get("difficulty", "easy"),
+                               {"n": 0, "a_ok": 0, "b_ok": 0, "inject_n": 0, "inject_a_ok": 0, "inject_b_ok": 0})
+        d["n"] += 1
+        d["a_ok"] += int(bool(r["a_l1"]))
+        d["b_ok"] += int(bool(r.get("b_l1")))
+        if r["band"] == "inject":
+            d["inject_n"] += 1
+            d["inject_a_ok"] += int(bool(r["a_l1"]))
+            d["inject_b_ok"] += int(bool(r.get("b_l1")))
+    for d in by_diff.values():
+        d["a_l1"] = d["a_ok"] / d["n"] if d["n"] else 0
+        d["b_l1"] = d["b_ok"] / d["n"] if d["n"] else 0
+        d["inject_a_l1"] = d["inject_a_ok"] / d["inject_n"] if d["inject_n"] else 0
+        d["inject_b_l1"] = d["inject_b_ok"] / d["inject_n"] if d["inject_n"] else 0
+        d["inject_gain"] = d["inject_b_l1"] - d["inject_a_l1"]
     await _close_memory()
     return {
         "degraded": degraded,
@@ -247,6 +267,7 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
         "inject_b_l1": inject_b_ok / inject_n if inject_n else 0,
         "inject_b_gain": (inject_b_ok - inject_a_ok) / inject_n if inject_n else 0,
         "sample_warning": sample_warn,
+        "by_difficulty": by_diff,
         "per_item": results,
     }
 
@@ -973,6 +994,10 @@ async def main() -> None:
                   f"N_miss={exp['n_band']['miss']}")
             print(f"[synonym] 组A L1={exp['group_a_l1']:.2%} | inject 子集 B L1={exp['inject_b_l1']:.2%} "
                   f"增益={exp['inject_b_gain']:+.2%}")
+            for _d, _m in sorted(exp.get("by_difficulty", {}).items()):
+                print(f"[synonym] 难度[{_d}] N={_m['n']} 组A L1={_m['a_l1']:.2%} "
+                      f"| inject 子集 B L1={_m['inject_b_l1']:.2%} 增益={_m['inject_gain']:+.2%} "
+                      f"(inject_n={_m['inject_n']})")
             if exp["sample_warning"]:
                 print("[synonym] WARNING: inject 子集样本不足(<8)，结论仅方向性")
         import json as _json
