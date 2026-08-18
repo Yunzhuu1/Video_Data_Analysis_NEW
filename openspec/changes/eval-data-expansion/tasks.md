@@ -15,11 +15,11 @@
 
 ## 3. 实验
 
-- [ ] 3.1 N=45 全量 --memory off 基线（真实 LLM）：**既有 25 例子集** L1-L4 与 N=25 基线一致（子集对比），N=45 整体单独报告
-- [ ] 3.2 --memory on 难层注入实验：**只统计 band=inject 真难层子集** → 组 B 对比 → easy/hard + miss 泛化层分层报告（含逐例翻转四列表，最小声明"至少 1 例翻转"）
+- [x] 3.1 N=45 全量 --memory off 基线（真实 LLM）：**既有 25 例子集** L1-L4 与 N=25 基线一致（子集对比），N=45 整体单独报告
+- [x] 3.2 --memory on 难层注入实验：**只统计 band=inject 真难层子集** → 组 B 对比 → easy/hard + miss 泛化层分层报告（含逐例翻转四列表，最小声明"至少 1 例翻转"）
 
 ## 4. 收尾
 
-- [ ] 4.1 Python pytest 全绿 + ruff clean
-- [ ] 4.2 docs/metrics-report.md 更新：N=45 基线 + 难度分层注入收益
-- [ ] 4.3 更新 docs/开发日志.md（倒序新条目）
+- [x] 4.1 Python pytest 全绿 + ruff clean
+- [x] 4.2 docs/metrics-report.md 更新：N=45 基线 + 难度分层注入收益
+- [x] 4.3 更新 docs/开发日志.md（倒序新条目）

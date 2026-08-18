@@ -116,7 +116,7 @@ async def main() -> int:
     print(f"{'id':<6}{'band':<10}{'判定':<14}{'组A':<6}{'组B':<6} q")
     for r in res["rows"]:
         b = "—" if "b_l1" not in r else str(r.get("b_l1"))
-        print(f"{r['id']:<6}{r['band']:<10}{r['verdict']:<14}{str(r['a_l1']):<6}{b:<6} {r['question']}")
+        print(f"{r['id']:<6}{r['band']:<10}{r['verdict']:<14}{r['a_l1']!s:<6}{b:<6} {r['question']}")
     print(f"\nhard 候选 N={res['hard_n']} | {res['counts']}")
     print(f"真难层 = {res['true_hard_n']}（≥8 才有注入实验统计意义，否则并入诚实报告）")
     if res["true_hard_n"]:
