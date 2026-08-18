@@ -220,16 +220,31 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 - **WHEN** 运行相似反例用例（real 模式）
 - **THEN** 预置"毒化变体"（问题文本与 intent 指标不一致）通过 `POST /internal/memory/seed` 写入 eval namespace（服务器 store）；查询同文本（相似度 ≥ 直通阈值）时 metrics 一致性校验拦截，band != hit
 
+### Requirement: 评测数据覆盖与难度分层
+评测数据集 SHALL 具备可扩展的覆盖度与难度分层：golden cases 覆盖多指标/多条件/跨表/长尾歧义等多类场景；同义表达集 SHALL 标注 `difficulty`（easy/hard），**hard 层以"无记忆基线（组 A）实测 L1<100%"为客观筛选标准**，不拍脑袋标难。
+
+#### Scenario: golden 覆盖度
+- **WHEN** 评测数据集（golden cases）包含多指标组合、多条件过滤、排名+时间嵌套、跨表 JOIN、长尾/歧义等场景
+- **THEN** 每个可判定用例标注 `golden_spec`，可参与口径正确率统计；歧义题可不标 golden_spec（仅端到端统计）
+
+#### Scenario: 难层客观筛选
+- **WHEN** 对同义集 hard 层候选运行无记忆基线（组 A）并计算运行时 band（与线上同一检索器）
+- **THEN** 仅保留 **组 A L1<100% 且 band=inject** 的条目为"真难层"；band=miss 的难层条目归入"miss 泛化层"单独报告；hard 层若无真难层，报告如实标注"注入不可达或无增益"，不硬凑
+
 ### Requirement: 量化指标测量
-评测 SHALL 支持量化指标的测量与报告：token 计量（LLM 调用 usage）、同义表达问题集的注入收益/冷热启动实验、以及可写进简历的指标报告（含历史轨迹与对比基线）。同义集实验的 band 分层 SHALL 取自**与线上同一实现**的检索器（混合检索），报告 SHALL 注明**检索器实现/阈值/embedding 模型**三变量配置。
+评测 SHALL 支持量化指标的测量与报告：token 计量（LLM 调用 usage）、同义表达问题集的注入收益/冷热启动实验、以及可写进简历的指标报告（含历史轨迹与对比基线）。同义集实验的 band 分层 SHALL 取自**与线上同一实现**的检索器（混合检索），报告 SHALL 注明**检索器实现/阈值/embedding 模型**三变量配置，并按**难度分层**（easy/hard）输出注入收益。
 
 #### Scenario: token 计量
 - **WHEN** 运行 real 模式评测
 - **THEN** 每用例记录 LLM token 消耗（prompt/completion/total）；命中直通仅消除解析阶段 token（用例总 token 仍含回答阶段），报告以"命中 vs 未命中用例总 token 差"衡量
 
 #### Scenario: 同义集注入收益（按波段分层，band 运行时取自检索器）
-- **WHEN** 以同义表达问题集（YAML 存 question/golden/source_case，不静态标 band）运行无记忆（--memory off）与有记忆（--memory on，先沉淀后同义集）两组，band 由 runner 对每条同义问题执行**与线上同一实现**的检索（取 top-1）
+- **WHEN** 以同义表达问题集（YAML 存 question/golden/source_case/difficulty，不静态标 band）运行无记忆（--memory off）与有记忆（--memory on，先沉淀后同义集）两组，band 由 runner 对每条同义问题执行**与线上同一实现**的检索（取 top-1）
 - **THEN** 报告对比 **inject 波段子集**的 L1 口径成功率与 inject 命中率；miss 波段子集单独报告（LLM 自身泛化）；hit 波段归直通实验；报告注明**检索器实现/阈值/embedding 模型**三变量（如 `hybrid(doubao-embedding-vision-251215)/0.92-0.80/w=0.7`）
+
+#### Scenario: 难层注入收益（按难度分层）
+- **WHEN** 同义集包含 `difficulty: hard` 条目，且已通过组 A 实测筛选（保留 **L1<100% 且 band=inject** 的真难层）
+- **THEN** 报告分别输出 easy / hard（真难层）/ miss 泛化层的 N、组 A L1、组 B L1 与注入增益，附逐例翻转四列表；hard 层增益 >0 说明注入示例将错误改写掰回正确，=0 则如实报告"该难度层注入无增益"（最小声明口径：至少 1 例翻转，不宣称显著提升）
 
 #### Scenario: 冷热启动（检索侧）
 - **WHEN** 以空记忆（冷）与预置记忆 seed（热）分别运行同义集
@@ -241,4 +256,4 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 
 #### Scenario: 指标报告
 - **WHEN** 生成 `docs/metrics-report.md`
-- **THEN** 包含历史轨迹表（逐轮端到端/L1/拦截率/命中率，附 commit）、正确性/安全/效率/记忆价值指标、实验协议与可复现说明
+- **THEN** 包含历史轨迹表（逐轮端到端/L1/拦截率/命中率，附 commit）、正确性/安全/效率/记忆价值指标、实验协议与可复现说明，以及样本量 N 与难度分层
