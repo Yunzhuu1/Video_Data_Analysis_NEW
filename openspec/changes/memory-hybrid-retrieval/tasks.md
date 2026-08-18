@@ -5,14 +5,14 @@
 
 ## 1. 存储与检索核心
 
-- [ ] 1.1 MemoryStore 加 `embedding TEXT`（JSON list[float]，格式写死）+ `embedding_model TEXT` 列（ALTER 迁移 + 存量惰性回填，**每 search 至多补算 10 条**）；upsert 同步写 embedding；单测（迁移/回填有界/模型变更失效重算）
-- [ ] 1.2 BM25 实现（std 自实现，1-2 字切分，可单测命中排序）
-- [ ] 1.3 HybridRetriever（精确快路径 + cosine + BM25 融合 + 双阈值 + 降级 difflib），实现/修正 Retriever 协议（补 namespace 参数）；**inject 示例按 intent 去重（top-3 尽量跨 intent）**；单测三档边界 + 毒化对不命中 + 降级路径（embedding=None → 行为同现状）+ inject intent 去重（**sparse_embedding 仅记录为后续可选项，本期用自研 BM25**）
+- [ ] 1.1 LanceDB VectorStore：`memory.lance/` 单表（norm_question/resolved_intent/metric_codes/hit_count/last_hit_at/resolver_hash/embedding_model/embedding）+ HNSW 向量索引 + norm_question FTS 索引 + namespace 过滤；存量 SQLite 数据导入 + 惰性回填（**每 search ≤10 条**，启动后台预回填）；`VectorStore` 接口抽象（store 可替换，未来迁 Qdrant）；单测（schema/索引/导入/回填有界/WAL/模型变更失效重算）
+- [ ] 1.2 LanceDB FTS（BM25）可用性验证：中文短句命中排序单测；若切分质量不足 → 回退自研 BM25 或接方舟 sparse（写进报告）
+- [ ] 1.3 HybridRetriever（精确快路径 + LanceDB hybrid 查询（向量+FTS+过滤）+ 双阈值 + 降级 difflib），实现/修正 Retriever 协议（补 namespace 参数）；**inject 示例按 intent 去重（top-3 尽量跨 intent）**；单测三档边界 + 毒化对不命中 + 降级路径（embedding=None → 行为同现状）+ inject intent 去重
 
 ## 2. 接入与配置
 
-- [ ] 2.1 nodes.py 用 build_retriever() 工厂替换直接实例化（settings 决定 hybrid/text）；融合权重 w 与阈值走 settings
-- [ ] 2.2 阈值标定脚本 `app/eval/calibrate_thresholds.py`：按 design D4 公式（cos_norm=max(0,cos)；bm25_norm=score/top1；score=w·cos_norm+(1−w)·bm25_norm）调 EmbeddingProvider（可 mock）输出同义集/毒化对/近重复对三组分布 → 定 hit/inject 阈值与 w → 写入 settings + 报告三变量（`hybrid(doubao-embedding-<model>)/hit_t-inject_t/w`）；单测：标定脚本可复现（同输入同输出）
+- [ ] 2.1 nodes.py 用 build_retriever()/VectorStore 工厂替换直接实例化（settings 决定 hybrid/text）；融合权重 w 与阈值走 settings
+- [ ] 2.2 阈值标定脚本 `app/eval/calibrate_thresholds.py`：消费 LanceDB hybrid 打分（或按 design D4 公式：cos_norm=max(0,cos)；bm25_norm=score/top1；score=w·cos_norm+(1−w)·bm25_norm）调 EmbeddingProvider（可 mock）输出同义集/毒化对/近重复对三组分布 → 定 hit/inject 阈值与 w → 写入 settings + 报告三变量（`hybrid(doubao-embedding-<model>)/hit_t-inject_t/w`）；单测：标定脚本可复现（同输入同输出）
 
 ## 3. 实验与报告闭环
 
