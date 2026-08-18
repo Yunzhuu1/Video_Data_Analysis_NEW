@@ -21,13 +21,16 @@
 
 ## Decisions
 
-### D1：Embedding 来源——火山方舟 doubao-embedding API（文本端点）+ 降级兜底
-- **选**：外接火山方舟文本向量端点 `POST {ARK_BASE_URL}/api/v3/embeddings`（`doubao-embedding-*`），`EmbeddingProvider` 用 httpx 封装（**embedding 侧零新增依赖**，httpx 已是现有依赖；存储侧新增 lancedb 见 D3/D6）。
-- **替代考虑**：① 本地 bge-small-zh（sentence-transformers+torch）→ 引入 ~2-3GB 依赖，被 API 方案取代；② 纯 BM25/词级 → 离线已实测分不开同义改写；③ 不升级（保持现状）→ 注入实验永久空转。
-- **为何 API 而非本地**：火山方舟是国内服务（北京 region），对本项目网络最稳（先前否决 API 的理由不成立）；成本 ≈ 0.0005 元/千 tokens（本规模 <1 分钱）；**彻底绕开 torch/transformers 依赖问题**；文档还支持稀疏向量（后续可作词面信号升级，见 D2）。
-- **可注入/mock**：`EmbeddingProvider` 定义 `embed(question) -> list[float] | None` 接口，测试注入固定向量实现（CI 无 key 可跑）；真实实现调 API。
-- **调用失败降级**：embed 返回 None 或抛错 → 仅告警（`memory disabled embedding: ...`），检索降级 `TextSimilarityRetriever`（现状行为 0.95/0.85）——与"记忆失败不打断主链路"哲学一致。
-- **模型版本**：`embedding_model` 列存 Model ID（如 `doubao-embedding-xxx`）+ 配置哈希，模型变更 → 全量失效重算。
+### D1：Embedding 来源——火山方舟 doubao-embedding API（多模态端点 + 文本输入）+ 降级兜底
+- **选**：外接火山方舟**多模态向量端点** `POST /api/v3/embeddings/multimodal`（实测可用：账号开通的是 `doubao-embedding-vision-251215`，2048 维；`/api/v3/embeddings` 文本端点对 text 模型 404——账号未开通）。`EmbeddingProvider` 用 httpx 封装（**embedding 侧零新增依赖**，httpx 已有；存储侧 lancedb 见 D3/D6）。
+- **调用语义（实测确认）**：多模态端点 `input` 列表 = **单文档的多模态内容**（text/image/video 组合），**一次调用返回 1 个 embedding**——批量文本需逐条调用（EmbeddingProvider 内部 for 循环）。
+- **base URL 容错**：`ARK_BASE_URL` 允许带或不带 `/api/v3` 后缀，代码归一化（`re.sub(r'/api/v3$', '', base)`）。
+- **替代考虑**：① 本地 bge-small-zh（sentence-transformers+torch）→ ~2-3GB 依赖，被 API 取代；② 纯 BM25/词级 → 分不开同义改写；③ 不升级 → 注入实验永久空转。
+- **为何 API 而非本地**：国内北京 region 网络最稳；成本 ≈0.0005 元/千 tokens（本规模 <1 分钱）；绕开 torch/transformers；文档支持稀疏向量（后续可作词面信号升级，见 D2）。
+- **可注入/mock**：`EmbeddingProvider` 定义 `embed(question) -> list[float] | None`，测试注入固定向量（CI 无 key 可跑）。
+- **调用失败降级**：embed 返回 None/抛错 → 仅告警，检索降级 `TextSimilarityRetriever`（0.95/0.85）——不打断主链路。
+- **模型版本**：`embedding_model` 列存 Model ID + 配置哈希，模型变更 → 全量失效重算。
+- **确定性注意（实测）**：同文本两次 cos≈0.999（非严格 1.0）——命中路径靠"精确匹配快路径"（norm 相等）保 100% 契约，不依赖 embedding；embedding 只用于近重复/语义改写候选。
 
 ### D2：检索架构——三层混合 HybridRetriever（实现既有 Retriever 协议）
 ```
@@ -60,9 +63,10 @@ search(question, namespace)
   - hit 阈值 = 「毒化对（点赞量 vs 播放量）全部落在 hit 之下」的最小值
   - inject 阈值 = 「期望注入的同义条目全部落在 inject 区间」的最大值
   - 输出三组分布表（同义集 20 条 / 毒化对 / 近重复对）→ 定阈值与 w → 写 settings + 报告
-- **硬门槛（先验证后实现，判定式可执行——P1）**：任务 0.2 通过条件 =
-  `存在阈值区间 (inject_t, hit_t] 使 毒化对全部 < hit_t 且 ≥60% 的同义注入条目 > inject_t`
-  （60% 为示例值，按实测分布调整；**关键是可计算、可争论**）；不满足 → 回 design 改方案（仿 semantic-dimensions 根因基线）。
+- **硬门槛（先验证后实现，判定式可执行——P1，2026-08-18 实测修订）**：
+  - **实测发现**：毒化对"播放量 vs 点赞量"仅一字之差，cosine=0.812 高于 8/20 条同义对（min 0.703）——**任何相似度都无法把"一字差的指标对"从语义改写中分离**，原判据"毒化对全部 < hit_t"结构性不可满足。
+  - **修订判定式**：`近重复（一字微调）≥ hit_t（≈0.95，实测 0.989）` 且 `≥60% 同义注入条目 ≥ inject_t（≈0.80，实测 14/20=70%）`；**毒化保护由 `metrics_consistent`（catalog 校验）承担**（c25 反例功能单测，非相似度层）。
+  - 不满足 → 回 design 改方案（仿 semantic-dimensions 根因基线）。
 
 ### D5：runner/实验一致性——band 必须取自真实检索器
 - `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**实例化真实 retriever（与 nodes.py 同一工厂）**对每条同义问题 search 取 top-1 band——实验测的就是线上跑的。
@@ -103,7 +107,7 @@ search(question, namespace)
 
 ## Open Questions
 
-- **端点/模型确认**：用文本端点 `POST /api/v3/embeddings`（`doubao-embedding-*`）而非多模态端点；确认 Model ID 与维度。
+- **端点/模型已确认（实测）**：多模态端点 `/api/v3/embeddings/multimodal` + `doubao-embedding-vision-251215`（2048 维）；账号未开通文本模型（text 端点 404）。
 - **存储已定 LanceDB**（docs §5.3 决策记录）；待实测确认：LanceDB 中文 FTS 切分质量是否够（不够则回退自研 BM25 或接 sparse）。
 - **词面信号**：默认消费 LanceDB 原生 BM25 FTS；火山方舟 API 原生稀疏向量（sparse_embedding）作为后续可选项（模型级质量，需验证与 dense 的同模型一致性）。
 - **key 获取**：用户在方舟控制台开通模型 + 创建 API Key（`ARK_API_KEY`），apply 前提供。

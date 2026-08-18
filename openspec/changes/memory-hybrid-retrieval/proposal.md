@@ -4,7 +4,7 @@ metrics-report（§5/§7）与开发日志反复钉死的瓶颈：`difflib` 字�
 
 ## What Changes
 
-- **Embedding 基础设施**（新增 `app/memory/embeddings.py`）：**外接火山方舟 doubao-embedding API**（文本端点 `POST /api/v3/embeddings`，httpx 封装，零新增 pip 依赖）；EmbeddingProvider 可注入/mock（CI 无 key 也能测）；调用失败 → 日志告警 + 自动降级 difflib（记忆失败不打断主链路哲学）；embedding 模型名+版本记录进 `embedding_model` 列（模型变更全量失效重算）。
+- **Embedding 基础设施**（新增 `app/memory/embeddings.py`）：**外接火山方舟 doubao-embedding API**（**多模态端点** `POST /api/v3/embeddings/multimodal`，文本输入，实测 `doubao-embedding-vision-251215` 2048 维；一次调用返回 1 个 embedding，批量逐条调）；EmbeddingProvider 可注入/mock（CI 无 key 也能测）；调用失败 → 日志告警 + 自动降级 difflib；embedding 模型名+版本记录进 `embedding_model` 列（模型变更全量失效重算）。
 - **HybridRetriever**（实现既有 `Retriever` 协议）：
   - ① 精确匹配快路径：`norm_question` 完全相等 → hit（score=1.0，保持"同问同答 100% 一致"确定性契约，不依赖模型）
   - ② 语义信号：query embedding vs 条目 embedding 的 cosine（LanceDB HNSW 向量索引）
@@ -14,7 +14,7 @@ metrics-report（§5/§7）与开发日志反复钉死的瓶颈：`difflib` 字�
 - **存储换 LanceDB**（嵌入式列式向量库，替代 SQLite JSON blob）：`memory.lance/` 单表 = `norm_question / resolved_intent / metric_codes / hit_count / last_hit_at / resolver_hash / embedding`；HNSW 向量索引 + FTS 索引 + WAL 持久化；存量 SQLite 数据导入 + 惰性回填（每 search ≤10 条）；`VectorStore` 接口抽象（`Retriever` 同源，未来可换 Qdrant）。选型矩阵与代价见 `docs/记忆系统设计.md` §5.3。
 - **阈值重标定（离线脚本，可复现）**：对（同义集 20 条 vs 沉淀记忆、毒化对 点赞量/播放量、近重复对）输出 cosine+BM25 融合分布 → hit 阈值 = 「毒化对全部落于其下」的最小值；inject 阈值 = 「期望注入同义条目全部落于区间内」的最大值 → 写进 settings + design。
 - **实验与报告闭环**：runner `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**调真实 retriever**（实验测的就是线上跑的）；exp2/exp3 重跑，预期注入带首次可填充；`docs/metrics-report.md` 更新，报告配置三变量加 **embedding 模型名**。
-- **外部依赖（运行时）**：火山方舟 `ARK_API_KEY` + 开通 doubao-embedding 模型（文本端点）；成本 ≈ 0.0005 元/千 tokens（本规模总成本 <1 分钱）。
+- **外部依赖（运行时）**：火山方舟 `ARK_API_KEY` + 已开通的 doubao-embedding-vision 模型（多模态端点，文本输入）；成本 ≈ 0.0005 元/千 tokens（本规模总成本 <1 分钱）。
 - **pip 依赖**：新增 `lancedb`（+ `pyarrow`，几十 MB）；不引入 torch/transformers、不引入向量数据库服务端（Qdrant/Milvus）。
 
 ## Capabilities

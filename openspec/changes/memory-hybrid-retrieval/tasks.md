@@ -1,7 +1,7 @@
 ## 0. 环境与硬门槛（先验证后实现）
 
 - [ ] 0.1 环境/凭据：用户开通火山方舟 doubao-embedding 文本模型 + 创建 `ARK_API_KEY`（写进 .env，settings 加 `ark_api_key`/`ark_embedding_model`/`ark_base_url`）；`EmbeddingProvider`（httpx 封装，可注入/mock）单测：mock 返回固定向量、失败 → 告警 + 返回 None（降级 difflib）
-- [ ] 0.2 硬门槛（判定式可执行）：标定脚本跑同义集 20 条 vs 沉淀记忆 + 毒化对（点赞量/播放量）的融合分分布（调 API，可 mock），验证「存在阈值区间 (inject_t, hit_t] 使 毒化对全部 < hit_t 且 ≥60% 同义注入条目 > inject_t」；不满足 → 回 design 改方案（仿 semantic-dimensions 根因基线）
+- [ ] 0.2 硬门槛（判定式可执行，2026-08-18 已实测修订）：标定脚本跑同义集 20 条 vs 沉淀记忆 + 近重复对的分布（调 API，可 mock），验证「近重复 ≥ hit_t（≈0.95）且 ≥60% 同义条目 ≥ inject_t（≈0.80）」；**毒化保护由 metrics_consistent（c25 反例）承担，不做相似度分离**（一字差指标对任何相似度都分不开，实测已证）；不满足 → 回 design
 
 ## 1. 存储与检索核心
 
