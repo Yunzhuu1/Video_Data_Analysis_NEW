@@ -15,6 +15,6 @@ async def test_calibration_reproducible():
         assert r1["rows"] == r2["rows"]  # 同输入同输出（可复现）
         assert r1["near_score"] == r2["near_score"]
         assert r1["poison_score"] == r2["poison_score"]
-        assert len(r1["rows"]) == 20
+        assert len(r1["rows"]) == 35  # 20 易层 + 15 难层
     finally:
         reset_embedding_provider(None)
