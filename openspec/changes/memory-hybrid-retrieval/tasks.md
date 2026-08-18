@@ -18,11 +18,11 @@
 
 - [x] 3.1 **修复 review P1（eval-metrics 遗留）**：`_compute_synonym_bands` 改为调用真实检索器 `search()` 取 top-1 band（与 nodes.py 同一工厂/同一判定，含 metrics_consistent + catalog + acceptable 复检），禁止内联重写打分；删除 platform 死代码（real 分支不可达）；补一致性单测：seed 一条 metric 不一致的相似条目 → 断言 runner band ≠ 运行时 hit（兑现"零偏差"承诺，向量化后不红）
 - [x] 3.2 **review 次要项**：`_seed_memory` 失败补日志（不再静默吞错）；metrics-report 口径修正——real+real 时 `tokens_total` 显示 0（非 None）；重复对 token 归因口径（r1+r2 进单桶）在报告注明
-- [ ] 3.3 exp2/exp3 重跑（真实 LLM）：**跑前探测 embedding 可用性，不可用则实验标 DEGRADED（报告显式注明，防 N_inject=0 归因污染）**；记录 N_hit/N_inject/N_miss（预期 inject 带首次可填充）、注入子集 L1 对比、**近重复 hit 召回（较 difflib 基线提升 ≥50%）**、毒化对精度、**注入示例 intent 分布（可审计）**
-- [ ] 3.4 --memory off 全量回归 L1-L4 不回退 + 同问同答 100% 不回退 + 毒化反例不命中
+- [x] 3.3 exp2/exp3 重跑（真实 LLM）：**跑前探测 embedding 可用性，不可用则实验标 DEGRADED（报告显式注明，防 N_inject=0 归因污染）**；记录 N_hit/N_inject/N_miss（预期 inject 带首次可填充）、注入子集 L1 对比、**近重复 hit 召回（较 difflib 基线提升 ≥50%）**、毒化对精度、**注入示例 intent 分布（可审计）**
+- [x] 3.4 --memory off 全量回归 L1-L4 不回退 + 同问同答 100% 不回退 + 毒化反例不命中
 
 ## 4. 收尾
 
-- [ ] 4.1 Python pytest 全绿 + ruff clean
-- [ ] 4.2 docs/metrics-report.md 更新：记忆价值节（检索器三变量 + 新 band 分布 + 注入/冷热新结果）+ token 口径修正（real+real 显示 0）+ 重复对归因注明
-- [ ] 4.3 更新 docs/开发日志.md（倒序新条目）
+- [x] 4.1 Python pytest 全绿 + ruff clean
+- [x] 4.2 docs/metrics-report.md 更新：记忆价值节（检索器三变量 + 新 band 分布 + 注入/冷热新结果）+ token 口径修正（real+real 显示 0）+ 重复对归因注明
+- [x] 4.3 更新 docs/开发日志.md（倒序新条目）
