@@ -6,7 +6,7 @@ from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
 from app.memory.embeddings import get_embedding_provider
-from app.memory.retriever import TextSimilarityRetriever, build_retriever, metrics_consistent, normalize_question
+from app.memory.retriever import TextSimilarityRetriever, build_retriever, hit_allowed, metrics_consistent, normalize_question
 from app.memory.store import MemoryStore, compute_resolver_hash
 from app.settings import settings
 from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
@@ -87,12 +87,6 @@ def _acceptable_intent(intent: dict) -> bool:
     )
 
 
-def _catalog_valid(entry, catalog: list[dict]) -> bool:
-    """存储条目的 metric_codes 必须都在当前 catalog 中（口径变更即失效）。"""
-    codes = {str(m.get("metricCode")) for m in catalog}
-    return all(code in codes for code in (entry.metric_codes or []))
-
-
 async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
     """记忆前置：hit → 直通复用；inject → few-shot；失败静默降级。返回处理后的 state 或 None。"""
     if memory is None or not settings.memory_enabled:
@@ -103,19 +97,18 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
         if not hits:
             return None
         best = hits[0]
-        if best.band == "hit" and _catalog_valid(best.entry, catalog) \
-                and metrics_consistent(state["question"], best.entry, catalog):
+        if best.band == "hit" and hit_allowed(state["question"], best.entry, catalog):
             intent = best.entry.resolved_intent
-            if _acceptable_intent(intent):
-                state["resolved_intent"] = intent
-                state["semantic_ok"] = True
-                state["sql_source"] = "memory"
-                state["memory_hit"] = True
-                state["memory_band"] = "hit"
-                if best.entry.id is not None:
-                    await memory.record_hit(best.entry.id)
-                return state
-            # acceptable 复检不过 → 降级 miss（走正常 LLM）
+            state["resolved_intent"] = intent
+            state["semantic_ok"] = True
+            state["sql_source"] = "memory"
+            state["memory_hit"] = True
+            state["memory_band"] = "hit"
+            if best.entry.id is not None:
+                await memory.record_hit(best.entry.id)
+            return state
+        # acceptable 复检不过 → 降级 miss（走正常 LLM）
+        if best.band == "hit":
             state["memory_band"] = "hit_rejected"
             return None
         if best.band == "inject":

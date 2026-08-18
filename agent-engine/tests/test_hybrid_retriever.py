@@ -11,6 +11,9 @@ from tests.test_vector_store import FakeProvider
 class CharBagProvider:
     """语义假 provider：字符袋向量（同字共享 → 相似文本高 cosine），模拟真实 embedding 行为。"""
 
+    def available(self):
+        return True
+
     async def embed(self, text):
         vec = np.zeros(DEFAULT_VECTOR_DIM, dtype="float32")
         for ch in text:

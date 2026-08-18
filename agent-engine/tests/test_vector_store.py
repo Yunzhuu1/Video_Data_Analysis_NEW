@@ -14,6 +14,9 @@ class FakeProvider:
         self.default = default if default is not None else [0.0] * DEFAULT_VECTOR_DIM
         self.fail = fail
 
+    def available(self):
+        return True
+
     async def embed(self, text):
         if self.fail:
             return None

@@ -109,18 +109,33 @@ class HybridRetriever:
         self.weight = weight
 
     async def search(self, question: str, limit: int = 3, namespace: str = "default") -> list[MemoryHit]:
+        """返回非 miss 候选（hit/inject），分数降序。"""
+        cands = await self._candidates(question, namespace)
+        scored = [MemoryHit(entry=e, score=score, band=band) for e, score, band in cands if band != _MISS]
+        scored.sort(key=lambda h: (h.score, h.entry.hit_count), reverse=True)
+        return scored[:limit]
+
+    async def best_score(self, question: str, namespace: str = "default") -> float:
+        """原始融合分 top-1（含 miss 带，供阈值标定使用，不经过滤）。无候选返回 0.0。"""
+        cands = await self._candidates(question, namespace)
+        return max((score for _e, score, _band in cands), default=0.0)
+
+    async def _candidates(self, question: str, namespace: str) -> list[tuple[Any, float, str]]:
+        """路径 B 融合的原始候选（含 miss 带）：精确快路径 / 向量+FTS 自算 / difflib 降级。"""
+        from typing import Any as _Any
+
         norm = normalize_question(question)
         # ① 精确匹配快路径（确定性契约：同问同答 100%，不依赖模型）
         entry = await self.store.find_by_question(norm, namespace)
         if entry is not None:
-            return [MemoryHit(entry=entry, score=1.0, band=_HIT)]
+            return [(entry, 1.0, _HIT)]
 
         # ②③ 向量 + FTS 分开查
         vec = await self.provider.embed(question)
         if not vec:
-            return await self._fallback_text(norm, namespace, limit)
+            return await self._fallback_candidates(norm, namespace)
 
-        k = max(limit * 3, 10)
+        k = max(10, 10)
         vec_hits = await self.store.search_by_vector(vec, namespace, k)
         fts_hits = await self.store.fts_search(norm, namespace, k)
         merged: dict[int, list] = {}
@@ -133,7 +148,7 @@ class HybridRetriever:
                 merged[e.id] = [e, 0.0, bm25]
 
         top1_bm25 = max((v[2] for v in merged.values()), default=0.0)
-        scored: list[MemoryHit] = []
+        cands: list[tuple[Any, float, str]] = []
         for _eid, (e, cos, bm25) in merged.items():
             cos_norm = cos  # 已裁剪
             bm25_norm = bm25 / top1_bm25 if top1_bm25 else 0.0
@@ -143,10 +158,25 @@ class HybridRetriever:
                 band = _HIT
             elif score >= self.inject_threshold:
                 band = _INJECT
-            if band != _MISS:
-                scored.append(MemoryHit(entry=e, score=score, band=band))
-        scored.sort(key=lambda h: (h.score, h.entry.hit_count), reverse=True)
-        return scored[:limit]
+            cands.append((e, score, band))
+        cands.sort(key=lambda c: (c[1], c[0].hit_count), reverse=True)
+        return cands
+
+    async def _fallback_candidates(self, norm: str, namespace: str) -> list[tuple[Any, float, str]]:
+        """embedding 不可用 → difflib 降级（与 TextSimilarityRetriever 同语义）。"""
+        from typing import Any as _Any
+
+        cands: list[tuple[Any, float, str]] = []
+        for entry in await self.store.all(namespace):
+            score = difflib.SequenceMatcher(None, norm, entry.norm_question).ratio()
+            band = _MISS
+            if score >= self.hit_threshold:
+                band = _HIT
+            elif score >= self.inject_threshold:
+                band = _INJECT
+            cands.append((entry, score, band))
+        cands.sort(key=lambda c: (c[1], c[0].hit_count), reverse=True)
+        return cands
 
     async def _fallback_text(self, norm: str, namespace: str, limit: int) -> list[MemoryHit]:
         """embedding 不可用 → difflib 降级（与 TextSimilarityRetriever 同语义）。"""
@@ -176,3 +206,24 @@ def build_retriever(memory, provider=None) -> Retriever:
             getattr(settings, "memory_fusion_weight", 0.7))
     return TextSimilarityRetriever(
         memory, settings.memory_hit_threshold, settings.memory_inject_threshold)
+
+
+def intent_acceptable(intent: dict) -> bool:
+    """意图可接受性（与 nodes 判定一致）：有 metrics + intent 合法 + 置信度 ≥0.5。"""
+    return bool(
+        intent.get("metrics")
+        and intent.get("intent") in {"aggregate", "trend", "ranking", "detail"}
+        and float(intent.get("confidence") or 0.0) >= 0.5
+    )
+
+
+def hit_allowed(question: str, entry: MemoryEntry, catalog: list[dict[str, Any]]) -> bool:
+    """运行时命中四重判定（nodes.py 与 runner band 分层共用的同一判定，零偏差承诺）：
+    catalog 校验（口径未变）+ metrics 一致性（防"点赞量"误命中"播放量"）+ 意图可接受。
+    """
+    codes = {str(m.get("metricCode")) for m in catalog or []}
+    if not all(code in codes for code in (entry.metric_codes or [])):
+        return False
+    if not metrics_consistent(question, entry, catalog):
+        return False
+    return intent_acceptable(entry.resolved_intent or {})

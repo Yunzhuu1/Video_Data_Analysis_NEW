@@ -110,46 +110,40 @@ async def _close_memory() -> None:
         nodes.memory = None
 
 
-async def _compute_synonym_bands(questions: list[str], namespace: str, platform: str) -> dict[str, str]:
-    """运行时 band 分层：取 eval namespace 实际条目，对每条同义问题真实 retriever.search 取 top-1 band。"""
-    import difflib
+async def _compute_synonym_bands(questions: list[str], namespace: str) -> dict[str, str]:
+    """运行时 band 分层（零偏差承诺）：对每条同义问题用【与线上同一实现】的检索器 search 取 top-1 band。
 
-    from app.memory.retriever import normalize_question
-    from app.memory.store import MemoryEntry
+    与 nodes.py 同一工厂/同一判定（含 metrics_consistent + catalog + acceptable 复检），
+    不内联重写打分（修复 eval-metrics review P1）。embedding 不可用 → 检索器内部降级 difflib。
+    """
+    from app.graph import nodes
+    from app.memory.embeddings import get_embedding_provider
+    from app.memory.retriever import build_retriever, hit_allowed
 
-    entries: list[MemoryEntry] = []
-    if platform == "real":
-        async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.get(
-                "http://localhost:8090/internal/memory/entries",
-                params={"namespace": namespace},
-                headers={"X-Internal-Token": settings.internal_api_token})
-            resp.raise_for_status()
-            for e in resp.json().get("entries", []):
-                entries.append(MemoryEntry(norm_question=e["norm_question"],
-                                           resolved_intent={}, metric_codes=e.get("metric_codes", []),
-                                           resolver_hash="", id=e["id"]))
-    else:
-        from app.graph import nodes
-        if nodes.memory is not None:
-            entries = await nodes.memory.all(namespace)
+    if nodes.memory is None:
+        return {q: "miss" for q in questions}
+    # 与运行时同源的 catalog（mock 平台即本地 metric_catalog.json）
+    catalog: list[dict] = []
+    try:
+        import json as _json
+        catalog = _json.loads((ROOT / "src" / "main" / "resources" / "metric_catalog.json").read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001 - catalog 读取失败则不额外校验
+        pass
+    retriever = build_retriever(nodes.memory, get_embedding_provider())
     bands: dict[str, str] = {}
     for q in questions:
-        norm = normalize_question(q)
-        best_band = "miss"
-        best_score = 0.0
-        for e in entries:
-            score = difflib.SequenceMatcher(None, norm, e.norm_question).ratio()
-            if score >= settings.memory_hit_threshold:
-                band = "hit"
-            elif score >= settings.memory_inject_threshold:
-                band = "inject"
-            else:
-                band = "miss"
-            if score > best_score:
-                best_score = score
-                best_band = band
-        bands[q] = best_band
+        try:
+            hits = await retriever.search(q, namespace=namespace)
+            if not hits:
+                bands[q] = "miss"
+                continue
+            band = hits[0].band
+            # 零偏差：band=hit 也须过运行时四重判定（catalog/metrics/acceptable），否则标 hit_rejected
+            if band == "hit" and catalog and not hit_allowed(q, hits[0].entry, catalog):
+                band = "hit_rejected"
+            bands[q] = band
+        except Exception:  # noqa: BLE001 - 检索失败按 miss（不污染实验）
+            bands[q] = "miss"
     return bands
 
 
@@ -200,7 +194,7 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
                 "warnings": [], "errors": []})
         # 运行时 band 分层（沉淀后，对每条同义问题真实 retriever.search 取 top-1）
         bands = await _compute_synonym_bands([s["question"] for s in synonym_cases],
-                                             settings.memory_namespace, "mock")
+                                             settings.memory_namespace)
         for r in results:
             r["band"] = bands[r["question"]]
         for s in synonym_cases:
@@ -284,7 +278,7 @@ async def run_cold_hot_experiment(synonym_cases: list[dict], platform: str,
             namespace=settings.memory_namespace, platform="mock")
     # 运行时 band 分层（与注入实验一致：对每条同义问题真实 retriever top-1）
     bands = await _compute_synonym_bands([s["question"] for s in synonym_cases],
-                                         settings.memory_namespace, "mock")
+                                         settings.memory_namespace)
     for s in synonym_cases:
         start = time.perf_counter()
         state = await run_chatbi_graph({
@@ -385,11 +379,16 @@ async def _seed_memory(question: str, intent: dict, metric_codes: list[str],
                 resp.raise_for_status()
         else:
             if nodes.memory is None:
+                print(f"[eval] seed skipped: memory not initialized (q={question})")
                 return False
-            await nodes.memory.upsert(normalize_question(question), intent, metric_codes,
-                                      compute_resolver_hash(), namespace=namespace)
+            eid = await nodes.memory.upsert(normalize_question(question), intent, metric_codes,
+                                            compute_resolver_hash(), namespace=namespace)
+            if eid is not None and eid < 0:
+                print(f"[eval] seed skipped: embedding failed (q={question})")
+                return False
         return True
-    except Exception:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001 - 预置失败不再静默
+        print(f"[eval] seed failed (q={question}): {type(exc).__name__}: {exc}")
         return False
 
 
