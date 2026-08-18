@@ -59,6 +59,8 @@ class LanceVectorStore:
 
         self._db = lancedb.connect(self.path)
         tables = self._db.list_tables()
+        if hasattr(tables, "tables"):  # lancedb>=0.37: list_tables() 返回 ListTablesResponse 对象
+            tables = tables.tables
         if "memory" not in tables:
             self._table = self._db.create_table("memory", schema=_make_schema(self.vector_dim))
         else:
