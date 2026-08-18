@@ -1,6 +1,6 @@
 ## Context
 
-指标 ID 是语义层唯一锚点（`metric_definition.metric_code`）。现状 `extract_metric_names(question, catalog)` 用**字符串包含匹配 metricName**，实测缺口：cases.yaml 9/44、synonym 22/35（hard 73%）匹配不到指标名。`metrics_consistent`（retriever.py:81）在匹配不到时返回 False → 直通被拦（c07 real-session 缺 1）、hard 层注入不可达。本 change 建立「表达 → 指标 ID」的确定性映射，并顺带验证 HITL 指标澄清叙事的数字（虚拟澄清实验）。
+指标 ID 是语义层唯一锚点（`metric_definition.metric_code`）。现状 `extract_metric_names(question, catalog)` 用**字符串包含匹配 metricName**，实测缺口：cases.yaml 9/44 匹配不到，其中**可判定（有 golden_spec）5 个**（c07/n19/n20/n23/n25，目标口径）；synonym 22/35（hard 73%）。`metrics_consistent`（retriever.py:81）在匹配不到时返回 False → 直通被拦（c07 real-session 缺 1）、hard 层注入不可达。本 change 建立「表达 → 指标 ID」的确定性映射，并顺带验证 HITL 指标澄清叙事的数字（虚拟澄清实验）。
 
 约束：
 - 指标 ID 是权威锚点（catalog 口径/公式/来源表不变），别名/指纹只是**读取侧表达扩展**，不改写 catalog。
@@ -25,6 +25,7 @@
 ### D1：别名表（MVP，必做）
 - `app/eval/aliases.yaml`：`{alias: metric_code}`，人工审核沉淀，评测驱动补充（runner 输出"匹配不到指标名清单"→ 审阅 → 入表）。
 - 别名粒度：**词组级**（播放走势/播放趋势/播放表现 → total_plays），不用单字/单动词（"播放"会误匹配"播放时长"）。
+- **最长匹配优先**：catalog 精确名与别名重叠时按最长匹配（复用 eval-metrics「播放时长先于播放」规则）——"播放走势"不得被"播放"短词先匹配错配。
 - 来源：c07 类高频表达 + synonym easy 层高频表达；每个别名至少 1 个 golden/同义用例覆盖（防别名失效）。
 - 理由：企业实践共识（分析师配别名）+ 改动最小（YAML + 读取扩展 ~20 行）。
 
@@ -36,6 +37,8 @@
 ### D3：指标 ID 表达指纹（可选增强，阈值标定后启用）
 - `MetricIdFingerprint.build(catalog, entries)`：catalog.metricName + 写路径沉淀的 norm_question（按 metric_codes 归属）→ 每 ID 的表达集。
 - `match(question)` → 候选 ID：精确匹配 ∪ 模糊 top-1（question vs 每 ID 表达集的相似度 ≥ 指纹阈值）。
+- **相似度定义（P2-2）**：倾向复用混合检索的**融合分**（w·cos_norm + (1-w)·bm25_norm，同 D4 公式），保证指纹与检索器同源、标定可复现；若独立实现则明确用 embedding cosine 并单独标定（二选一写死，禁止"或"）。
+- **与混合检索的重叠（P2-4）**：不用"混合检索 top-N 条目的 metric_codes"直接当多指标候选，因为检索 top-N 受 namespace/记忆沉淀状态影响（default 冷启动为 0 条）；指纹是 **catalog + 沉淀的稳定 ID 视角**（7 个指标规模恒定），更轻量且与沉淀状态解耦。
 - 指纹阈值**比直通阈值宽**（如 0.6 vs hit 0.92），只做候选判定，最终仍走 metrics_consistent。
 - 每 ID 表达集上限（top-20 高频），防"播放"泛化误归。
 - 理由：别名覆盖高频确定性表达，指纹兜底动态表达；7 个指标规模小，指纹构建/匹配开销可忽略。
@@ -44,10 +47,10 @@
 ### D4：虚拟澄清实验（验证 HITL 叙事，必做）
 - 定义"歧义判定"：semantic resolve 低置信（confidence < 阈值）或 多指标候选（fingerprint/别名命中 ≥ 2 个 ID）。
 - **golden 模拟选择**：评测中用 golden_spec 的 metrics 自动"回答"澄清（不造真 HITL 交互）。
-- 产出三个数字：
-  1. **潜在澄清率** = 歧义问题数 / 总问题数（无记忆基线）；
-  2. **虚拟澄清收益** = 澄清后 L1 vs 不澄清 L1 的差值（说明澄清值不值得）；
-  3. **澄清率随记忆下降** = 沉淀后再跑同集，歧义问题数变化（说明记忆能否自动化掉澄清）。
+- 产出数字（全部按 band 分层，避免重蹈 eval-data-expansion P1 的 band 耦合）：
+  1. **潜在澄清率** = 歧义问题数 / 总问题数（无记忆基线），**必须拆「歧义且解析错误」/「歧义且解析正确」**——easy 层组 A L1=100% 说明大量歧义项 LLM 照样对、不需要澄清，裸占比会高估 HITL 需求（P2-3）；
+  2. **虚拟澄清收益** = 澄清后 L1 vs 不澄清 L1 的差值（**主指标**，诚实反映澄清价值）；
+  3. **澄清率随记忆下降** = 沉淀后再跑同集，**只统计 hit/inject 可达项**（这些才可能被记忆自动化掉）；miss 带歧义项单独报告「记忆不可达」——否则歧义项天然 band=miss 会让曲线恒 0，被误读为记忆对澄清无价值（P2-1）。
 - 理由：虚拟澄清用 golden 模拟"完美用户"，半天量化正确率上限与澄清需求，作为表达映射价值的**独立证据**；不实现真 HITL（用户明确不做，避免与实习经历重复且 ROI 低）。
 
 ### D5：评测与回归
