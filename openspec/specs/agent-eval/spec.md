@@ -221,19 +221,23 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 - **THEN** 预置"毒化变体"（问题文本与 intent 指标不一致）通过 `POST /internal/memory/seed` 写入 eval namespace（服务器 store）；查询同文本（相似度 ≥ 直通阈值）时 metrics 一致性校验拦截，band != hit
 
 ### Requirement: 量化指标测量
-评测 SHALL 支持量化指标的测量与报告：token 计量（LLM 调用 usage）、同义表达问题集的注入收益/冷热启动实验、以及可写进简历的指标报告（含历史轨迹与对比基线）。
+评测 SHALL 支持量化指标的测量与报告：token 计量（LLM 调用 usage）、同义表达问题集的注入收益/冷热启动实验、以及可写进简历的指标报告（含历史轨迹与对比基线）。同义集实验的 band 分层 SHALL 取自**与线上同一实现**的检索器（混合检索），报告 SHALL 注明**检索器实现/阈值/embedding 模型**三变量配置。
 
 #### Scenario: token 计量
 - **WHEN** 运行 real 模式评测
 - **THEN** 每用例记录 LLM token 消耗（prompt/completion/total）；命中直通仅消除解析阶段 token（用例总 token 仍含回答阶段），报告以"命中 vs 未命中用例总 token 差"衡量
 
 #### Scenario: 同义集注入收益（按波段分层，band 运行时取自检索器）
-- **WHEN** 以同义表达问题集（YAML 存 question/golden/source_case，不静态标 band）运行无记忆（--memory off）与有记忆（--memory on，先沉淀后同义集）两组，band 由 runner 对每条同义问题执行真实检索取 top-1
-- **THEN** 报告对比 **inject 波段子集**的 L1 口径成功率与 inject 命中率；miss 波段子集单独报告（LLM 自身泛化）；hit 波段归直通实验；报告注明检索器/阈值/embedding 模型三变量
+- **WHEN** 以同义表达问题集（YAML 存 question/golden/source_case，不静态标 band）运行无记忆（--memory off）与有记忆（--memory on，先沉淀后同义集）两组，band 由 runner 对每条同义问题执行**与线上同一实现**的检索（取 top-1）
+- **THEN** 报告对比 **inject 波段子集**的 L1 口径成功率与 inject 命中率；miss 波段子集单独报告（LLM 自身泛化）；hit 波段归直通实验；报告注明**检索器实现/阈值/embedding 模型**三变量（如 `hybrid(doubao-embedding-vision-251215)/0.92-0.80/w=0.7`）
 
 #### Scenario: 冷热启动（检索侧）
 - **WHEN** 以空记忆（冷）与预置记忆 seed（热）分别运行同义集
 - **THEN** 报告对比成功率与延迟（实验仅测检索侧，消除写路径方差，区别于全链路注入实验）
+
+#### Scenario: 阈值标定可复现
+- **WHEN** 生成混合检索的阈值标定报告
+- **THEN** 输出同义集/毒化对/近重复对三组相似度分布，标注 hit 阈值（毒化对全部落于其下的最小值）与 inject 阈值（期望注入条目全部落于区间内的最大值），阈值可复现
 
 #### Scenario: 指标报告
 - **WHEN** 生成 `docs/metrics-report.md`
