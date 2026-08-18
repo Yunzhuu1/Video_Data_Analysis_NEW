@@ -28,9 +28,16 @@ if BaseSettings is not None:
         eval_llm_mode: str = "real"  # real | record | replay | mock
         memory_db_path: str = "memory.sqlite"
         memory_enabled: bool = True
-        memory_hit_threshold: float = 0.95
-        memory_inject_threshold: float = 0.85
+        memory_hit_threshold: float = 0.92  # 混合检索标定（2026-08-18 实测）
+        memory_inject_threshold: float = 0.82  # 混合检索标定（2026-08-18 实测）
         memory_namespace: str = "default"
+        ark_base_url: str = "https://ark.cn-beijing.volces.com"
+        ark_api_key: str = ""
+        ark_embedding_model: str = ""  # 方舟 doubao-embedding Model ID（控制台开通后填入）
+        memory_lance_path: str = "memory.lance"
+        memory_store_backend: str = "lance"  # lance | sqlite（记忆存储后端，lance 需 lancedb + ark key）
+        memory_fusion_weight: float = 0.7   # 混合检索融合权重 w（D4 公式）
+        memory_vector_dim: int = 2048       # doubao-embedding-vision 实测维度
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -49,9 +56,16 @@ else:
             self.eval_llm_mode = os.getenv("EVAL_LLM_MODE", "real")
             self.memory_db_path = os.getenv("MEMORY_DB_PATH", "memory.sqlite")
             self.memory_enabled = _env_bool("MEMORY_ENABLED", True)
-            self.memory_hit_threshold = float(os.getenv("MEMORY_HIT_THRESHOLD", "0.95"))
-            self.memory_inject_threshold = float(os.getenv("MEMORY_INJECT_THRESHOLD", "0.85"))
+            self.memory_hit_threshold = float(os.getenv("MEMORY_HIT_THRESHOLD", "0.92"))
+            self.memory_inject_threshold = float(os.getenv("MEMORY_INJECT_THRESHOLD", "0.82"))
             self.memory_namespace = os.getenv("MEMORY_NAMESPACE", "default")
+            self.ark_base_url = os.getenv("ARK_BASE_URL", "https://ark.cn-beijing.volces.com")
+            self.ark_api_key = os.getenv("ARK_API_KEY", "")
+            self.ark_embedding_model = os.getenv("ARK_EMBEDDING_MODEL", "")
+            self.memory_lance_path = os.getenv("MEMORY_LANCE_PATH", "memory.lance")
+            self.memory_store_backend = os.getenv("MEMORY_STORE_BACKEND", "lance")
+            self.memory_fusion_weight = float(os.getenv("MEMORY_FUSION_WEIGHT", "0.7"))
+            self.memory_vector_dim = int(os.getenv("MEMORY_VECTOR_DIM", "2048"))
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 

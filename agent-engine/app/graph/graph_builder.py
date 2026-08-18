@@ -23,15 +23,28 @@ MAX_SQL_RETRIES = 3
 platform = PlatformClient()
 
 
-async def init_memory(db_path: str) -> None:
-    """启动时注入语义记忆（nodes.memory）。失败仅告警，不阻断服务。"""
-    from app.graph import nodes
-    from app.memory.store import MemoryStore
+async def init_memory(db_path: str, backend: str | None = None) -> None:
+    """启动时注入语义记忆（nodes.memory）。失败仅告警，不阻断服务。
 
+    backend 默认取 settings.memory_store_backend；lance 需要真实路径 + 方舟 key，
+    :memory: 或未配 key → 自动降级 sqlite（不改变既有行为）。
+    """
+    from app.graph import nodes
+    from app.memory.embeddings import get_embedding_provider
+    from app.memory.vector_store import build_memory_store
+    from app.settings import settings
+
+    backend = backend or settings.memory_store_backend
+    if backend == "lance" and (db_path == ":memory:" or not get_embedding_provider().available()):
+        backend = "sqlite"
     try:
-        store = MemoryStore(db_path)
-        await store.init()
+        store = await build_memory_store(
+            db_path, backend=backend,
+            provider=get_embedding_provider() if backend == "lance" else None,
+            embedding_model=settings.ark_embedding_model)
         nodes.memory = store
+        if backend == "lance":
+            print(f"[memory] lance store ready: {db_path}")
     except Exception as exc:  # noqa: BLE001
         print(f"[memory] init failed, memory disabled: {exc}")
         nodes.memory = None
