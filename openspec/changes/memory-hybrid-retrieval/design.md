@@ -38,23 +38,32 @@ search(question, namespace)
 ```
 - **替代考虑**：纯向量 → 可能漏精确词匹配（"最近7天"这类字面关键）；纯 BM25 → 漏语义改写。融合是 Mem0 multi-signal 的落地形态。
 - 命中后安全网不变：`_catalog_valid` + `metrics_consistent` + `_acceptable_intent` 复检。
+- **inject 示例的意图一致性（P2-2）**：语义相似 ≠ 意图相同（"各分类播放量排名"=ranking vs "各分类播放量趋势"=trend，cosine 很高）。`metrics_consistent` 只保护 hit 路径，inject 路径无一致性防护。策略：**注入示例按 intent 去重**（top-3 尽量覆盖不同 intent，同 intent 只取相似度最高一条）+ **报告记录注入示例的 intent 分布**（可审计，防负迁移）。
 
 ### D3：存储——SQLite 加 embedding 列，写时缓存，不引入向量库
-- `semantic_memory` 表 ALTER 加 `embedding BLOB`（float32 JSON/二进制）+ `embedding_model TEXT`；存量迁移 + 惰性回填（启动/首次 search 时对缺 embedding 的条目补算）。
+- `semantic_memory` 表 ALTER 加 `embedding TEXT` + `embedding_model TEXT`；存量迁移 + 惰性回填。
+- **embedding 格式写死为 JSON**（`json.dumps(list[float])`，bge-small-zh 512 维 ≈ 1-2KB/条）：规模小开销可忽略，可调试优先；二进制作未来规模增长时的优化项（P3）。
+- **回填延迟有界（P2-3）**：每 search 至多补算 N=10 条（带"已回填"标记），首个非精确查询延迟有界（10×10-50ms ≈ 0.5s）；启动时可选后台任务预回填；**①精确匹配快路径在回填前即可命中**（模型的懒加载/首载是一次性 ~1-2s，可接受，写进报告）。
 - upsert 时同步写 embedding（写钩子路径）；record_hit 不重算。
 - **为何不加 FAISS**：规模几十~上百条，线性 cosine 毫秒级；FAISS 是规模问题的解，当前是过度工程（写入 Non-Goals）。
 
 ### D4：融合评分与阈值重标定（离线脚本，可复现）
-- 评分：`score = w·cosine + (1−w)·bm25_norm`，两信号先各自归一化。
+- **评分公式（P2-1，归一化写死，保证标定可复现）**：
+  - `cos_norm = max(0.0, cos)`（cosine ∈ [-1,1] 裁剪到 [0,1]）
+  - `bm25_norm = bm25_score / top1_bm25_score`（候选集内除以最高分 → [0,1]；BM25 无界且语料=记忆库几十条、IDF 不稳定，用候选集内相对分）
+  - `score = w·cos_norm + (1−w)·bm25_norm`（w 初值 0.7，标定后定）
 - **标定方法**（沿用 design 既有方法论，落地为脚本 `app/eval/calibrate_thresholds.py`）：
   - hit 阈值 = 「毒化对（点赞量 vs 播放量）全部落在 hit 之下」的最小值
   - inject 阈值 = 「期望注入的同义条目全部落在 inject 区间」的最大值
   - 输出三组分布表（同义集 20 条 / 毒化对 / 近重复对）→ 定阈值与 w → 写 settings + 报告
-- **硬门槛（先验证后实现）**：任务 1 先跑离线 cosine 分布——若同义集与毒化对分不开（无区分度），回 design 改方案（仿 semantic-dimensions 的根因基线打法）。
+- **硬门槛（先验证后实现，判定式可执行——P1）**：任务 0.2 通过条件 =
+  `存在阈值区间 (inject_t, hit_t] 使 毒化对全部 < hit_t 且 ≥60% 的同义注入条目 > inject_t`
+  （60% 为示例值，按实测分布调整；**关键是可计算、可争论**）；不满足 → 回 design 改方案（仿 semantic-dimensions 根因基线）。
 
 ### D5：runner/实验一致性——band 必须取自真实检索器
 - `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**实例化真实 retriever（与 nodes.py 同一工厂）**对每条同义问题 search 取 top-1 band——实验测的就是线上跑的。
 - 报告配置三变量补全：`difflib/0.95-0.85/-` → `hybrid(bge-small-zh-v1.5)/hit_t-inject_t/w=0.7`。
+- **近重复 hit 召回数值目标（P3）**：标定后自适应定——「近重复对 hit 数较 difflib 基线提升 ≥50%」（验收可判定，简历数字更硬）。
 
 ### D6：依赖与体积决策
 - 新增 `sentence-transformers` + `torch`（~2-3GB）。懒加载：仅首次 memory 检索时 import/加载，不影响启动与 --memory off 路径。
@@ -76,7 +85,7 @@ search(question, namespace)
 ## Migration Plan
 
 1. 环境：装 sentence-transformers + torch + 下载模型；EmbeddingProvider 懒加载单测（失败降级）。
-2. 硬门槛：离线 cosine 分布验证（同义/毒化可区分），不过则回 design。
+2. 硬门槛（判定式）：离线三组分布，验证 `毒化全部 < hit_t 且 ≥60% 同义注入条目 > inject_t`；不过则回 design。
 3. MemoryStore 加列 + 迁移 + 惰性回填（单测）。
 4. HybridRetriever + BM25 + 融合 + 精确快路径 + 降级（单测三档边界 + 毒化对）。
 5. nodes.py 工厂替换 + settings 配置化。
