@@ -31,6 +31,10 @@ if BaseSettings is not None:
         memory_hit_threshold: float = 0.95
         memory_inject_threshold: float = 0.85
         memory_namespace: str = "default"
+        ark_base_url: str = "https://ark.cn-beijing.volces.com"
+        ark_api_key: str = ""
+        ark_embedding_model: str = ""  # 方舟 doubao-embedding Model ID（控制台开通后填入）
+        memory_lance_path: str = "memory.lance"
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -52,6 +56,10 @@ else:
             self.memory_hit_threshold = float(os.getenv("MEMORY_HIT_THRESHOLD", "0.95"))
             self.memory_inject_threshold = float(os.getenv("MEMORY_INJECT_THRESHOLD", "0.85"))
             self.memory_namespace = os.getenv("MEMORY_NAMESPACE", "default")
+            self.ark_base_url = os.getenv("ARK_BASE_URL", "https://ark.cn-beijing.volces.com")
+            self.ark_api_key = os.getenv("ARK_API_KEY", "")
+            self.ark_embedding_model = os.getenv("ARK_EMBEDDING_MODEL", "")
+            self.memory_lance_path = os.getenv("MEMORY_LANCE_PATH", "memory.lance")
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 
