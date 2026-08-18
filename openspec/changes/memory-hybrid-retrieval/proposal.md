@@ -4,7 +4,7 @@ metrics-report（§5/§7）与开发日志反复钉死的瓶颈：`difflib` 字�
 
 ## What Changes
 
-- **Embedding 基础设施**（新增 `app/memory/embeddings.py`）：懒加载本地 `bge-small-zh-v1.5`（sentence-transformers），模型版本内容哈希；加载失败 → 日志告警 + 自动降级 difflib（记忆失败不打断主链路哲学）。
+- **Embedding 基础设施**（新增 `app/memory/embeddings.py`）：**外接火山方舟 doubao-embedding API**（文本端点 `POST /api/v3/embeddings`，httpx 封装，零新增 pip 依赖）；EmbeddingProvider 可注入/mock（CI 无 key 也能测）；调用失败 → 日志告警 + 自动降级 difflib（记忆失败不打断主链路哲学）；embedding 模型名+版本记录进 `embedding_model` 列（模型变更全量失效重算）。
 - **HybridRetriever**（实现既有 `Retriever` 协议）：
   - ① 精确匹配快路径：`norm_question` 完全相等 → hit（score=1.0，保持"同问同答 100% 一致"确定性契约，不依赖模型）
   - ② 语义信号：embedding cosine
@@ -14,7 +14,7 @@ metrics-report（§5/§7）与开发日志反复钉死的瓶颈：`difflib` 字�
 - **MemoryStore 加列**：`semantic_memory` 表增加 `embedding BLOB` + `embedding_model`（写入/更新时计算缓存，模型版本变更全量失效重算）；存量迁移（ALTER，先例：namespace 列）+ 惰性回填。
 - **阈值重标定（离线脚本，可复现）**：对（同义集 20 条 vs 沉淀记忆、毒化对 点赞量/播放量、近重复对）输出 cosine+BM25 融合分布 → hit 阈值 = 「毒化对全部落于其下」的最小值；inject 阈值 = 「期望注入同义条目全部落于区间内」的最大值 → 写进 settings + design。
 - **实验与报告闭环**：runner `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**调真实 retriever**（实验测的就是线上跑的）；exp2/exp3 重跑，预期注入带首次可填充；`docs/metrics-report.md` 更新，报告配置三变量加 **embedding 模型名**。
-- **新增依赖**：`sentence-transformers` + `torch`（~2-3GB，一次性，磁盘充足）。**这是本 change 最大的外部成本，需在 apply 前确认。**
+- **外部依赖（运行时）**：火山方舟 `ARK_API_KEY` + 开通 doubao-embedding 模型（文本端点）；成本 ≈ 0.0005 元/千 tokens（本规模总成本 <1 分钱）。**零新增 pip 依赖**（httpx 已有）。
 
 ## Capabilities
 
@@ -28,7 +28,7 @@ metrics-report（§5/§7）与开发日志反复钉死的瓶颈：`difflib` 字�
 ## Impact
 
 - **Python**：新增 `app/memory/embeddings.py`（EmbeddingProvider）；`app/memory/retriever.py`（HybridRetriever + BM25 + 融合评分，协议补 namespace）；`app/memory/store.py`（embedding 列 + 迁移 + 回填）；`app/graph/nodes.py`（build_retriever 工厂替换直接实例化）；`app/eval/runner.py`（_compute_synonym_bands 复用真实检索器 + 报告三变量）；`app/settings.py`（阈值/融合权重/模型名配置）；`tests/`（向量三档边界、降级路径、标定脚本可复现、一致性断言不绑 band 值）。
-- **依赖**：新增 `sentence-transformers` + `torch`（~2-3GB）+ 首次下载 bge-small-zh-v1.5 模型（~100MB，需网络，可走镜像）。
+- **依赖/凭据**：**零新增 pip 依赖**（httpx 已有）；新增 `ARK_API_KEY` 配置（settings + .env，与 DeepSeek key 并列）；需在方舟控制台开通 doubao-embedding 文本模型并取得 Model ID。
 - **Java**：无改动（检索在 Python 侧）。
 - **文档**：`docs/记忆系统设计.md` §5.2 已写入设计输入；`docs/metrics-report.md` 记忆价值节更新；`docs/开发日志.md` 新条目。
 - **评测**：exp2/exp3 重跑（真实 LLM，~15-20 分钟）；--memory off 全量回归 L1-L4 不回退；同问同答 100% 不回退。

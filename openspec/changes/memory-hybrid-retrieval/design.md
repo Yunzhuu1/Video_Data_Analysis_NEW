@@ -20,11 +20,13 @@
 
 ## Decisions
 
-### D1：Embedding 来源——本地 bge-small-zh-v1.5 + 懒加载 + 降级兜底
-- **选**：`sentence-transformers` 加载本地 `bge-small-zh-v1.5`（~100MB 模型，CPU 短句单条 ~10-50ms）。
-- **替代考虑**：① API embedding（SiliconFlow/BAAI 等）→ 每次查询依赖网络（本项目网络不稳，致命）+ 有成本；② 纯 BM25/词级 → 离线已实测分不开同义改写；③ 不升级（保持现状）→ 注入实验永久空转。
-- **懒加载单例 + 加载失败降级**：EmbeddingProvider 首次使用时加载；失败仅告警（`memory disabled embedding: ...`），检索降级 `TextSimilarityRetriever`（现状行为 0.95/0.85）——与"记忆失败不打断主链路"哲学一致。
-- **模型版本**：`embedding_model` 列存模型名+内容哈希，模型变更 → 全量失效重算。
+### D1：Embedding 来源——火山方舟 doubao-embedding API（文本端点）+ 降级兜底
+- **选**：外接火山方舟文本向量端点 `POST {ARK_BASE_URL}/api/v3/embeddings`（`doubao-embedding-*`），`EmbeddingProvider` 用 httpx 封装（**零新增 pip 依赖**，httpx 已是现有依赖）。
+- **替代考虑**：① 本地 bge-small-zh（sentence-transformers+torch）→ 引入 ~2-3GB 依赖，被 API 方案取代；② 纯 BM25/词级 → 离线已实测分不开同义改写；③ 不升级（保持现状）→ 注入实验永久空转。
+- **为何 API 而非本地**：火山方舟是国内服务（北京 region），对本项目网络最稳（先前否决 API 的理由不成立）；成本 ≈ 0.0005 元/千 tokens（本规模 <1 分钱）；**彻底绕开 torch/transformers 依赖问题**；文档还支持稀疏向量（后续可作词面信号升级，见 D2）。
+- **可注入/mock**：`EmbeddingProvider` 定义 `embed(question) -> list[float] | None` 接口，测试注入固定向量实现（CI 无 key 可跑）；真实实现调 API。
+- **调用失败降级**：embed 返回 None 或抛错 → 仅告警（`memory disabled embedding: ...`），检索降级 `TextSimilarityRetriever`（现状行为 0.95/0.85）——与"记忆失败不打断主链路"哲学一致。
+- **模型版本**：`embedding_model` 列存 Model ID（如 `doubao-embedding-xxx`）+ 配置哈希，模型变更 → 全量失效重算。
 
 ### D2：检索架构——三层混合 HybridRetriever（实现既有 Retriever 协议）
 ```
@@ -42,8 +44,8 @@ search(question, namespace)
 
 ### D3：存储——SQLite 加 embedding 列，写时缓存，不引入向量库
 - `semantic_memory` 表 ALTER 加 `embedding TEXT` + `embedding_model TEXT`；存量迁移 + 惰性回填。
-- **embedding 格式写死为 JSON**（`json.dumps(list[float])`，bge-small-zh 512 维 ≈ 1-2KB/条）：规模小开销可忽略，可调试优先；二进制作未来规模增长时的优化项（P3）。
-- **回填延迟有界（P2-3）**：每 search 至多补算 N=10 条（带"已回填"标记），首个非精确查询延迟有界（10×10-50ms ≈ 0.5s）；启动时可选后台任务预回填；**①精确匹配快路径在回填前即可命中**（模型的懒加载/首载是一次性 ~1-2s，可接受，写进报告）。
+- **embedding 格式写死为 JSON**（`json.dumps(list[float])`，维度随模型 ~1024-4096 维，每条 ≤几 KB）：规模小开销可忽略，可调试优先；二进制作未来规模增长时的优化项（P3）。
+- **回填延迟有界（P2-3）**：每 search 至多补算 N=10 条（带"已回填"标记），每条 API 调用 ~100-300ms → 首次回填集中搜索最坏 ~1-3s；**启动时后台任务预回填**避免首查集中回填；**①精确匹配快路径在回填前即可命中**（写进报告）。
 - upsert 时同步写 embedding（写钩子路径）；record_hit 不重算。
 - **为何不加 FAISS**：规模几十~上百条，线性 cosine 毫秒级；FAISS 是规模问题的解，当前是过度工程（写入 Non-Goals）。
 
@@ -62,20 +64,23 @@ search(question, namespace)
 
 ### D5：runner/实验一致性——band 必须取自真实检索器
 - `_compute_synonym_bands` 从"自实现 difflib 复刻"改为**实例化真实 retriever（与 nodes.py 同一工厂）**对每条同义问题 search 取 top-1 band——实验测的就是线上跑的。
-- 报告配置三变量补全：`difflib/0.95-0.85/-` → `hybrid(bge-small-zh-v1.5)/hit_t-inject_t/w=0.7`。
+- 报告配置三变量补全：`difflib/0.95-0.85/-` → `hybrid(doubao-embedding-<model>)/hit_t-inject_t/w=0.7`。
 - **近重复 hit 召回数值目标（P3）**：标定后自适应定——「近重复对 hit 数较 difflib 基线提升 ≥50%」（验收可判定，简历数字更硬）。
 
-### D6：依赖与体积决策
-- 新增 `sentence-transformers` + `torch`（~2-3GB）。懒加载：仅首次 memory 检索时 import/加载，不影响启动与 --memory off 路径。
-- 首次模型下载需网络（~100MB，可走 HF 镜像）；下载后离线可用。
-- **这是本 change 最大的外部成本**，apply 前需用户确认；不确认则卡在任务 0（环境准备）。
+### D6：依赖与凭据决策
+- **零新增 pip 依赖**：httpx 已是现有依赖；不引入 torch/transformers/sentence-transformers/onnxruntime/向量库。
+- **新增凭据/配置**：`ARK_API_KEY`（settings + .env，与 DeepSeek key 并列）+ `ARK_EMBEDDING_MODEL`（Model ID，控制台开通后填入）+ `ARK_BASE_URL`（默认 `https://ark.cn-beijing.volces.com`）。
+- **CI/测试隔离**：EmbeddingProvider 可 mock（固定向量），向量单测不依赖真实 API；标定脚本与真实实验在本地/显式命令下才调 API。
+- **外部成本**：需用户控制台开通 doubao-embedding 文本模型并创建 API Key（一次性）；调用成本本规模可忽略。
 
 ## Risks / Trade-offs
 
 | 风险 | 对策 |
 |---|---|
-| torch/sentence-transformers 体积大、安装失败 | 懒加载 + 失败降级 difflib（主链路零影响）；模型下载走镜像 |
-| CPU embedding 延迟 | 查询只 embed 1 条（存量写时缓存）；短句 10-50ms，相对 LLM 秒级可忽略 |
+| API embedding 依赖外部服务（网络/限流/宕机） | 国内北京 region 稳定；调用失败降级 difflib（主链路零影响）；EmbeddingProvider 可 mock |
+| API 调用延迟 | 查询只 embed 1 条（存量写时缓存）；单次 ~100-300ms 相对 LLM 秒级可忽略；回填有界（≤10 条/search） |
+| key 泄露/误用 | 只存本地 .env，不落库不打印；仅 agent-engine 进程读取 |
+| API 计费异常 | 本规模 <1 分钱；settings 可配开关/阈值，超量可降级 difflib |
 | 阈值/权重拍脑袋 | D4 离线标定脚本出分布；三变量随报告列出；同义/毒化/近重复三组对照 |
 | 向量化后行为变化伤回归 | --memory off 全量 L1-L4 不回退（硬门槛）+ 同问同答 100% 不回退 + 毒化对不命中 |
 | 模型版本漂移 | `embedding_model` 哈希列，变更全量失效重算 |
@@ -84,7 +89,7 @@ search(question, namespace)
 
 ## Migration Plan
 
-1. 环境：装 sentence-transformers + torch + 下载模型；EmbeddingProvider 懒加载单测（失败降级）。
+1. 环境/凭据：开通方舟 doubao-embedding 文本模型 + 创建 ARK_API_KEY；EmbeddingProvider（httpx 封装）单测（mock 注入 + 失败降级）。
 2. 硬门槛（判定式）：离线三组分布，验证 `毒化全部 < hit_t 且 ≥60% 同义注入条目 > inject_t`；不过则回 design。
 3. MemoryStore 加列 + 迁移 + 惰性回填（单测）。
 4. HybridRetriever + BM25 + 融合 + 精确快路径 + 降级（单测三档边界 + 毒化对）。
@@ -94,6 +99,7 @@ search(question, namespace)
 
 ## Open Questions
 
-- **embedding 来源确认**：本地 bge-small-zh-v1.5（~2-3GB 依赖）是否可接受？不可接受则改 API 方案（需重评网络依赖）。
+- **端点/模型确认**：用文本端点 `POST /api/v3/embeddings`（`doubao-embedding-*`）而非多模态端点；确认 Model ID 与维度。
+- **词面信号取舍**：默认自研 BM25（确定性、零成本）；火山方舟 API 原生稀疏向量（sparse_embedding）作为后续可选项（模型级质量，需验证与 dense 的同模型一致性）。
+- **key 获取**：用户在方舟控制台开通模型 + 创建 API Key（`ARK_API_KEY`），apply 前提供。
 - 融合权重 w 初值 0.7 是否合理 → 以标定脚本分布为准调整。
-- 模型下载源：HuggingFace 直连 vs 镜像（huggingface.co 在国内网络稳定性）→ 任务 0 实测。
