@@ -7,7 +7,7 @@
 - **`aliases.yaml` 静态别名表**（人工审核沉淀，同 metric_catalog 模式）：高频确定性表达（播放走势/观看量/完播情况 → 指标 ID），评测驱动补充。
 - **读取侧扩展**：`extract_metric_names` / `metrics_consistent` 在 catalog 精确名之外，按别名表匹配；`metrics_consistent` 双保险保留（别名只扩展"能判定"，不绕过校验）。
 - **指标 ID 表达指纹（可选增强）**：`MetricIdFingerprint` 从写路径沉淀的 norm_question 按 `metric_codes` 归属自动派生每个 ID 的表达集，模糊匹配兜底别名未覆盖的动态表达；阈值标定后启用。
-- **虚拟澄清实验（0.5 天，验证 HITL 叙事）**：评测内定义"歧义判定"（低置信/多指标候选），用 golden 自动模拟用户选择，产出**潜在澄清率 / 虚拟澄清收益 / 澄清率随记忆下降曲线**——先验证数字，再决定是否立项真 HITL 指标澄清。
+- **虚拟澄清实验（0.5 天，价值上限量化）**：评测内定义"歧义判定"（低置信/多指标候选），用 golden 自动模拟用户选择，产出**潜在澄清率 / 虚拟澄清收益 / 澄清率随记忆下降曲线**——量化"若存在完美澄清"的正确率上限，**明确不做真 HITL**（用户决策）。
 - **评测目标**：real-session 7/8 → 8/8（c07 解锁）；毒化反例仍拦；--memory off N=45 零回退；synonym 难层 band 分布变化（hard 层部分 miss → inject/hit）。
 
 ## Capabilities
