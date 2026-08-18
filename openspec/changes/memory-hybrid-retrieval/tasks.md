@@ -7,7 +7,7 @@
 
 - [ ] 1.1 LanceDB VectorStore：`memory.lance/` 单表（norm_question/resolved_intent/metric_codes/hit_count/last_hit_at/resolver_hash/embedding_model/embedding）+ HNSW 向量索引 + norm_question FTS 索引 + namespace 过滤；存量 SQLite 数据导入 + 惰性回填（**每 search ≤10 条**，启动后台预回填）；`VectorStore` 接口抽象（store 可替换，未来迁 Qdrant）；单测（schema/索引/导入/回填有界/WAL/模型变更失效重算）
 - [ ] 1.2 LanceDB FTS（BM25）可用性验证：中文短句命中排序单测；若切分质量不足 → 回退自研 BM25 或接方舟 sparse（写进报告）
-- [ ] 1.3 HybridRetriever（精确快路径 + LanceDB hybrid 查询（向量+FTS+过滤）+ 双阈值 + 降级 difflib），实现/修正 Retriever 协议（补 namespace 参数）；**inject 示例按 intent 去重（top-3 尽量跨 intent）**；单测三档边界 + 毒化对不命中 + 降级路径（embedding=None → 行为同现状）+ inject intent 去重
+- [ ] 1.3 HybridRetriever（精确快路径 + **LanceDB 向量 search + FTS search 分开查 + D4 自算融合** + 双阈值 + 降级 difflib），实现/修正 Retriever 协议（补 namespace 参数）；**inject 示例按 intent 去重（top-3 尽量跨 intent）**；单测三档边界 + 毒化对不命中 + 降级路径（embedding=None → 行为同现状）+ inject intent 去重
 
 ## 2. 接入与配置
 

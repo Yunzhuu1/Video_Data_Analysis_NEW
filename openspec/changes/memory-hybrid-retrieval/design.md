@@ -38,12 +38,12 @@ search(question, namespace)
   ├─ ① 精确匹配快路径：norm_question 完全相等 → hit（score=1.0）
   │     确定性契约（同问同答 100%）不依赖模型，模型漂移不影响
   ├─ ② 语义信号：query embedding vs 条目 embedding 的 cosine（LanceDB 向量索引）
-  ├─ ③ 词面信号：LanceDB 原生 BM25 FTS（建在 norm_question 上，替代自研）
-  │     LanceDB hybrid 查询 = 向量 + FTS + namespace/metric 过滤一条查询
+  ├─ ③ 词面信号：LanceDB 原生 BM25 FTS（FTS search，建在 norm_question 上，替代自研）
+  │     ②③ 分开查询（各自 search），融合按 D4 公式自算：score = w·cos_norm + (1−w)·bm25_norm
   └─ 双阈值（hit ≥ hit_t / inject ≥ inject_t）→ 同现状 band 语义
 ```
 - **替代考虑**：纯向量 → 可能漏精确词匹配（"最近7天"这类字面关键）；纯 BM25 → 漏语义改写。融合是 Mem0 multi-signal 的落地形态。
-- **词面信号为何用 LanceDB FTS 而非自研**：① 引擎原生 BM25，省掉自研任务与维护；② 与向量同一查询入口，融合由引擎产出（标定公式仍保留，见 D4）；③ 中文按字级切分与自研字二元组同量级，且支持后续换 tokenizer/接 sparse。
+- **词面信号为何用 LanceDB FTS 而非自研**：① 引擎原生 BM25，省掉自研任务与维护；② **与向量分开查询（各自 search），融合由我们按 D4 公式自算，保留 w 控制——不消费引擎融合分（"抄机制不抄框架"，P1 路径 B）**；③ 中文按字级切分与自研字二元组同量级，且支持后续换 tokenizer/接 sparse。
 - 命中后安全网不变：`_catalog_valid` + `metrics_consistent` + `_acceptable_intent` 复检。
 - **inject 示例的意图一致性（P2-2）**：语义相似 ≠ 意图相同（"各分类播放量排名"=ranking vs "各分类播放量趋势"=trend，cosine 很高）。`metrics_consistent` 只保护 hit 路径，inject 路径无一致性防护。策略：**注入示例按 intent 去重**（top-3 尽量覆盖不同 intent，同 intent 只取相似度最高一条）+ **报告记录注入示例的 intent 分布**（可审计，防负迁移）。
 
@@ -104,7 +104,7 @@ search(question, namespace)
 1. 环境/凭据：开通方舟 doubao-embedding 文本模型 + 创建 ARK_API_KEY；EmbeddingProvider（httpx 封装）单测（mock 注入 + 失败降级）。
 2. 硬门槛（判定式）：离线三组分布，验证 `毒化全部 < hit_t 且 ≥60% 同义注入条目 > inject_t`；不过则回 design。
 3. LanceDB VectorStore：建表（HNSW + FTS 索引）+ 存量 SQLite 导入 + 惰性回填（单测：schema/索引/回填有界/WAL）。
-4. HybridRetriever：LanceDB hybrid 查询 + 精确快路径 + 双阈值 + 降级 difflib（单测三档边界 + 毒化对）。
+4. HybridRetriever：LanceDB 向量 search + FTS search 分开查 + D4 自算融合 + 精确快路径 + 双阈值 + 降级 difflib（单测三档边界 + 毒化对）。
 5. nodes.py 工厂替换 + settings 配置化。
 6. 标定脚本出阈值 → 写 settings；runner 改用真实检索器 + 报告三变量。
 7. exp2/exp3 重跑 + --memory off 回归 + 同问同答回归；metrics-report 更新 + 开发日志。
