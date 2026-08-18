@@ -27,18 +27,23 @@
 - namespace = `real-<eval_date>-<start_ts>`（独立于 eval-* 与 default，一次评测一个，天然唯一）。
 - 用例按**会话**分组：每个会话 = 首问（未命中，沉淀）→ 二问（同文本，期望命中）→ 近似问（变体，期望 inject/miss）。
 - 会话集复用现有 golden cases 的子集（5-8 个代表性问题，覆盖 aggregate/trend/ranking/detail + 指标多样性），近似变体复用同义集 easy 层或人工构造。
+- 近似问在本 change 中**仅作观测**（band 任意，按运行时检索器 top-1 分层报告，不预设）；若后续要演示真实路径的注入收益，需先离线验证近似变体 vs source 的融合分 ≥ inject_t（复用同义集 easy 层大概率落 inject，但必须显式校验——同 eval-data-expansion 的 band 前置打法）。
 - 理由：构造会话是"真实路径"的最小可信模拟——它能验证跨请求命中与一致率，又不污染 default。**替代方案**（直接写 default）被否：破坏"评测不污染真实记忆"不变式。
 
 ### D2：口径分离——指标命名与报告
-- 新指标前缀 `real_`：`real_hit_rate`（二问起命中数/可命中机会）、`real_consistency`（同问同答一致率）、`real_persist_hits`（跨进程命中数）。
+- 新指标前缀 `real_`：`real_hit_rate`（二问起命中数/可命中机会）、`real_consistency`（同问同答一致率）、`real_persist_hits`（持久化命中数）。
+- **原始计数优先**：所有 `real_` 指标必须报告 x/y 原始计数而非只有百分比——8 个会话的二问+近似问可命中机会仅 ~16 次，单次 miss 即 6-12pp；报告统一标注「N=8 量级，方向性基线」，防「real_hit_rate=100%」被过度解读。
+- `real_consistency` 复用 eval-metrics 重复对协议的逐字段定义：intent/metrics/dimensions/time_range/filters/ordering 逐字段一致（跨协议口径统一，报告可交叉引用）。
 - 既有 `memory_hit_rate`（eval 协议）保持含义为"场内自命中"，报告明确标注。
 - metrics-report 新增「真实路径基线」章节，与 §5 记忆价值（场内口径）并列、互相引用。
 - 理由：口径混用是简历叙事最大风险——"16-20% 命中率"若被当作真实命中是误导；分离后两个数字各自站得住。
 
-### D3：跨进程持久化验证
-- 第一遍会话结束后 `close()` store，再以同一路径重开（或子进程重跑二问），验证命中仍在 → 证明记忆不依赖进程内状态。
+### D3：持久化验证（强弱双轨，报告分别标注）
+- **弱验证（mock/runner 模式，自动化）**：第一遍会话结束后 `close()` store，同一路径重开后再查同文本，验证命中仍在——证明**文件持久化**（SQLite/LanceDB 落盘，不依赖进程内对象状态）。
+- **强验证（real 模式，人工/联调）**：两遍 `/analyze`（首问 + 二问）**中间重启服务器进程**，同一 `MEMORY_LANCE_PATH` 下二问仍命中——证明**服务器进程重启后记忆仍在**（即「用户下次打开还在」）。
+- 报告分别标注验证强度：`real_persist_hits`（弱，文件持久化）与 `real_persist_hits_strong`（强，进程重启）分开记录，避免「跨进程持久化」名不副实。
 - 使用 runner 临时目录（与现有 eval 实验记忆同机制，`tempfile.mkdtemp`），不触碰真实 memory.sqlite/memory.lance。
-- 理由：持久化是"真实生效"的关键证据（用户下次打开还在），而 SQLite/LanceDB 文件持久化此前只在同进程验证过。
+- 理由：持久化是"真实生效"的关键证据；文件落盘与进程重启是两层 claim，必须分开验证与标注。
 
 ### D4：namespace 策略（防污染不变式）
 - real-session 默认 `real-<ts>`，**绝不**写 default。
@@ -66,4 +71,4 @@
 
 - 会话数取 5 还是 8？（样本小则一致性口径弱，先取 8 看耗时）
 - 近似变体优先复用同义集 easy 层，还是人工构造更贴近"用户真实改写"？（倾向复用，零新数据）
-- 跨进程验证用"重开 store"还是"子进程"？（倾向重开 store，CI 友好；子进程留作 real 模式可选项）
+- （已解决）持久化验证采用强弱双轨：弱验证重开 store（自动化），强验证重启服务器（real 模式联调）。
