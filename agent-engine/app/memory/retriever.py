@@ -122,7 +122,6 @@ class HybridRetriever:
 
     async def _candidates(self, question: str, namespace: str) -> list[tuple[Any, float, str]]:
         """路径 B 融合的原始候选（含 miss 带）：精确快路径 / 向量+FTS 自算 / difflib 降级。"""
-        from typing import Any as _Any
 
         norm = normalize_question(question)
         # ① 精确匹配快路径（确定性契约：同问同答 100%，不依赖模型）
@@ -149,7 +148,7 @@ class HybridRetriever:
 
         top1_bm25 = max((v[2] for v in merged.values()), default=0.0)
         cands: list[tuple[Any, float, str]] = []
-        for _eid, (e, cos, bm25) in merged.items():
+        for e, cos, bm25 in merged.values():
             cos_norm = cos  # 已裁剪
             bm25_norm = bm25 / top1_bm25 if top1_bm25 else 0.0
             score = self.weight * cos_norm + (1.0 - self.weight) * bm25_norm
@@ -164,7 +163,6 @@ class HybridRetriever:
 
     async def _fallback_candidates(self, norm: str, namespace: str) -> list[tuple[Any, float, str]]:
         """embedding 不可用 → difflib 降级（与 TextSimilarityRetriever 同语义）。"""
-        from typing import Any as _Any
 
         cands: list[tuple[Any, float, str]] = []
         for entry in await self.store.all(namespace):

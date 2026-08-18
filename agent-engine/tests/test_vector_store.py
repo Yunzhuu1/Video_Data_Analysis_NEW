@@ -2,7 +2,6 @@
 import numpy as np
 import pytest
 
-from app.memory.store import MemoryEntry
 from app.memory.vector_store import DEFAULT_VECTOR_DIM, LanceVectorStore
 
 

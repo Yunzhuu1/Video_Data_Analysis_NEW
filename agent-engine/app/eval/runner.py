@@ -4,6 +4,7 @@ import argparse
 import asyncio
 import json
 import statistics
+import tempfile
 import time
 from pathlib import Path
 from typing import Any
@@ -99,6 +100,19 @@ async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_d
     return results
 
 
+def _experiment_memory_path() -> str:
+    """实验记忆路径：lance 后端 + embedding 可用 → 临时目录（不碰真实 memory.lance）；否则 :memory:。"""
+    from app.memory.embeddings import get_embedding_provider
+    if getattr(settings, "memory_store_backend", "sqlite") == "lance" and get_embedding_provider().available():
+        return tempfile.mkdtemp(prefix="eval-memory-")
+    return ":memory:"
+
+
+def _embedding_available() -> bool:
+    from app.memory.embeddings import get_embedding_provider
+    return get_embedding_provider().available()
+
+
 async def _close_memory() -> None:
     """关闭实验内建的内存记忆 store，避免 aiosqlite 连接残留导致进程不退出。"""
     from app.graph import nodes
@@ -127,7 +141,7 @@ async def _compute_synonym_bands(questions: list[str], namespace: str) -> dict[s
     try:
         import json as _json
         catalog = _json.loads((ROOT / "src" / "main" / "resources" / "metric_catalog.json").read_text(encoding="utf-8"))
-    except Exception:  # noqa: BLE001 - catalog 读取失败则不额外校验
+    except Exception:  # noqa: BLE001, S110 - catalog 读取失败则不额外校验
         pass
     retriever = build_retriever(nodes.memory, get_embedding_provider())
     bands: dict[str, str] = {}
@@ -180,9 +194,11 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
                         "a_intent": state.get("resolved_intent")})
 
     # 组 B：memory on，先沉淀 source cases（写路径参与），再跑同义集
+    degraded = memory_on and getattr(settings, "memory_store_backend", "sqlite") == "lance" \
+        and not _embedding_available()
     if memory_on:
         settings.memory_enabled = True
-        await init_memory(":memory:")  # 实验自包含，不碰磁盘记忆
+        await init_memory(_experiment_memory_path())  # 实验自包含，不碰磁盘记忆
         # 沉淀：跑 source cases 的语义路径（写钩子写入 nodes.memory）
         for s in synonym_cases:
             src = source_by_id.get(s.get("source_case"))
@@ -223,6 +239,7 @@ async def run_synonym_experiment(synonym_cases: list[dict], platform: str, memor
     sample_warn = inject_n < 8
     await _close_memory()
     return {
+        "degraded": degraded,
         "n_band": n, "synonym_total": len(results),
         "group_a_l1": a_ok / len(results) if results else 0,
         "inject_n": inject_n,
@@ -265,8 +282,9 @@ async def run_cold_hot_experiment(synonym_cases: list[dict], platform: str,
                         "cold_latency_ms": latency})
 
     # 热：seed 预置（直接写 store，不走图/写钩子 → 消除写路径方差）
+    degraded = getattr(settings, "memory_store_backend", "sqlite") == "lance" and not _embedding_available()
     settings.memory_enabled = True
-    await init_memory(":memory:")
+    await init_memory(_experiment_memory_path())
     for s in synonym_cases:
         src = source_by_id.get(s.get("source_case"))
         if src is None:
@@ -303,6 +321,7 @@ async def run_cold_hot_experiment(synonym_cases: list[dict], platform: str,
     hot_lats = sorted(r["hot_latency_ms"] for r in results)
     await _close_memory()
     return {
+        "degraded": degraded,
         "n_band": n, "synonym_total": len(results),
         "cold_l1": cold_ok / len(results) if results else 0,
         "hot_l1": hot_ok / len(results) if results else 0,

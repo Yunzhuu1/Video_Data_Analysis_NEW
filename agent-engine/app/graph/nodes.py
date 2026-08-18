@@ -6,7 +6,11 @@ from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
 from app.memory.embeddings import get_embedding_provider
-from app.memory.retriever import TextSimilarityRetriever, build_retriever, hit_allowed, metrics_consistent, normalize_question
+from app.memory.retriever import (
+    build_retriever,
+    hit_allowed,
+    normalize_question,
+)
 from app.memory.store import MemoryStore, compute_resolver_hash
 from app.settings import settings
 from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize

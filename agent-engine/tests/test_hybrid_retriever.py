@@ -1,5 +1,6 @@
 """HybridRetriever 单测（1.3，路径 B）：精确快路径 / 融合打分 / 降级 difflib / 三档边界。"""
 import hashlib
+
 import numpy as np
 import pytest
 
@@ -33,7 +34,7 @@ async def _store(tmp_path, **entries):
 
 @pytest.mark.asyncio
 async def test_exact_match_fast_path(tmp_path):
-    store = await _store(tmp_path, **{"最近7天播放量是多少": {"intent": "trend", "metrics": ["total_plays"]}})
+    store = await _store(tmp_path, 最近7天播放量是多少={"intent": "trend", "metrics": ["total_plays"]})
     r = HybridRetriever(store, CharBagProvider(), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         hits = await r.search("最近7天播放量是多少")
@@ -45,7 +46,7 @@ async def test_exact_match_fast_path(tmp_path):
 @pytest.mark.asyncio
 async def test_fallback_difflib_when_embedding_unavailable(tmp_path):
     """embedding 不可用 → 降级 difflib（近重复 → hit/inject，行为同现状）。"""
-    store = await _store(tmp_path, **{"最近7天播放量是多少": {"intent": "trend", "metrics": ["total_plays"]}})
+    store = await _store(tmp_path, 最近7天播放量是多少={"intent": "trend", "metrics": ["total_plays"]})
     r = HybridRetriever(store, FakeProvider(fail=True), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         hits = await r.search("最近7天播放量是多少啊")
@@ -58,7 +59,7 @@ async def test_fallback_difflib_when_embedding_unavailable(tmp_path):
 @pytest.mark.asyncio
 async def test_fused_path_near_repeat_hits(tmp_path):
     """路径 B 融合：近重复（字面近 + 语义近）→ hit。"""
-    store = await _store(tmp_path, **{"最近7天播放量是多少": {"intent": "trend", "metrics": ["total_plays"]}})
+    store = await _store(tmp_path, 最近7天播放量是多少={"intent": "trend", "metrics": ["total_plays"]})
     r = HybridRetriever(store, CharBagProvider(), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         hits = await r.search("最近7天播放量是多少啊")
@@ -71,7 +72,7 @@ async def test_fused_path_near_repeat_hits(tmp_path):
 @pytest.mark.asyncio
 async def test_inject_band_populated(tmp_path):
     """语义改写（共享大部分词）→ 落 inject 带。"""
-    store = await _store(tmp_path, **{"统计各分类总播放量": {"intent": "aggregate", "metrics": ["total_plays"]}})
+    store = await _store(tmp_path, 统计各分类总播放量={"intent": "aggregate", "metrics": ["total_plays"]})
     r = HybridRetriever(store, CharBagProvider(), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         hits = await r.search("统计各分类的总播放量")  # 近义微调（加"的"）→ 注入带
@@ -82,7 +83,7 @@ async def test_inject_band_populated(tmp_path):
 
 @pytest.mark.asyncio
 async def test_unrelated_miss(tmp_path):
-    store = await _store(tmp_path, **{"最近7天播放量是多少": {"intent": "trend", "metrics": ["total_plays"]}})
+    store = await _store(tmp_path, 最近7天播放量是多少={"intent": "trend", "metrics": ["total_plays"]})
     r = HybridRetriever(store, CharBagProvider(), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         assert await r.search("统计各分类总分享量") == []
@@ -93,10 +94,7 @@ async def test_unrelated_miss(tmp_path):
 @pytest.mark.asyncio
 async def test_top1_band_sorted(tmp_path):
     """runner band 分层消费的语义：search 返回分数降序，top-1 即 best band。"""
-    store = await _store(tmp_path, **{
-        "最近7天播放量是多少": {"intent": "trend", "metrics": ["total_plays"]},
-        "统计各分类总播放量": {"intent": "aggregate", "metrics": ["total_plays"]},
-    })
+    store = await _store(tmp_path, 最近7天播放量是多少={"intent": "trend", "metrics": ["total_plays"]}, 统计各分类总播放量={"intent": "aggregate", "metrics": ["total_plays"]})
     r = HybridRetriever(store, CharBagProvider(), hit_threshold=0.95, inject_threshold=0.85, weight=0.7)
     try:
         hits = await r.search("最近7天播放量是多少啊", limit=3)

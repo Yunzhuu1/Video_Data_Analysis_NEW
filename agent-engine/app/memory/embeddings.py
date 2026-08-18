@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Any
 
 import httpx
 
@@ -16,7 +15,7 @@ from app.settings import settings
 
 logger = logging.getLogger(__name__)
 
-_provider: "EmbeddingProvider | None" = None
+_provider: EmbeddingProvider | None = None
 
 
 class EmbeddingProvider:
@@ -52,7 +51,7 @@ class EmbeddingProvider:
             return None
 
 
-def get_embedding_provider() -> "EmbeddingProvider | None":
+def get_embedding_provider() -> EmbeddingProvider | None:
     """模块级单例（懒创建）。测试可调用 reset_embedding_provider() 注入 mock。"""
     global _provider
     if _provider is None:
@@ -60,6 +59,6 @@ def get_embedding_provider() -> "EmbeddingProvider | None":
     return _provider
 
 
-def reset_embedding_provider(provider: "EmbeddingProvider | None" = None) -> None:
+def reset_embedding_provider(provider: EmbeddingProvider | None = None) -> None:
     global _provider
     _provider = provider

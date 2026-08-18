@@ -1,7 +1,10 @@
 import pytest
 
-from app.memory.embeddings import EmbeddingProvider, get_embedding_provider, reset_embedding_provider
-from app.settings import settings
+from app.memory.embeddings import (
+    EmbeddingProvider,
+    get_embedding_provider,
+    reset_embedding_provider,
+)
 
 
 def test_provider_available_requires_key_and_model():
