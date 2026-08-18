@@ -113,6 +113,80 @@ def _embedding_available() -> bool:
     return get_embedding_provider().available()
 
 
+def _real_session_memory_path() -> str:
+    """real-session 记忆路径：必须是持久化文件路径（弱验证 close/reopen 需要落盘）。
+    lance 后端 + embedding 可用 → 临时 lance 目录；否则临时 sqlite 文件。"""
+    from app.memory.embeddings import get_embedding_provider
+    d = tempfile.mkdtemp(prefix="real-session-memory-")
+    if getattr(settings, "memory_store_backend", "sqlite") == "lance" and get_embedding_provider().available():
+        return d
+    return str(Path(d) / "memory.sqlite")
+
+
+def _assert_real_session_valid(llm: str) -> None:
+    """real-session 协议前置校验：真实 LLM（real/replay）才可沉淀；mock LLM 直接报错。"""
+    if llm == "mock":
+        raise SystemExit(
+            "--protocol real-session 需要真实 LLM（--llm real 或 replay）；mock LLM 无法产出 resolved_intent，"
+            "写入门槛（sql_source=semantic + 执行成功 + DQ PASS/WARNING）永不满足。")
+
+
+def _real_session_namespace(eval_date: str) -> str:
+    """真实路径评测 namespace：real-<eval_date>-<start_ts>，一次评测一个，与 eval-*/default 隔离。"""
+    return f"real-{eval_date}-{int(time.time())}"
+
+
+def _pick_real_sessions(cases: list[dict[str, Any]], n: int = 8) -> list[dict[str, Any]]:
+    """从 golden cases 选 n 个代表性问题：覆盖 intent 多样性（aggregate/trend/ranking/detail），
+    跳过 memory 专用用例（repeat_of/memory_setup）。"""
+    golden = [c for c in cases if c.get("golden_spec") and not (c.get("repeat_of") or c.get("memory_setup"))]
+    by_intent: dict[str, list[dict[str, Any]]] = {}
+    for c in golden:
+        it = (c["golden_spec"] or {}).get("intent", "aggregate")
+        by_intent.setdefault(it, []).append(c)
+    picked: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    intents = ["aggregate", "trend", "ranking", "detail"]
+    while len(picked) < n:
+        added = False
+        for it in intents:
+            if len(picked) >= n:
+                break
+            for c in by_intent.get(it, []):
+                if c["id"] not in seen:
+                    picked.append(c)
+                    seen.add(c["id"])
+                    added = True
+                    break
+        if not added:
+            break
+    return picked[:n]
+
+
+def _variant_for(case: dict[str, Any], syn_cases: list[dict[str, Any]]) -> str | None:
+    """近似问变体：复用同义集 easy 层里 source_case 匹配的条目；无匹配则 None（跳过近似问，仅观测）。
+    近似问在本 change 中仅观测（band 任意分层）；若需演示注入收益需离线校验融合分 ≥ inject_t。"""
+    for s in syn_cases:
+        if s.get("source_case") == case["id"] and s.get("difficulty") == "easy":
+            return s["question"]
+    return None
+
+
+def _intents_equal(a: dict[str, Any] | None, b: dict[str, Any] | None) -> bool:
+    """同问同答一致率（real_consistency）逐字段口径：复用 eval-metrics 重复对协议定义。
+    intent/metrics/dimensions/time_range/filters/ordering 逐字段一致。"""
+    if not a or not b:
+        return False
+    for key in ("intent", "metrics", "dimensions", "ordering"):
+        if a.get(key) != b.get(key):
+            return False
+    ta, tb = (a.get("time_range") or {}), (b.get("time_range") or {})
+    for key in ("type", "relative", "absolute", "granularity"):
+        if ta.get(key) != tb.get(key):
+            return False
+    return (a.get("filters") or []) == (b.get("filters") or [])
+
+
 async def _close_memory() -> None:
     """关闭实验内建的内存记忆 store，避免 aiosqlite 连接残留导致进程不退出。"""
     from app.graph import nodes
@@ -430,6 +504,124 @@ async def _seed_memory(question: str, intent: dict, metric_codes: list[str],
     except Exception as exc:  # noqa: BLE001 - 预置失败不再静默
         print(f"[eval] seed failed (q={question}): {type(exc).__name__}: {exc}")
         return False
+
+
+def _real_session_metrics(per_session: list[dict[str, Any]], platform: str,
+                            namespace: str) -> dict[str, Any]:
+    """real-session 指标聚合（task 2.1）：x/y 原始计数 + N 量级方向性标注（P2-3）。"""
+    n = len(per_session)
+    hit_total = sum(1 for x in per_session if x["second_hit"])
+    cons_total = sum(1 for x in per_session if x["consistent"])
+    persist_total = sum(1 for x in per_session if x["persist_ok"])
+    variant_total = sum(1 for x in per_session if x.get("variant"))
+    tok_delta = sum(x.get("second_tokens", 0) for x in per_session) - sum(x.get("first_tokens", 0) for x in per_session)
+    return {
+        "protocol": "real-session",
+        "namespace": namespace,
+        "session_total": n,
+        "hit_total": hit_total,
+        "real_hit_rate": f"{hit_total}/{n}",
+        "real_hit_rate_pct": _percent(hit_total, n),
+        "consistency_total": cons_total,
+        "real_consistency": f"{cons_total}/{n}",
+        "real_consistency_pct": _percent(cons_total, n),
+        "persist_total": persist_total if platform == "mock" else None,
+        "real_persist_hits": (f"{persist_total}/{n}" if platform == "mock"
+                              else "N/A (real: 强验证=重启服务器，留联调)"),
+        "variant_total": variant_total,
+        "token_delta_second_minus_first": tok_delta,
+        "direction_note": "N=8 量级，方向性基线（单次 miss 即 6-12pp）",
+        "persist_note": ("弱验证=close/reopen 文件持久化" if platform == "mock"
+                         else "real 平台弱验证 N/A；强验证=两遍 /analyze + 重启服务器"),
+    }
+
+
+async def run_real_session_experiment(cases: list[dict[str, Any]], platform: str,
+                                      eval_date: str, session_count: int = 8) -> dict[str, Any]:
+    """真实路径记忆评测（real-session 协议，设计 D1/D2/D3）：
+    每会话 = 首问（未命中，沉淀）→ [mock 弱验证：close/reopen 同一路径] → 二问（期望命中）
+           → 近似问（变体，仅观测，band 任意分层）。
+    产出 real_hit_rate / real_consistency / real_persist_hits，带 x/y 原始计数 + N 量级方向性标注。
+    - mock 平台：runner 本地 store（临时路径），弱验证自动化（文件持久化）。
+    - real 平台：走服务器 /analyze（memoryNamespace 透传），二问命中验证；强验证（重启服务器）留联调。"""
+    from app.eval.comparator import compare_spec
+    from app.graph.graph_builder import init_memory
+
+    settings.memory_enabled = True  # real-session 协议隐含 --memory on（测的就是记忆）
+    _d, syn_cases = load_cases(Path(__file__).with_name("synonym_cases.yaml"))
+    sessions = _pick_real_sessions(cases, session_count)
+    llm = settings.eval_llm_mode
+
+    memory_path: str | None = None
+    if platform == "mock":
+        from langgraph.checkpoint.memory import InMemorySaver
+
+        graph_builder.init_graph(InMemorySaver())  # mock 平台需先 init graph（run_chatbi_graph 前置）
+        memory_path = _real_session_memory_path()
+        await init_memory(memory_path)  # real-session 专用 store，不碰真实 memory.sqlite/memory.lance
+
+    per_session: list[dict[str, Any]] = []
+    for s in sessions:
+        sid = s["id"]
+        # 首问：未命中 → 全链路成功后写钩子沉淀
+        before1 = meter.snapshot()
+        r1 = await run_case(s, llm, platform, eval_date)
+        after1 = meter.snapshot()
+        # mock 弱验证：close → reopen 同一路径（文件持久化 claim）
+        if platform == "mock":
+            from app.graph import nodes as _n
+            _first_rows = 0
+            if _n.memory is not None:
+                try:
+                    _first_rows = len(await _n.memory.all(namespace=settings.memory_namespace))
+                except Exception:  # noqa: BLE001
+                    _first_rows = -1
+            await _close_memory()
+            await init_memory(memory_path)
+        # 二问：期望命中（mock 下已跨 reopen）
+        before2 = meter.snapshot()
+        r2 = await run_case(s, llm, platform, eval_date)
+        after2 = meter.snapshot()
+        # 近似问：变体仅观测（band 任意分层，不预设）
+        variant = _variant_for(s, syn_cases)
+        r3: dict[str, Any] | None = None
+        if variant:
+            vcase = dict(s)
+            vcase["id"] = f"{sid}_variant"
+            vcase["question"] = variant
+            before3 = meter.snapshot()
+            r3 = await run_case(vcase, llm, platform, eval_date)
+            after3 = meter.snapshot()
+        hit2 = bool(r2.get("memory_hit"))
+        score1 = compare_spec(r1.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        score2 = compare_spec(r2.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        per_session.append({
+            "id": sid,
+            "question": s["question"],
+            "intent_type": (s.get("golden_spec") or {}).get("intent"),
+            "first_sql_source": r1.get("sql_source"),
+            "first_store_rows": _first_rows if platform == "mock" else None,
+            "first_hit": bool(r1.get("memory_hit")),
+            "first_l1": bool(score1 and score1.core_ok),
+            "second_hit": hit2,
+            "second_l1": bool(score2 and score2.core_ok),
+            "consistent": _intents_equal(r1.get("resolved_intent"), r2.get("resolved_intent")),
+            "persist_ok": hit2,  # mock 下二问已跨 close/reopen；real 下仅跨请求（强验证留联调）
+            "variant": variant,
+            "variant_band": r3.get("memory_band") if r3 else None,
+            "variant_hit": bool(r3.get("memory_hit")) if r3 else None,
+            "first_tokens": after1["total_tokens"] - before1["total_tokens"],
+            "second_tokens": after2["total_tokens"] - before2["total_tokens"],
+        })
+        if r3 is not None:
+            per_session[-1]["variant_tokens"] = after3["total_tokens"] - before3["total_tokens"]
+
+    if platform == "mock":
+        await _close_memory()
+
+    metrics = _real_session_metrics(per_session, platform, settings.memory_namespace)
+    metrics["per_session"] = per_session
+    return metrics
 
 
 async def run_counterexample(case: dict[str, Any], platform: str, eval_date: str) -> dict[str, Any]:
@@ -966,6 +1158,12 @@ async def main() -> None:
                         help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
     parser.add_argument("--cold-hot", action="store_true", default=False,
                         help="冷热启动实验（需 --synonym-cases）：空记忆 vs seed 预置记忆，测检索侧收益")
+    parser.add_argument("--protocol", choices=["eval", "real-session"], default="eval",
+                        help="评测协议：eval（默认，场内自命中口径）| real-session（真实路径命中率基线）")
+    parser.add_argument("--namespace", default=None,
+                        help="记忆 namespace 覆盖；仅支持显式 default（真实联调开关），评测 namespace 由协议自动生成")
+    parser.add_argument("--real-session-cases", type=int, default=8,
+                        help="real-session 会话数（默认 8）")
     args = parser.parse_args()
 
     if args.compare:
@@ -1002,6 +1200,25 @@ async def main() -> None:
                 print("[synonym] WARNING: inject 子集样本不足(<8)，结论仅方向性")
         import json as _json
         print(_json.dumps(exp, ensure_ascii=False, indent=2))
+        return
+
+    if args.protocol == "real-session":
+        _assert_real_session_valid(run_config["llm"])
+        if args.namespace:
+            if args.namespace != "default":
+                raise SystemExit("--namespace 仅支持显式 default（真实联调开关）；评测 namespace 由协议自动生成")
+            settings.memory_namespace = "default"
+        else:
+            settings.memory_namespace = _real_session_namespace(eval_date)
+        exp = await run_real_session_experiment(cases, run_config["platform"], eval_date,
+                                                session_count=max(1, args.real_session_cases))
+        print(f"[real-session] namespace={settings.memory_namespace} sessions={exp['session_total']}")
+        print(f"[real-session] real_hit_rate={exp['real_hit_rate']} "
+              f"real_consistency={exp['real_consistency']}")
+        print(f"[real-session] real_persist_hits={exp['real_persist_hits']} "
+              f"variant_total={exp['variant_total']}")
+        print(f"[real-session] {exp['direction_note']}")
+        print(json.dumps(exp, ensure_ascii=False, indent=2))
         return
 
     from app.graph.checkpoints import create_checkpointer
