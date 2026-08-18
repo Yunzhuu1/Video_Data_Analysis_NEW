@@ -83,13 +83,27 @@ async def run() -> dict:
     for r in rows:
         r["band"] = bands[r["question"]]
         r["verdict"] = classify(r["a_l1"], r["band"])
+
+    # 组 B：只跑 真难层 子集（band=inject 且 组A错）——注入实验统计口径（P1）
+    true_hard = [r for r in rows if r["verdict"] == "真难层"]
+    for r in true_hard:
+        state = await run_chatbi_graph({
+            "run_id": f"hardB_{r['id']}", "user_id": "eval", "question": r["question"],
+            "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+            "warnings": [], "errors": []})
+        score = compare_spec(state.get("resolved_intent"),
+                             next(s["golden_spec"] for s in hard if s["id"] == r["id"]), eval_date)
+        r["b_l1"] = bool(score and score.core_ok)
+        r["b_intent"] = state.get("resolved_intent")
     await _close_memory()
 
     # 汇总
     counts = {"真难层": 0, "miss泛化层": 0, "非难层(组A对)": 0}
     for r in rows:
         counts[r["verdict"]] += 1
-    return {"hard_n": len(rows), "counts": counts, "rows": rows}
+    flips = [r for r in true_hard if r.get("b_l1") and not r["a_l1"]]
+    return {"hard_n": len(rows), "counts": counts, "true_hard_n": len(true_hard),
+            "flip_n": len(flips), "rows": rows}
 
 
 async def main() -> int:
@@ -99,11 +113,19 @@ async def main() -> int:
     except Exception as exc:  # noqa: BLE001
         print(f"FATAL: {exc}")
         return 1
+    print(f"{'id':<6}{'band':<10}{'判定':<14}{'组A':<6}{'组B':<6} q")
     for r in res["rows"]:
-        print(f"{r['id']:<6}{r['band']:<10}{r['verdict']:<14}{r['a_l1']!s:<7} {r['question']}")
+        b = "—" if "b_l1" not in r else str(r.get("b_l1"))
+        print(f"{r['id']:<6}{r['band']:<10}{r['verdict']:<14}{str(r['a_l1']):<6}{b:<6} {r['question']}")
     print(f"\nhard 候选 N={res['hard_n']} | {res['counts']}")
-    true_hard = res["counts"]["真难层"]
-    print(f"真难层 = {true_hard}（≥8 才有注入实验统计意义，否则并入诚实报告）")
+    print(f"真难层 = {res['true_hard_n']}（≥8 才有注入实验统计意义，否则并入诚实报告）")
+    if res["true_hard_n"]:
+        gain = res["flip_n"] / res["true_hard_n"]
+        print(f"注入实验（真难层子集）：组B 翻转 {res['flip_n']}/{res['true_hard_n']} "
+              f"= {gain:.0%}（最小声明口径：至少 1 例翻转，不宣称显著提升）")
+        for r in [x for x in res["rows"] if x["verdict"] == "真难层"]:
+            print(f"  flip: {r['question'][:24]} | 组A={'错' if not r['a_l1'] else '对'} "
+                  f"组B={'对' if r.get('b_l1') else '错'} | band={r['band']}")
     return 0
 
 
