@@ -5,7 +5,8 @@ from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
-from app.memory.retriever import TextSimilarityRetriever, metrics_consistent, normalize_question
+from app.memory.embeddings import get_embedding_provider
+from app.memory.retriever import TextSimilarityRetriever, build_retriever, metrics_consistent, normalize_question
 from app.memory.store import MemoryStore, compute_resolver_hash
 from app.settings import settings
 from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
@@ -97,8 +98,7 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
     if memory is None or not settings.memory_enabled:
         return None
     try:
-        retriever = TextSimilarityRetriever(
-            memory, settings.memory_hit_threshold, settings.memory_inject_threshold)
+        retriever = build_retriever(memory, get_embedding_provider())
         hits = await retriever.search(state["question"], namespace=state.get("memory_namespace", "default"))
         if not hits:
             return None
@@ -119,7 +119,17 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
             state["memory_band"] = "hit_rejected"
             return None
         if best.band == "inject":
-            examples = [(h.entry.norm_question, h.entry.resolved_intent) for h in hits[:3]]
+            # 示例按 intent 去重（P2-2）：top-3 尽量覆盖不同 intent，同 intent 只取相似度最高一条（hits 已按分数降序）
+            examples: list[tuple[str, dict]] = []
+            seen_intents: set[str] = set()
+            for h in hits:
+                it = str((h.entry.resolved_intent or {}).get("intent") or "")
+                if it in seen_intents:
+                    continue
+                seen_intents.add(it)
+                examples.append((h.entry.norm_question, h.entry.resolved_intent))
+                if len(examples) >= 3:
+                    break
             state["memory_band"] = "inject"
             try:
                 intent = await semantic_resolver.resolve(
