@@ -16,12 +16,13 @@
 
 ## 3. 实验与报告闭环
 
-- [ ] 3.1 runner `_compute_synonym_bands` 改用真实检索器（与 nodes.py 同一工厂），band = 真实 search top-1；报告配置列补 embedding 模型名
-- [ ] 3.2 exp2/exp3 重跑（真实 LLM）：记录 N_hit/N_inject/N_miss（预期 inject 带首次可填充）、注入子集 L1 对比、hit 召回（近重复更稳直通）、毒化对精度
-- [ ] 3.3 --memory off 全量回归 L1-L4 不回退 + 同问同答 100% 不回退 + 毒化反例不命中
+- [ ] 3.1 **修复 review P1（eval-metrics 遗留）**：`_compute_synonym_bands` 改为调用真实检索器 `search()` 取 top-1 band（与 nodes.py 同一工厂/同一判定，含 metrics_consistent + catalog + acceptable 复检），禁止内联重写打分；删除 platform 死代码（real 分支不可达）；补一致性单测：seed 一条 metric 不一致的相似条目 → 断言 runner band ≠ 运行时 hit（兑现"零偏差"承诺，向量化后不红）
+- [ ] 3.2 **review 次要项**：`_seed_memory` 失败补日志（不再静默吞错）；metrics-report 口径修正——real+real 时 `tokens_total` 显示 0（非 None）；重复对 token 归因口径（r1+r2 进单桶）在报告注明
+- [ ] 3.3 exp2/exp3 重跑（真实 LLM）：记录 N_hit/N_inject/N_miss（预期 inject 带首次可填充）、注入子集 L1 对比、hit 召回（近重复更稳直通）、毒化对精度
+- [ ] 3.4 --memory off 全量回归 L1-L4 不回退 + 同问同答 100% 不回退 + 毒化反例不命中
 
 ## 4. 收尾
 
 - [ ] 4.1 Python pytest 全绿 + ruff clean
-- [ ] 4.2 docs/metrics-report.md 记忆价值节更新（检索器三变量 + 新 band 分布 + 注入/冷热新结果）
+- [ ] 4.2 docs/metrics-report.md 更新：记忆价值节（检索器三变量 + 新 band 分布 + 注入/冷热新结果）+ token 口径修正（real+real 显示 0）+ 重复对归因注明
 - [ ] 4.3 更新 docs/开发日志.md（倒序新条目）
