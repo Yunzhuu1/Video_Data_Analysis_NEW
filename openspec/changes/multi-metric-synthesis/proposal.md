@@ -4,8 +4,8 @@
 
 ## What Changes
 
-- **同源表多指标聚合（MVP）**：`synthesize()` 支持多个指标来自同一源表（metric_daily 的 total_plays/total_likes 等）时，同一 FROM + 多 SELECT 表达式列，共享 group-by/time/filter——n01「统计各分类的播放量和点赞量」从 fallback → semantic。
-- **约束（防错误合成）**：多指标共享同 dimensions/time_range/filters/ordering（同 group-by 集）；intent 限 aggregate/trend（ranking/detail 多指标仍降级）；跨源表多指标（如 n02：play_detail + user_behavior_fact）**明确降级**（诚实边界，标注非目标）。
+- **同源表多指标聚合（MVP）**：`synthesize()` 支持多个指标**经 `_resolve_path` 后全部落在 metric_daily 列路径**（同一 FROM + 多 SELECT 表达式列，共享 group-by/time/filter）——n01「统计各分类的播放量和点赞量」从 fallback → semantic；事实路径（按 dims 路由到 user_behavior_fact）多指标明确降级（各指标 factEventFilter 不同会致空结果）。
+- **约束（防错误合成）**：多指标共享同 dimensions/time_range/filters/ordering（同 group-by 集）；intent 限 aggregate/trend（ranking/detail 多指标仍降级）；**非 metric_daily 列路径**多指标（跨源如 n02、或事实路径）**明确降级**（诚实边界，标注非目标）。
 - **SUM 包裹复用**：metric_daily 且分组粒度 ≠ {date, category} 时，多指标每列各自 SUM（复用 v1 逻辑）。
 - **评测**：--memory off N=45 回归中 n01 从 fallback → semantic 且 L1 正确；n02 保持 fallback（已知边界）；零回退。
 

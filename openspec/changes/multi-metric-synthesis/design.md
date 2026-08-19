@@ -16,16 +16,18 @@
 
 ## Decisions
 
-### D1：同源表多指标（MVP 必做）
-- 所有 metrics 的 `sourceTable` 相同 → 单 FROM + 多 SELECT 列。
-- 例 n01：`SELECT cd.category AS category, SUM(md.total_plays) AS total_plays, SUM(md.total_likes) AS total_likes FROM metric_daily md JOIN content_dim cd ... GROUP BY md.category`。
+### D1：同源表多指标（MVP 必做，判定基于 _resolve_path 后的 source）
+- **判定式（P1）**：全部 metrics 经 `_resolve_path(mdef, intent, dims)` 后 `path.source == "metric_daily"` 才合成多指标；否则（含经路由到 user_behavior_fact 的事实路径）一律降级。
+  - 不能用原始 `sourceTable` 判同源：`_resolve_path` 会把 metric_daily 指标在特定 dims（如 trend+dims=[content]）下路由到 user_behavior_fact，且各指标 factEventFilter 不同（total_plays→`event_type='play'`、total_likes→`event_type='like'`）——若判"同源"会合成 `WHERE event_type='play' AND event_type='like'` → 空结果。
+- 例 n01（metric_daily 列路径）：`SELECT md.category AS category, SUM(md.total_plays) AS total_plays, SUM(md.total_likes) AS total_likes FROM metric_daily md GROUP BY md.category`。
+  - 注（P2）：metric_daily 的 category 维度返回 `md.category`，**不产生 JOIN**（content_dim 的 JOIN 只在 user_behavior_fact 源路径出现）。
 - 每个 metric 的 expr = `_resolve_path(mdef, intent, dims)` 的 expr（metric_daily 路径下即 formula 列名）；SUM 包裹按统一 gb 判断（`gb != {date, category}` 时每列 SUM）。
-- 理由：metric_daily 行粒度为 (date, category)，同 group-by 下多列聚合语义一致，风险最低。
+- 理由：metric_daily 行粒度为 (date, category)，同 group-by 下多列聚合语义一致，风险最低；事实路径多指标（factEventFilter 兼容校验）留后续（P1 方案 2）。
 
-### D2：跨源表多指标 → 明确降级
-- metrics 的 sourceTable 不一致 → `SynthesisError`（走现有降级 raw SQL 路径）。
-- n02 保持 fallback，报告标注「已知边界：跨源表多指标未支持」。
-- 理由：completion_rate（play_detail AVG）与 engagement_rate（fact 聚合）粒度/聚合语义不同，子查询 JOIN 需严格对齐（date/category 双键），MVP 不做；面试可讲为「多指标同源优先、跨源为后续」的渐进策略。
+### D2：非 metric_daily 路径多指标 → 明确降级
+- 任一 metric 经 `_resolve_path` 后 source 非 metric_daily（跨源：play_detail/fact；或 metric_daily 被路由到事实路径）→ `SynthesisError`（走现有降级 raw SQL 路径）。
+- n02 保持 fallback，报告标注「已知边界：跨源/事实路径多指标未支持」。
+- 理由：completion_rate（play_detail AVG）与 engagement_rate（fact 聚合）粒度/聚合语义不同；事实路径各指标 factEventFilter 不同会导致空结果（P1）。子查询 JOIN 需严格对齐（date/category 双键），MVP 不做；面试可讲为「多指标 metric_daily 列路径优先、其余渐进」的策略。
 
 ### D3：约束校验（防错误合成）
 - 多指标时 intent ∈ {aggregate, trend}；ranking/detail → SynthesisError。
@@ -52,4 +54,4 @@
 ## Open Questions
 
 - 跨源表多指标（n02）是否值得做子查询 JOIN 版？（倾向后续独立 change，需先确认 play_detail/fact 粒度可对齐）
-- 多指标 trend（date + category 双轴）是否需要？（MVP 已支持 trend 多指标，无额外工作）
+- 多指标 trend 是否已支持？（支持，但**仅 metric_daily 列路径**——trend group-by 逻辑 `gb=[date]+dims` 与单指标相同，多指标只是加 SELECT 列；trend+dims=[content] 会触发事实路径 → 降级，见 P1）

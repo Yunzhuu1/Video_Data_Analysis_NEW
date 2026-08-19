@@ -1,7 +1,7 @@
 ## 1. 合成器多指标
 
-- [ ] 1.1 `synthesize()` 支持同源表多指标聚合：metrics 同 sourceTable 且 intent ∈ {aggregate, trend} → 单 FROM + 多 SELECT 列（每列 `agg_expr AS code`），SUM 包裹按统一 gb 判断
-- [ ] 1.2 约束校验：跨源表多指标 / 多指标 ranking|detail / 维度时间过滤排序不一致 → SynthesisError（显式降级）
+- [ ] 1.1 `synthesize()` 支持同源表多指标聚合：**全部 metrics 经 `_resolve_path` 后 `path.source == "metric_daily"`** 且 intent ∈ {aggregate, trend} → 单 FROM + 多 SELECT 列（每列 `agg_expr AS code`，无 spurious JOIN），SUM 包裹按统一 gb 判断
+- [ ] 1.2 约束校验：非 metric_daily 路径多指标（跨源 / 事实路径，如 trend+dims=[content] 的播放+点赞）/ 多指标 ranking|detail / 维度时间过滤排序不一致 → SynthesisError（显式降级）
 - [ ] 1.3 单测：n01 同源聚合 SQL 形态与 SUM 包裹、跨源降级（n02）、ranking 多指标降级、单指标行为不变
 
 ## 2. 评测与回归
