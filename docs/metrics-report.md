@@ -23,6 +23,7 @@
 | 08-17 | **本 change：--memory on real+mock 全量** | 100% (25/25) | 96% | 100% (14/14) | 92.86% (13/14) | 100% | 100% | 16% | 12.6s / 27.4s | 72d7130 |
 | 08-18 | eval-data-expansion（N=45 扩展基线） | 100% (45/45) | 95.56% | 96.97% (32/33) | 84.85% (28/33) | 96.46% | 100% | 0%（off） | - | PR#16 |
 | 08-18 | **real-memory-baseline（--memory off 回归 + real-session）** | 100% (45/45) | 95.56% | 100% (33/33) | 90.91% (30/33) | 97.98% | 100% | **7/8 真实路径** | - | 本 change |
+| 08-19 | eval-result-grading（结果级评测 R1） | 100% (45/45) | 97.78% | 96.97% (32/33) | 81.82% (27/33) | 95.96% | 100% | - | **R1 12/12 (100%)** | 本 change |
 
 > 注：L2 92.86% 为 c04 ordering 单字段 LLM 解析方差（sql_source=semantic，非记忆回归，详见 §2）；47.62% 一轮为 c15/c16 真实模式评测设计伪影（mock 注入用例期望重试数，语义 SQL 一次通过），非真实回归。
 
@@ -56,6 +57,13 @@
 - **约束（防错误合成）**：全部指标经 `_resolve_path` 后落在 metric_daily 列路径 且 intent ∈ {aggregate, trend} 才合成；事实路径多指标（各指标 factEventFilter 不同会致空结果）显式降级。
 - **回归**：--memory off N=45 可用性 100%、L1 96.97%（32/33，与基线严格一致）、L2 81.82%（27/33，失分全为 source=semantic 单指标用例的 intent/时间/维度 LLM 解析方差，历轮 81-91% 波动范围内）、端到端 97.78%、拦截 100%。
 - **简历口径**：多指标 NL 查询从"降级 raw SQL"走向"确定性语义合成"——产品能力完整性补齐，n01 类缺口关闭。
+
+### 2.3 结果级评测 R1（eval-result-grading，2026-08-19）
+- **R1 = 结果正确率**：对 12 个结果可确定用例（aggregate/trend/ranking），用**独立于合成器的手工 SQL 取 seed 42 真值**（truth_source 记录），runner 用真实 MySQL 独立执行系统合成 SQL 后按 intent 分层断言（exact/exact_per_key/trend_pattern/top_set）。
+- **结果：R1 = 12/12（100%）**，交叉诊断（L1 对 + R1 错 value_mismatch）为空——当前用例集合成 SQL 与真值全一致，无"解析对但 SQL 错"的 bug（诚实结论：基础用例合成器已正确；R1 的价值是未来合成器改动的回归保险）。
+- **断言分层**：c04/c05/c08 exact；c02/c11/n16 exact_per_key；c12 trend 单序列；c01/c07 trend 多序列（seed 42 节后下降模式）；c06/n12/n21 top_set。
+- **平台**：R1 走 runner 独立 MySQL 审计执行（非业务链路），mock 平台也可评 R1（执行层独立于系统）；mock 假数据不参与断言。
+- **已知边界**：relative 时间用例（c03 等）合成 SQL 无时间过滤（系统已知缺口，R1 暂不覆盖，后续修时间语义时用 R1 验证）。
 
 ## 3. 安全（门禁 / HITL）
 

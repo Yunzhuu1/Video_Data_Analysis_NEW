@@ -29,6 +29,35 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "trend_pattern",
+        "series": {
+          "美食": [
+            {
+              "date": "2023-10-08",
+              "direction": "down",
+              "magnitude": "drop"
+            }
+          ],
+          "游戏": [
+            {
+              "date": "2023-10-08",
+              "direction": "down"
+            }
+          ],
+          "美妆": [
+            {
+              "date": "2023-10-08",
+              "direction": "down"
+            }
+          ]
+        },
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -54,6 +83,20 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {
+          "游戏": 2662,
+          "美妆": 2669,
+          "美食": 3828
+        },
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -104,6 +147,16 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 43.660119,
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -133,6 +186,16 @@
           }
         ],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 3828,
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -160,6 +223,23 @@
           "field": "total_plays",
           "direction": "desc",
           "limit": 10
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_5",
+          "content_6",
+          "content_2",
+          "content_4",
+          "content_1",
+          "content_3"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
         }
       }
     },
@@ -195,6 +275,29 @@
           }
         ],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "trend_pattern",
+        "series": {
+          "美食": [
+            {
+              "date": "2023-10-08",
+              "direction": "down",
+              "magnitude": "drop"
+            }
+          ],
+          "游戏": [
+            {
+              "date": "2023-10-08",
+              "direction": "down"
+            }
+          ]
+        },
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -222,6 +325,16 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 2924,
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -295,6 +408,20 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {
+          "游戏": 0,
+          "美妆": 0,
+          "美食": 0
+        },
+        "tolerance": 0.0,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -324,6 +451,25 @@
           }
         ],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "trend_pattern",
+        "points": [
+          {
+            "date": "2023-10-08",
+            "direction": "down",
+            "magnitude": "drop"
+          },
+          {
+            "date": "2023-10-11",
+            "direction": "up"
+          }
+        ],
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -735,6 +881,20 @@
           "direction": "desc",
           "limit": 3
         }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "creator_3",
+          "creator_1",
+          "creator_2"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -801,6 +961,23 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {
+          "content_1": 383,
+          "content_2": 396,
+          "content_3": 399,
+          "content_4": 415,
+          "content_5": 596,
+          "content_6": 535
+        },
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -906,6 +1083,20 @@
           "field": "total_plays",
           "direction": "desc",
           "limit": 3
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_5",
+          "content_6",
+          "content_2"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "sql": "独立手工 SQL（见 metrics-report）"
         }
       }
     },

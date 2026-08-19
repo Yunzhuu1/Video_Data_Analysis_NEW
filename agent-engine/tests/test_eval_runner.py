@@ -272,3 +272,51 @@ def test_render_report_direct_hit_row():
 
     assert "直通收益" in md
     assert "1/1" in md
+
+
+# ------------------------------------------------------------------ R1（eval-result-grading）
+def test_aggregate_r1_metrics_and_cross_diagnosis():
+    ok = {
+        "id": "c02", "type": "text2sql", "passed": True, "status": "SUCCESS", "retry_count": 0,
+        "latency_ms": 5, "sql_source": "semantic", "sql": "SELECT 1",
+        "spec_score": {"matched": True, "core_ok": True, "field_hits": 6, "field_total": 6,
+                       "fields": {"intent": True, "metrics": True, "dimensions": True,
+                                  "time_range": True, "filters": True, "ordering": True}},
+        "result_check": {"kind": "exact_per_key", "passed": True, "detail": "all keys match", "fail_reason": None},
+    }
+    mismatch = {
+        "id": "c07", "type": "text2sql", "passed": True, "status": "SUCCESS", "retry_count": 0,
+        "latency_ms": 5, "sql_source": "semantic", "sql": "SELECT 2",
+        "spec_score": {"matched": True, "core_ok": True, "field_hits": 6, "field_total": 6,
+                       "fields": {"intent": True, "metrics": True, "dimensions": True,
+                                  "time_range": True, "filters": True, "ordering": True}},
+        "result_check": {"kind": "exact", "passed": False, "detail": "v=2 vs 3", "fail_reason": "value_mismatch"},
+    }
+    no_assert = {
+        "id": "c18", "type": "risk", "passed": True, "status": "SUCCESS", "retry_count": 0,
+        "latency_ms": 5, "sql_source": "semantic", "sql": "SELECT 3",
+        "spec_score": {"matched": True, "core_ok": True, "field_hits": 6, "field_total": 6,
+                       "fields": {"intent": True, "metrics": True, "dimensions": True,
+                                  "time_range": True, "filters": True, "ordering": True}},
+        "result_check": None,
+    }
+    agg = aggregate([ok, mismatch, no_assert])
+    assert agg["result_judged"] == 2
+    assert agg["result_passed"] == 1
+    assert agg["result_rate"] == 0.5
+    assert agg["result_value_mismatch"] == ["c07"]
+
+
+def test_render_report_includes_r1_and_diagnosis():
+    run_config = {"llm": "real", "platform": "real", "model": "deepseek-chat", "eval_date": "2023-10-14", "cassette": "-"}
+    ok = {
+        "id": "c02", "type": "text2sql", "passed": True, "status": "SUCCESS", "retry_count": 0,
+        "latency_ms": 5, "sql_source": "semantic", "sql": "SELECT 1", "reason": "PASS",
+        "spec_score": {"matched": True, "core_ok": True, "field_hits": 6, "field_total": 6,
+                       "fields": {"intent": True, "metrics": True, "dimensions": True,
+                                  "time_range": True, "filters": True, "ordering": True}},
+        "result_check": {"kind": "exact", "passed": False, "detail": "v=2 vs 3", "fail_reason": "value_mismatch"},
+    }
+    md = render_report([ok], run_config, "2023-10-14")
+    assert "结果正确率（R1" in md
+    assert "交叉诊断" in md and "c02" in md
