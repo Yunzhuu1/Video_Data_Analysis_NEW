@@ -23,8 +23,10 @@
 ### D1：断言分层（按 intent 类型）
 | intent | 断言 | 判定 |
 |---|---|---|
-| aggregate | `{type: "exact", value, tolerance}` | 数值 |actual-value| ≤ tolerance（如 1%） |
-| trend | `{type: "trend_pattern", points}` | 关键点方向/激增下降模式匹配（seed 42 刻意模式） |
+| aggregate（无维度，单行） | `{type: "exact", value, tolerance}` | 数值 |actual-value| ≤ tolerance（如 1%） |
+| aggregate（带维度，多行） | `{type: "exact_per_key", values: {key: value}, tolerance}` | 每 key 数值均在容差内（P2-1：多行结果对单值断言无定义，MVP 用例须匹配断言形态） |
+| trend（单序列） | `{type: "trend_pattern", points}` | 关键点方向/激增下降模式匹配（seed 42 刻意模式） |
+| trend（多序列） | `{type: "trend_pattern", series: {key: points}}` 或聚合总序列 | 按序列键断言（seed 42 模式按分类不同：美食+200%/其他+50%）或断言聚合总序列（P2-2） |
 | ranking | `{type: "top_set", items, ordered?}` | 集合命中（必选）+ 顺序（可选） |
 | detail/歧义 | 不断言 | R1=N/A |
 
@@ -34,10 +36,12 @@
 - R1 = 结果断言通过数 / 可断言用例数（real 平台，judged 口径）。
 - 与 L1-L4 并列报告；端到端（现有 95.56% 口径）不变。
 - **L1 错 → R1=N/A**（结果对也是碰巧，避免假阳性）；`L1 对 + R1 错` 单列 = 合成器/SQL 生成 bug 的最直接信号。
-- 理由：两套数字各自成立 + 交叉诊断价值。
+- **R1 失败记录原因类别（P2-3）**：`sql_error`（SQL 无法执行/语法错）/ `exec_error`（执行超时/环境）/ `value_mismatch`（执行成功但值不匹配）；**交叉诊断清单只挑 `value_mismatch`**（真正的"解析对但 SQL 错"信号），避免执行噪声污染。
+- 理由：两套数字各自成立 + 交叉诊断价值（聚焦 value_mismatch 才是合成器 bug 信号）。
 
 ### D3：expected_result 来源与格式
-- 来源：先跑一次 real 评测（或手工 SQL）确认真实值 → 写入 cases.yaml `expected_result`。
+- **来源（P1，硬要求）**：取真值必须用**独立于合成器的手工 SQL**（直接查库验证，如 `SELECT category, SUM(total_plays) FROM metric_daily WHERE ... GROUP BY category`），**不得用系统合成输出作为 expected_result**——否则会把合成器 bug 烘焙进真值，R1 永远通过、交叉诊断失效，change 退化为"确认 bug 的系统"。
+- cases.yaml 每个 expected_result 记录 **`truth_source`**（手工 SQL / 查询时间 / 数据初始化版本 seed 42）供审计（P3）。
 - 格式（按 D1 类型）：
   ```yaml
   expected_result:
@@ -70,7 +74,7 @@
 
 - **[Risk] 精确值对数据变动敏感**（真实数据若重灌变化）→ 小容差 + seed 42 确定性 + 报告注明"结果基准取自 seed 42 数据"。
 - **[Risk] 趋势方向误判**（噪声使方向不稳）→ 方向断言用关键点（激增/下降模式）而非逐点，seed 42 的刻意模式可稳定断言。
-- **[Risk] 取真值过期**（数据初始化逻辑变更）→ 取真值脚本 + 报告版本化（记录取真值日期）。
+- **[Risk] 取真值过期**（数据初始化逻辑变更）→ 取真值脚本 + 报告版本化（记录取真值日期 + **数据初始化版本**——seed 42 若变，全部真值失效）。
 - **[Risk] R1 与 L1 关系被误读**（L1 错 R1=N/A 可能被当"缺数据"）→ 报告明确 N/A 语义（不可判定，非失败）。
 
 ## Migration Plan
@@ -85,4 +89,5 @@
 
 - 容差取值（1%？绝对值？）→ 取真值时看数值量级定，MVP 用相对 1%。
 - 趋势方向判定的幅度阈值（多少算"激增"）→ 用 seed 42 模式标定（+50% 激增、-40% 下降）。
+- 多序列 trend 断言方式（按序列键 vs 聚合总序列）→ 取真值时按用例实际形态定（倾向按序列键，seed 42 各分类模式明确）。
 - 扩展全量用例的结果断言 → 后续独立 change（需先评估歧义/detail 的可断言性）。

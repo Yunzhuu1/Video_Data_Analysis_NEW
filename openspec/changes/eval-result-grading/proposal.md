@@ -4,12 +4,12 @@
 
 ## What Changes
 
-- **ResultComparator（按 intent 分层断言）**：aggregate → 精确值+容差；trend → 方向断言（涨/跌/激增/下降模式）；ranking → 集合+顺序断言；detail/歧义 → 不断言。
-- **`expected_result` 字段**：给结果可确定的用例标注标准答案（先跑一次真实评测取真值，数据确定性保证可复现）。
+- **ResultComparator（按 intent 分层断言）**：aggregate → exact（单行）/ exact_per_key（带维度多行）+容差；trend → 方向断言（单序列/多序列按序列键）；ranking → 集合+顺序断言；detail/歧义 → 不断言。
+- **`expected_result` 字段**：给结果可确定的用例标注标准答案——**取真值用独立于合成器的手工 SQL**（直接查库验证，防止把合成器 bug 烘焙进真值），记录 `truth_source`（手工 SQL/查询时间/数据初始化版本）供审计。
 - **R1（结果正确率）独立维度**：与 L1-L4 并列报告，端到端口径不变；**L1 错 → R1 标记 N/A**（避免"思路错但结果碰巧对"的假阳性）。
 - **平台行为**：mock 平台只评 L1-L4（R1=N/A，假数据无意义）；real 平台（真实 MySQL）评 R1。
 - **MVP 范围**：10-15 个结果可确定用例（总量/趋势/排名类），歧义/明细不加。
-- **交叉诊断**：报告输出 `L1 对 + R1 错` 用例清单（= 解析对但 SQL 错，合成器/生成 bug 的最直接信号）。
+- **交叉诊断**：报告输出 `L1 对 + R1 错` 用例清单，**仅 `value_mismatch` 类**（执行成功但值不匹配 = 解析对但 SQL 错）；sql_error/exec_error 不计入诊断（防执行噪声污染）。
 
 ## Capabilities
 

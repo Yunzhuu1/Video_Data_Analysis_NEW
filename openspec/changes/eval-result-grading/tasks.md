@@ -1,17 +1,17 @@
 ## 1. ResultComparator
 
-- [ ] 1.1 `result_comparator.py`：exact 断言（数值+容差）、trend_pattern 断言（关键点方向/模式）、top_set 断言（集合+可选顺序）
-- [ ] 1.2 单测：三类断言通过/失败边界（容差、方向、集合漏项/错序）、非可断言类型返回 None
+- [ ] 1.1 `result_comparator.py`：exact / exact_per_key（带维度多行）/ trend_pattern（单序列+多序列按序列键）/ top_set（集合+可选顺序）断言
+- [ ] 1.2 单测：断言通过/失败边界（容差、方向、集合漏项/错序、exact_per_key 多行）、失败原因分类、非可断言类型返回 None
 
 ## 2. cases 标注
 
 - [ ] 2.1 挑 10-15 个结果可确定用例（aggregate/trend/ranking 各覆盖）
-- [ ] 2.2 跑一次 real 评测取真值 → cases.yaml 标 `expected_result`（按 D1 格式）
+- [ ] 2.2 用**独立于合成器的手工 SQL** 直接查库取真值 → cases.yaml 标 `expected_result` + `truth_source`（手工 SQL/查询时间/seed 版本）
 
 ## 3. runner R1
 
-- [ ] 3.1 runner 聚合 R1（可断言口径）、mock 平台 R1=N/A、L1 错 → R1=N/A
-- [ ] 3.2 报告：R1 与 L1-L4 并列 + `L1 对 + R1 错` 交叉诊断清单
+- [ ] 3.1 runner 聚合 R1（可断言口径）、mock 平台 R1=N/A、L1 错 → R1=N/A、失败原因分类（sql_error/exec_error/value_mismatch）
+- [ ] 3.2 报告：R1 与 L1-L4 并列 + `L1 对 + R1 错` 交叉诊断清单（仅 value_mismatch）
 - [ ] 3.3 单测：R1 聚合（mock 数据造 exact/trend/top_set 结果）
 
 ## 4. 评测与回归

@@ -4,11 +4,11 @@
 评测 SHALL 对可确定结果的用例执行最终结果断言：aggregate 用精确值+容差，trend 用方向/模式断言，ranking 用集合+顺序断言；detail/歧义用例不断言。断言基于真实执行结果（real 平台），且 expected_result 取自确定性种子数据（seed 42）保证可复现。
 
 #### Scenario: aggregate 精确值断言
-- **WHEN** 用例 intent=aggregate 且标注 `expected_result: {type: "exact", value, tolerance}`
-- **THEN** 真实执行结果数值与 value 之差 ≤ tolerance 判通过，否则 R1 失败
+- **WHEN** 用例 intent=aggregate 且标注 `expected_result: {type: "exact", value, tolerance}`（无维度单行）或 `{type: "exact_per_key", values: {key: value}, tolerance}`（带维度多行）
+- **THEN** 真实执行结果数值（单值或每 key）与断言之差 ≤ tolerance 判通过，否则 R1 失败
 
 #### Scenario: trend 方向断言
-- **WHEN** 用例 intent=trend 且标注 `expected_result: {type: "trend_pattern", points}`
+- **WHEN** 用例 intent=trend 且标注 `expected_result: {type: "trend_pattern", points}`（单序列）或 `{type: "trend_pattern", series: {key: points}}`（多序列按序列键）
 - **THEN** 关键点方向/激增下降模式与断言匹配判通过（不逐点比精确值）
 
 #### Scenario: ranking 集合+顺序断言
@@ -25,6 +25,14 @@
 #### Scenario: L1 错 R1 不判
 - **WHEN** 用例 L1 未通过
 - **THEN** R1 标记 N/A（不因"结果碰巧对"产生假阳性）
+
+#### Scenario: 真值独立于合成器
+- **WHEN** 采集 expected_result 真值
+- **THEN** 使用独立于合成器的手工 SQL 直接查库验证（不得用系统合成输出），并记录 truth_source（手工 SQL/查询时间/数据初始化版本）供审计
+
+#### Scenario: R1 失败原因分类
+- **WHEN** R1 失败
+- **THEN** 记录失败类别 sql_error / exec_error / value_mismatch；`L1 对 + R1 错` 交叉诊断仅统计 value_mismatch
 
 #### Scenario: 交叉诊断
 - **WHEN** 存在 L1 对且 R1 错的用例
