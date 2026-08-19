@@ -116,26 +116,43 @@ def _resolve_path(mdef: dict[str, Any], intent: str, dims: list[str]) -> dict[st
 
 
 def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -> str:
-    """Deterministically synthesize SELECT SQL from a resolved intent."""
-    metrics = intent.get("metrics") or []
-    if len(metrics) != 1:
-        raise SynthesisError(f"v1 synthesizer supports exactly one metric, got {metrics}")
-    code = metrics[0]
-    mdef = metric_defs.get(code)
-    if mdef is None:
-        raise SynthesisError(f"unknown metric code: {code}")
+    """Deterministically synthesize SELECT SQL from a resolved intent.
 
+    v1 规则（metric-alias 起扩展）：
+    - 单指标：任意源路径（metric_daily 列 / play_detail / 事实路径）。
+    - 多指标：全部指标经 _resolve_path 后落在 metric_daily 列路径 且 intent ∈ {aggregate, trend}
+      才合成（单 FROM + 多 SELECT 列）；否则抛 SynthesisError（降级 raw SQL）——
+      事实路径多指标各指标 factEventFilter 不同会合成空结果 WHERE（review P1）。
+    """
+    metrics = intent.get("metrics") or []
+    if not metrics:
+        raise SynthesisError("no metrics specified")
     it = intent.get("intent", "aggregate")
     dims = list(intent.get("dimensions") or [])
     filters = list(intent.get("filters") or [])
     tr = intent.get("time_range") or {"type": "none", "granularity": None}
     ordering = intent.get("ordering") or {}
 
-    path = _resolve_path(mdef, it, dims)
-    source = path["source"]
+    # 解析每个 metric 的合成路径（_resolve_path 会按 intent/dims 动态路由）
+    paths: dict[str, dict[str, Any]] = {}
+    for code in metrics:
+        mdef = metric_defs.get(code)
+        if mdef is None:
+            raise SynthesisError(f"unknown metric code: {code}")
+        paths[code] = _resolve_path(mdef, it, dims)
+
+    multi = len(metrics) > 1
+    if multi:
+        # 约束校验（显式失败优于错误 SQL）：intent 限 aggregate/trend；全 metric_daily 列路径
+        if it not in ("aggregate", "trend"):
+            raise SynthesisError(f"multi-metric synthesis not supported for intent={it}")
+        if any(paths[c]["source"] != "metric_daily" for c in metrics):
+            raise SynthesisError("multi-metric synthesis only supports metric_daily path")
+
+    first = paths[metrics[0]]
+    source = first["source"]
     alias = _ALIAS.get(source, source)
-    expr = path["expr"]
-    event_filter = path["event_filter"]
+    event_filter = first["event_filter"]
 
     # group-by set (trend always includes date on the x axis)
     gb: list[str] = []
@@ -144,10 +161,13 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
     elif it in ("aggregate", "ranking"):
         gb = list(dims)
 
-    # metric expression (metric_daily rows are at (date, category) grain)
-    agg_expr = expr
-    if source == "metric_daily" and set(gb) != {"date", "category"}:
-        agg_expr = f"SUM({expr})"
+    # metric expressions（metric_daily rows are at (date, category) grain；多指标每列各自 SUM）
+    agg_exprs: list[tuple[str, str]] = []
+    for code in metrics:
+        expr = paths[code]["expr"]
+        if source == "metric_daily" and set(gb) != {"date", "category"}:
+            expr = f"SUM({expr})"
+        agg_exprs.append((code, expr))
 
     # resolve field expressions + joins
     joins: list[str] = []
@@ -170,7 +190,7 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         start = absolute.get("start")
         end = absolute.get("end")
         if start and end:
-            tcol = mdef.get("timeField") or "date"
+            tcol = metric_defs[metrics[0]].get("timeField") or "date"
             time_expr, j = _field_expr(source, tcol)
             joins.extend(j)
             end_sql = str(end) + (" 23:59:59" if len(str(end)) <= 10 else "")
@@ -179,7 +199,7 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
 
     join_sql = (" " + " ".join(dict.fromkeys(joins))) if joins else ""
 
-    # detail intent
+    # detail intent（单指标；多指标已在约束排除）
     if it == "detail":
         return f"SELECT * FROM {source} {alias}{join_sql}{where} LIMIT {_limit(ordering, 100)}".strip()
 
@@ -189,7 +209,8 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         select_cols.append(f"{field_exprs['date']} AS date")
     for f in dims:
         select_cols.append(f"{field_exprs[f]} AS {f}")
-    select_cols.append(f"{agg_expr} AS {code}")
+    for code, expr in agg_exprs:
+        select_cols.append(f"{expr} AS {code}")
 
     sql = f"SELECT {', '.join(select_cols)} FROM {source} {alias}{join_sql}{where}"
     if gb:
@@ -198,5 +219,5 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         sql += f" ORDER BY {field_exprs['date']}"
     elif it == "ranking":
         direction = str(ordering.get("direction") or "desc").upper()
-        sql += f" ORDER BY {agg_expr} {direction} LIMIT {_limit(ordering, 10)}"
+        sql += f" ORDER BY {agg_exprs[0][1]} {direction} LIMIT {_limit(ordering, 10)}"
     return sql.strip()

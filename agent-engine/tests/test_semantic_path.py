@@ -102,14 +102,14 @@ async def test_low_confidence_resolve_falls_back(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_synthesis_failure_falls_back(monkeypatch):
-    # multi-metric intent cannot be synthesized in v1 -> degrade to raw SQL
+    # cross-source multi-metric (completion_rate + engagement_rate) cannot be synthesized -> degrade to raw SQL
     monkeypatch.setattr(
         nodes,
         "semantic_resolver",
         FakeResolver(
             {
                 "intent": "aggregate",
-                "metrics": ["total_plays", "total_likes"],
+                "metrics": ["completion_rate", "engagement_rate"],
                 "dimensions": [],
                 "time_range": {"type": "none", "granularity": None},
                 "filters": [],
@@ -125,6 +125,33 @@ async def test_synthesis_failure_falls_back(monkeypatch):
     assert state["semantic_ok"] is False
     assert state["sql_source"] == "fallback"
     assert state["sql_attempts"][-1]["source"] == "fallback"
+
+
+@pytest.mark.asyncio
+async def test_same_source_multi_metric_synthesizes(monkeypatch):
+    # same-source multi-metric (metric_daily) now synthesizes -> semantic path
+    monkeypatch.setattr(
+        nodes,
+        "semantic_resolver",
+        FakeResolver(
+            {
+                "intent": "aggregate",
+                "metrics": ["total_plays", "total_likes"],
+                "dimensions": ["category"],
+                "time_range": {"type": "none", "granularity": None},
+                "filters": [],
+                "ordering": None,
+                "confidence": 0.9,
+                "coverage": "full",
+            }
+        ),
+    )
+
+    state = await run_chatbi_graph(_initial_state())
+
+    assert state["semantic_ok"] is True
+    assert state["sql_source"] == "semantic"
+    assert "total_likes" in state["sql_attempts"][-1]["sql"]
 
 
 @pytest.mark.asyncio
