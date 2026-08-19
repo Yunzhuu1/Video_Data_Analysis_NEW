@@ -95,6 +95,13 @@ async def run_cases(cases: list[dict[str, Any]], llm: str, platform: str, eval_d
                 results.append(await run_case(case, llm, platform, eval_date))
             after = meter.snapshot()
             results[-1]["tokens"] = after["total_tokens"] - before["total_tokens"]
+            # R1：L1 通过且含 expected_result → 独立 MySQL 执行合成 SQL 断言结果
+            last = results[-1]
+            score = last.get("spec_score")
+            if last.get("status") != "ERROR" and score and score.get("core_ok") and case.get("expected_result"):
+                last["result_check"] = await _check_case_result(case, last)
+            else:
+                last["result_check"] = None
         except Exception as exc:  # noqa: BLE001 - environment failure isolation
             results.append(error_result(case, exc))
     return results
@@ -862,6 +869,7 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
         "resolved_intent": state.get("resolved_intent"),
         "memory_hit": bool(state.get("memory_hit")),
         "memory_band": state.get("memory_band"),
+        "sql": (state.get("sql_attempts") or [{}])[-1].get("sql"),
     }
 
 
@@ -948,6 +956,7 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "resolved_intent": state.get("resolved_intent"),
         "memory_hit": bool(state.get("memory_hit")),
         "memory_band": state.get("memory_band"),
+        "sql": final_report.get("sql", ""),
     }
 
 
@@ -1101,6 +1110,28 @@ def _percent(part: int, total: int) -> float:
     return (part / total) if total else 0.0
 
 
+async def _check_case_result(case: dict[str, Any], result: dict[str, Any]) -> dict[str, Any] | None:
+    """R1：对 L1 通过的用例，用真实 MySQL 独立执行其合成 SQL 并断言结果（P1 独立审计）。"""
+    from app.eval.result_comparator import check_result
+
+    exp = case.get("expected_result")
+    if not exp:
+        return None  # 无 expected_result → 不可判定（R1=N/A）
+    sql = result.get("sql")
+    if not sql:
+        return {"kind": str(exp.get("type") or ""), "passed": False,
+                "detail": "no sql", "fail_reason": "sql_error"}
+    rows, err = _exec_mysql(sql)
+    if err:
+        return {"kind": str(exp.get("type") or ""), "passed": False,
+                "detail": f"exec_error: {err}", "fail_reason": "exec_error"}
+    check = check_result(rows, exp, intent=str((case.get("golden_spec") or {}).get("intent") or ""))
+    if check is None:
+        return None
+    return {"kind": check.kind, "passed": check.passed, "detail": check.detail,
+            "fail_reason": None if check.passed else "value_mismatch"}
+
+
 def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     total = len(results)
     evaluated = [r for r in results if r.get("status") != "ERROR"]
@@ -1147,6 +1178,13 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "tokens_total": sum(r.get("tokens", 0) for r in evaluated),
         "tokens_hit_avg": _avg_tokens([r for r in evaluated if r.get("memory_hit")]),
         "tokens_miss_avg": _avg_tokens([r for r in evaluated if not r.get("memory_hit")]),
+        "result_judged": sum(1 for r in evaluated if r.get("result_check") is not None),
+        "result_passed": sum(1 for r in evaluated if r.get("result_check") is not None and r["result_check"]["passed"]),
+        "result_rate": _percent(
+            sum(1 for r in evaluated if r.get("result_check") is not None and r["result_check"]["passed"]),
+            sum(1 for r in evaluated if r.get("result_check") is not None)),
+        "result_value_mismatch": [r["id"] for r in evaluated
+                                  if r.get("result_check") and r["result_check"].get("fail_reason") == "value_mismatch"],
         "repeat_pairs": sum(1 for r in evaluated if "r1_tokens" in r),
         "direct_hit_pairs": sum(1 for r in evaluated if r.get("direct_hit") and "r1_tokens" in r),
         "direct_hit_avg_token_delta": _avg_key(
@@ -1163,6 +1201,37 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "latency_p50": statistics.median(latencies) if latencies else 0,
         "latency_p95": _percentile(latencies, 0.95),
     }
+
+
+def _exec_mysql(sql: str, db: str = "video_data_analysis") -> tuple[list[dict[str, Any]], str | None]:
+    """评测侧审计执行：用本地 MySQL 独立执行合成 SQL（R1 验证，P1 独立于系统）。
+
+    注意：这是评测 runner 的独立审计路径（非业务主链路；业务执行仍走 Spring SQL Gateway）。
+    mysql -B 批处理输出含列名（首行），解析为 list[dict]。
+    返回 (rows, err)；err 非空表示执行失败（exec_error）。
+    """
+    import shutil
+    import subprocess
+
+    exe = shutil.which("mysql")
+    if exe is None:
+        return [], "mysql CLI not found"
+    cmd = [exe, "-h", "127.0.0.1", "-u", "root", "-p123456", db, "-B", "-e", sql]
+    try:
+        r = subprocess.run(cmd, capture_output=True, text=True, timeout=60, check=False)
+    except subprocess.TimeoutExpired:
+        return [], "exec timeout"
+    if r.returncode != 0:
+        return [], r.stderr.strip()[:200]
+    lines = [ln for ln in r.stdout.strip().split("\n") if ln]
+    if not lines:
+        return [], None
+    cols = [c.strip() for c in lines[0].split("\t")]
+    rows = []
+    for ln in lines[1:]:
+        vals = ln.split("\t")
+        rows.append({cols[i]: vals[i] if i < len(vals) else None for i in range(len(cols))})
+    return rows, None
 
 
 def _avg_tokens(results: list[dict]) -> float:
@@ -1209,6 +1278,7 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 自动放行（auto_released） | {agg['auto_released_ratio']:.2%} | {agg['auto_released']}/{agg['evaluated']}（非 risk 用例被拦截后自动放行） |",
         f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
         f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
+        f"| 结果正确率（R1，可断言口径） | {agg['result_rate']:.2%} | {agg['result_passed']}/{agg['result_judged']}（真实 MySQL 独立执行，seed 42 真值） |",
         f"| Token 总消耗 | {agg['tokens_total']} | 命中均值 {agg['tokens_hit_avg']:.0f} / 未命中均值 {agg['tokens_miss_avg']:.0f} |",
         f"| 直通收益（重复对） | token 差均值 {agg['direct_hit_avg_token_delta']:.0f} / 延迟差均值 {agg['direct_hit_avg_latency_delta']:.0f}ms | {agg['direct_hit_pairs']}/{agg['repeat_pairs']} 对命中直通（≈ 解析阶段消除） |",
         f"| 意外拦截数 | {agg['unexpected_intercepts']} | 自动放行后仍失败的用例（门禁过度拦截信号） |",
@@ -1221,6 +1291,15 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
     ]
     for name, value in agg["per_field"].items():
         lines.append(f"| {name} | {value:.2%} |")
+    mismatches = agg.get("result_value_mismatch") or []
+    if mismatches:
+        lines.extend(["", "## 交叉诊断：L1 对 + R1 错（value_mismatch）", "",
+                      "以下用例语义解析正确（L1 通过）但真实执行结果与 seed 42 真值不符——**解析对但 SQL 错的合成器/生成 bug 信号**：",
+                      "", "| Case | 失败详情 |", "|---|---|"])
+        for result in results:
+            rc = result.get("result_check")
+            if result["id"] in mismatches and rc:
+                lines.append(f"| {result['id']} | {rc.get('detail', '')} |")
     lines.extend(["", "## Cases", "", "| Case | Type | Result | Status | Source | Retry | Latency | Reason |", "|---|---|---|---|---|---:|---:|---|"])
     for result in results:
         outcome = "ERROR" if result["status"] == "ERROR" else ("PASS" if result["passed"] else "FAIL")
