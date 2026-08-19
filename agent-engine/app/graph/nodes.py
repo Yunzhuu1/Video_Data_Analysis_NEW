@@ -5,6 +5,7 @@ from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
+from app.memory.aliases import get_aliases
 from app.memory.embeddings import get_embedding_provider
 from app.memory.retriever import (
     build_retriever,
@@ -101,7 +102,7 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
         if not hits:
             return None
         best = hits[0]
-        if best.band == "hit" and hit_allowed(state["question"], best.entry, catalog):
+        if best.band == "hit" and hit_allowed(state["question"], best.entry, catalog, get_aliases()):
             intent = best.entry.resolved_intent
             state["resolved_intent"] = intent
             state["semantic_ok"] = True

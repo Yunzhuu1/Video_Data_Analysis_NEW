@@ -172,6 +172,143 @@ def _variant_for(case: dict[str, Any], syn_cases: list[dict[str, Any]]) -> str |
     return None
 
 
+async def run_virtual_clarify_experiment(synonym_cases: list[dict], eval_date: str,
+                                          conf_threshold: float = 0.7,
+                                          memory_on: bool = False) -> dict[str, Any]:
+    """虚拟澄清实验（task 3，P2-1/P2-3）：
+    阶段 1（无记忆基线）：澄清判定 + golden 模拟用户选择 → 潜在澄清率（拆「歧义且错」/「歧义但对」）
+          + 虚拟澄清收益（澄清后 L1 差，主指标）。
+    阶段 2（--memory on）：沉淀 source cases + band 分层 → 澄清率随记忆下降
+          （只统计 hit/inject 可达项；miss 带歧义项单独报「记忆不可达」）。
+    报告标注：golden 模拟完美用户，数字为上限参考；不做真 HITL。"""
+    from langgraph.checkpoint.memory import InMemorySaver
+
+    from app.eval.comparator import compare_spec
+    from app.graph.graph_builder import init_memory, run_chatbi_graph
+    from app.memory.aliases import get_aliases
+
+    catalog = json.loads((ROOT / "src" / "main" / "resources" / "metric_catalog.json").read_text())
+    graph_builder.init_graph(InMemorySaver())
+    settings.memory_enabled = False
+
+    source_by_id: dict[str, dict] = {}
+    if memory_on:
+        _d, golden = load_cases(DEFAULT_CASES)
+        source_by_id = {c["id"]: c for c in golden if c.get("golden_spec")}
+
+    def _run(q: str, rid: str) -> dict[str, Any]:
+        return run_chatbi_graph({
+            "run_id": rid, "user_id": "eval", "question": q,
+            "graph_mode": "chatbi", "memory_namespace": settings.memory_namespace,
+            "warnings": [], "errors": []})
+
+    results: list[dict[str, Any]] = []
+    for s in synonym_cases:
+        state = await _run(s["question"], f"clar_{s['id']}")
+        score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+        intent = state.get("resolved_intent") or {}
+        a_l1 = bool(score and score.core_ok)
+        amb, reason = _clarify_decision(s["question"], intent, catalog, get_aliases(), conf_threshold)
+        clarified = dict(intent)
+        clarified["metrics"] = list((s.get("golden_spec") or {}).get("metrics") or [])
+        c_score = compare_spec(clarified, s.get("golden_spec"), eval_date)
+        results.append({
+            "id": s["id"], "question": s["question"], "difficulty": s.get("difficulty", "easy"),
+            "a_l1": a_l1, "ambiguous": amb, "clarify_reason": reason,
+            "clarified_l1": bool(c_score and c_score.core_ok),
+            "conf": float(intent.get("confidence") or 0.0),
+            "ambiguous_baseline": amb and not a_l1,  # 歧义且错 = 真需要澄清
+        })
+
+    if memory_on:
+        settings.memory_enabled = True
+        await init_memory(_experiment_memory_path())
+        for s in synonym_cases:
+            src = source_by_id.get(s.get("source_case"))
+            if src is None:
+                continue
+            await _run(src["question"], f"seed_{src['id']}")
+        bands = await _compute_synonym_bands([s["question"] for s in synonym_cases],
+                                             settings.memory_namespace)
+        for r in results:
+            r["band"] = bands[r["question"]]
+        for s in synonym_cases:
+            state = await _run(s["question"], f"clarM_{s['id']}")
+            score = compare_spec(state.get("resolved_intent"), s.get("golden_spec"), eval_date)
+            intent = state.get("resolved_intent") or {}
+            amb_mem, _ = _clarify_decision(s["question"], intent, catalog, get_aliases(), conf_threshold)
+            r = next(x for x in results if x["id"] == s["id"])
+            r["ambiguous_memory"] = amb_mem and not bool(score and score.core_ok)
+        await _close_memory()
+    else:
+        for r in results:
+            r["band"] = "miss"
+            r["ambiguous_memory"] = r["ambiguous_baseline"]
+
+    metrics = _virtual_clarify_metrics(results, conf_threshold)
+    metrics["band_report"] = _clarify_band_report(results)
+    metrics["memory_on"] = memory_on
+    metrics["upper_bound_note"] = "golden 模拟完美用户，数字为上限参考；不做真 HITL"
+    metrics["per_item"] = results
+    return metrics
+
+
+def _clarify_decision(question: str, intent: dict[str, Any] | None,
+                     catalog: list[dict[str, Any]], aliases: dict[str, str] | None,
+                     conf_threshold: float) -> tuple[bool, str]:
+    """歧义判定（task 3.1）：低置信 OR 多指标候选（别名/catalog 命中 ≥2 个 ID）。"""
+    from app.memory.retriever import extract_metric_names
+
+    conf = float((intent or {}).get("confidence") or 0.0)
+    if conf < conf_threshold:
+        return True, f"low_confidence({conf:.2f}<{conf_threshold})"
+    found = extract_metric_names(question, catalog, aliases)
+    if len(set(found)) >= 2:
+        return True, f"multi_metric_candidates({sorted(set(found))})"
+    return False, ""
+
+
+def _virtual_clarify_metrics(results: list[dict[str, Any]],
+                             conf_threshold: float) -> dict[str, Any]:
+    """聚合（task 3.2）：潜在澄清率（拆歧义且错/歧义但对）+ 虚拟澄清收益（主指标，澄清后 L1 差）。"""
+    n = len(results)
+    if not n:
+        return {"n": 0, "potential_clarify_rate": "0/0", "ambiguous_error": "0/0",
+                "ambiguous_correct": "0/0", "baseline_l1": 0.0, "clarified_l1": 0.0,
+                "virtual_gain": 0.0}
+    baseline_ok = sum(1 for r in results if r["a_l1"])
+    clarified_ok = sum(1 for r in results if r["clarified_l1"])
+    amb = [r for r in results if r["ambiguous"]]
+    amb_err = sum(1 for r in amb if not r["a_l1"])
+    amb_ok = sum(1 for r in amb if r["a_l1"])
+    return {
+        "n": n,
+        "potential_clarify_rate": f"{len(amb)}/{n}",
+        "ambiguous_error": f"{amb_err}/{n}",
+        "ambiguous_correct": f"{amb_ok}/{n}",
+        "baseline_l1": baseline_ok / n,
+        "clarified_l1": clarified_ok / n,
+        "virtual_gain": (clarified_ok - baseline_ok) / n,
+    }
+
+
+def _clarify_band_report(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """澄清率随记忆下降的 band 分层报告（task 3.2，P2-1）：只统计 hit/inject 可达项，miss 单独报记忆不可达。"""
+    bands: dict[str, list[dict[str, Any]]] = {}
+    for r in results:
+        bands.setdefault(r.get("band", "miss"), []).append(r)
+    out: dict[str, Any] = {}
+    for b in ("hit", "inject", "miss"):
+        rs = bands.get(b) or []
+        if not rs:
+            continue
+        base_err = sum(1 for r in rs if r.get("ambiguous_baseline"))
+        mem_err = sum(1 for r in rs if r.get("ambiguous_memory"))
+        out[b] = {"n": len(rs), "baseline_ambiguous": f"{base_err}/{len(rs)}",
+                  "memory_ambiguous": f"{mem_err}/{len(rs)}"}
+    return out
+
+
 def _intents_equal(a: dict[str, Any] | None, b: dict[str, Any] | None) -> bool:
     """同问同答一致率（real_consistency）逐字段口径：复用 eval-metrics 重复对协议定义。
     intent/metrics/dimensions/time_range/filters/ordering 逐字段一致。"""
@@ -205,6 +342,7 @@ async def _compute_synonym_bands(questions: list[str], namespace: str) -> dict[s
     不内联重写打分（修复 eval-metrics review P1）。embedding 不可用 → 检索器内部降级 difflib。
     """
     from app.graph import nodes
+    from app.memory.aliases import get_aliases
     from app.memory.embeddings import get_embedding_provider
     from app.memory.retriever import build_retriever, hit_allowed
 
@@ -227,7 +365,7 @@ async def _compute_synonym_bands(questions: list[str], namespace: str) -> dict[s
                 continue
             band = hits[0].band
             # 零偏差：band=hit 也须过运行时四重判定（catalog/metrics/acceptable），否则标 hit_rejected
-            if band == "hit" and catalog and not hit_allowed(q, hits[0].entry, catalog):
+            if band == "hit" and catalog and not hit_allowed(q, hits[0].entry, catalog, get_aliases()):
                 band = "hit_rejected"
             bands[q] = band
         except Exception:  # noqa: BLE001 - 检索失败按 miss（不污染实验）
@@ -1164,6 +1302,8 @@ async def main() -> None:
                         help="记忆 namespace 覆盖；仅支持显式 default（真实联调开关），评测 namespace 由协议自动生成")
     parser.add_argument("--real-session-cases", type=int, default=8,
                         help="real-session 会话数（默认 8）")
+    parser.add_argument("--virtual-clarify", action="store_true", default=False,
+                        help="虚拟澄清实验（需 --synonym-cases；--memory on 加阶段 2 澄清率随记忆下降）")
     args = parser.parse_args()
 
     if args.compare:
@@ -1175,6 +1315,20 @@ async def main() -> None:
     run_config = apply_run_config(args.llm, args.platform, args.cassette, args.memory)
     eval_date, cases = load_cases(args.cases)
     run_config["eval_date"] = eval_date
+
+    if args.virtual_clarify:
+        if not args.synonym_cases:
+            raise SystemExit("--virtual-clarify 需 --synonym-cases 指定同义集")
+        _date, syn_cases = load_cases(args.synonym_cases)
+        exp = await run_virtual_clarify_experiment(syn_cases, eval_date,
+                                                   memory_on=run_config["memory"] == "on")
+        print(f"[virtual-clarify] 潜在澄清率={exp['potential_clarify_rate']} "
+              f"(歧义且错={exp['ambiguous_error']} / 歧义但对={exp['ambiguous_correct']})")
+        print(f"[virtual-clarify] 基线 L1={exp['baseline_l1']:.2%} → 澄清后 L1={exp['clarified_l1']:.2%} "
+              f"虚拟收益={exp['virtual_gain']:+.2%}")
+        print(f"[virtual-clarify] band_report={exp['band_report']} | {exp['upper_bound_note']}")
+        print(json.dumps(exp, ensure_ascii=False, indent=2))
+        return
 
     if args.synonym_cases:
         _date, syn_cases = load_cases(args.synonym_cases)

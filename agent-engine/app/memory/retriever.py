@@ -42,14 +42,34 @@ def normalize_question(question: str) -> str:
     return text
 
 
-def extract_metric_names(question: str, catalog: list[dict[str, Any]]) -> list[str]:
-    """从问题文本匹配 catalog 的 metricName（最长前缀），返回匹配到的 metricCode 列表。"""
-    found: list[str] = []
+def _match_codes(question: str, catalog: list[dict[str, Any]],
+                 aliases: dict[str, str] | None) -> list[str]:
+    """最长匹配：候选词（catalog metricName + 别名）按长度降序，匹配后移除片段防短词重复匹配。
+    catalog 精确名与别名同在候选池，长词优先（复用 eval-metrics「播放时长先于播放」规则）。"""
+    candidates: list[tuple[str, str]] = []
     for m in catalog or []:
         name = str(m.get("metricName") or "")
-        if name and name in question:
-            found.append(str(m.get("metricCode")))
+        if name:
+            candidates.append((name, str(m.get("metricCode"))))
+    for alias, code in (aliases or {}).items():
+        candidates.append((alias, code))
+    candidates.sort(key=lambda x: len(x[0]), reverse=True)
+    found: list[str] = []
+    seen: set[str] = set()
+    remaining = question
+    for word, code in candidates:
+        if word and word in remaining:
+            if code not in seen:
+                found.append(code)
+                seen.add(code)
+            remaining = remaining.replace(word, "", 1)
     return found
+
+
+def extract_metric_names(question: str, catalog: list[dict[str, Any]],
+                         aliases: dict[str, str] | None = None) -> list[str]:
+    """从问题文本匹配指标 ID：catalog metricName + 别名表（最长匹配优先），返回 metricCode 列表。"""
+    return _match_codes(question, catalog, aliases)
 
 
 class TextSimilarityRetriever:
@@ -78,13 +98,14 @@ class TextSimilarityRetriever:
         return candidates[:limit]
 
 
-def metrics_consistent(question: str, entry: MemoryEntry, catalog: list[dict[str, Any]]) -> bool:
-    """metrics 一致性校验：问题文本匹配到的指标名必须与存储 metric_codes 一致。
+def metrics_consistent(question: str, entry: MemoryEntry, catalog: list[dict[str, Any]],
+                       aliases: dict[str, str] | None = None) -> bool:
+    """metrics 一致性校验：问题文本匹配到的指标 ID（catalog + 别名）必须与存储 metric_codes 一致。
 
-    - 问题能匹配到指标名 且 与存储不一致 → 不一致（降级，防"点赞量"误命中"播放量"）
-    - 问题匹配不到指标名（无法判定）→ 返回 False（降级 inject，不直通）
+    - 匹配到且与存储不一致 → 不一致（降级，防"点赞量"误命中"播放量"）
+    - 匹配不到（无法判定）→ 返回 False（降级 inject，不直通；别名只扩展"能判定"，不绕过校验）
     """
-    found = extract_metric_names(question, catalog)
+    found = extract_metric_names(question, catalog, aliases)
     if not found:
         return False  # 无法判定 → 不直通（P2-3 收紧）
     stored = set(entry.metric_codes or [])
@@ -215,13 +236,14 @@ def intent_acceptable(intent: dict) -> bool:
     )
 
 
-def hit_allowed(question: str, entry: MemoryEntry, catalog: list[dict[str, Any]]) -> bool:
+def hit_allowed(question: str, entry: MemoryEntry, catalog: list[dict[str, Any]],
+               aliases: dict[str, str] | None = None) -> bool:
     """运行时命中四重判定（nodes.py 与 runner band 分层共用的同一判定，零偏差承诺）：
-    catalog 校验（口径未变）+ metrics 一致性（防"点赞量"误命中"播放量"）+ 意图可接受。
+    catalog 校验（口径未变）+ metrics 一致性（catalog + 别名，防"点赞量"误命中"播放量"）+ 意图可接受。
     """
     codes = {str(m.get("metricCode")) for m in catalog or []}
     if not all(code in codes for code in (entry.metric_codes or [])):
         return False
-    if not metrics_consistent(question, entry, catalog):
+    if not metrics_consistent(question, entry, catalog, aliases):
         return False
     return intent_acceptable(entry.resolved_intent or {})

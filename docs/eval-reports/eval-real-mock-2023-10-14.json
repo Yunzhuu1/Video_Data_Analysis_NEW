@@ -25,29 +25,29 @@
     "memory_hit_rate": 0.0,
     "memory_inject": 0,
     "memory_inject_rate": 0.0,
-    "tokens_total": 145272,
+    "tokens_total": 149977,
     "tokens_hit_avg": 0.0,
-    "tokens_miss_avg": 3228.266666666667,
+    "tokens_miss_avg": 3332.822222222222,
     "repeat_pairs": 0,
     "direct_hit_pairs": 0,
     "direct_hit_avg_token_delta": 0.0,
     "direct_hit_avg_latency_delta": 0.0,
     "judged": 33,
-    "core_accuracy": 1.0,
-    "core_hits": 33,
-    "strict_accuracy": 0.9090909090909091,
-    "strict_hits": 30,
-    "avg_field_match": 0.9797979797979798,
+    "core_accuracy": 0.9696969696969697,
+    "core_hits": 32,
+    "strict_accuracy": 0.8484848484848485,
+    "strict_hits": 28,
+    "avg_field_match": 0.9646464646464646,
     "per_field": {
       "intent": 0.9393939393939394,
-      "metrics": 1.0,
+      "metrics": 0.9696969696969697,
       "dimensions": 0.9696969696969697,
-      "time_range": 1.0,
+      "time_range": 0.9696969696969697,
       "filters": 1.0,
-      "ordering": 0.9696969696969697
+      "ordering": 0.9393939393939394
     },
-    "latency_p50": 12816,
-    "latency_p95": 27489.199999999997
+    "latency_p50": 13198,
+    "latency_p95": 35083.4
   },
   "cases": [
     {
@@ -55,7 +55,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9986,
+      "latency_ms": 10539,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -94,14 +94,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2582
+      "tokens": 2657
     },
     {
       "id": "c02_category_total",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6571,
+      "latency_ms": 15627,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -135,19 +135,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2179
+      "tokens": 3186
     },
     {
       "id": "c03_last7d_daily_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10788,
+      "latency_ms": 10355,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -181,19 +181,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.98,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2645
+      "tokens": 2575
     },
     {
       "id": "c04_completion_rate",
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12941,
+      "latency_ms": 8482,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -219,23 +219,25 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3008
+      "tokens": 2202
     },
     {
       "id": "c05_food_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12116,
+      "latency_ms": 12316,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -278,14 +280,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2941
+      "tokens": 2736
     },
     {
       "id": "c06_top10_videos",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9325,
+      "latency_ms": 10440,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -328,14 +330,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2519
+      "tokens": 2649
     },
     {
       "id": "c07_compare_food_game_trend",
       "type": "text2sql",
       "passed": false,
       "reason": "final report missing required fields",
-      "latency_ms": 12704,
+      "latency_ms": 6934,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -383,27 +385,27 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3042
+      "tokens": 2276
     },
     {
       "id": "c08_oct1to7_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 14219,
+      "latency_ms": 23748,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": true,
+        "matched": false,
         "core_ok": true,
-        "field_hits": 6,
+        "field_hits": 5,
         "field_total": 6,
         "fields": {
           "intent": true,
           "metrics": true,
           "dimensions": true,
-          "time_range": true,
+          "time_range": false,
           "filters": true,
           "ordering": true
         }
@@ -418,8 +420,8 @@
           "type": "absolute",
           "relative": null,
           "absolute": {
-            "start": "2023-10-01",
-            "end": "2023-10-07"
+            "start": "2024-10-01",
+            "end": "2024-10-07"
           },
           "granularity": null
         },
@@ -430,14 +432,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3228
+      "tokens": 3984
     },
     {
       "id": "c09_likes_trend",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10167,
+      "latency_ms": 14397,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -471,19 +473,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2733
+      "tokens": 3020
     },
     {
       "id": "c10_engagement_rate",
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12041,
+      "latency_ms": 16447,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -515,19 +517,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2982
+      "tokens": 3439
     },
     {
       "id": "c11_shares_total",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12792,
+      "latency_ms": 9103,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -566,14 +568,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3093
+      "tokens": 2331
     },
     {
       "id": "c12_food_trend",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6045,
+      "latency_ms": 9559,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -611,19 +613,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2164
+      "tokens": 2481
     },
     {
       "id": "c13_lastweek_plays",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9452,
+      "latency_ms": 12286,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -653,113 +655,6 @@
             "amount": 7,
             "unit": "day"
           },
-          "absolute": null,
-          "granularity": "day"
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.95,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "tokens": 2518
-    },
-    {
-      "id": "c14_answer_structure",
-      "type": "answer_quality",
-      "passed": false,
-      "reason": "final report missing required fields",
-      "latency_ms": 27664,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "aggregate",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
-          "granularity": null
-        },
-        "filters": [
-          {
-            "field": "category",
-            "op": "in",
-            "value": [
-              "美食",
-              "游戏"
-            ]
-          }
-        ],
-        "ordering": null,
-        "confidence": 0.95,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "tokens": 4828
-    },
-    {
-      "id": "c15_hard_guard_retry",
-      "type": "hard_guard",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 26790,
-      "status": "SUCCESS",
-      "retry_count": 1,
-      "sql_source": "fallback",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "trend",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": "day"
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.95,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "tokens": 5054
-    },
-    {
-      "id": "c16_dq_retry",
-      "type": "dq",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 15584,
-      "status": "SUCCESS",
-      "retry_count": 1,
-      "sql_source": "fallback",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "trend",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": "day"
         },
         "filters": [],
@@ -769,14 +664,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3878
+      "tokens": 2846
     },
     {
-      "id": "c17_dq_warning",
-      "type": "dq",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 7085,
+      "id": "c14_answer_structure",
+      "type": "answer_quality",
+      "passed": false,
+      "reason": "final report missing required fields",
+      "latency_ms": 11416,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -811,14 +706,122 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2295
+      "tokens": 2609
+    },
+    {
+      "id": "c15_hard_guard_retry",
+      "type": "hard_guard",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13109,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "tokens": 3241
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10399,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "tokens": 2966
+    },
+    {
+      "id": "c17_dq_warning",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11193,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "tokens": 2762
     },
     {
       "id": "c18_detail_playback",
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 37170,
+      "latency_ms": 22841,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -827,42 +830,6 @@
         "intent": "detail",
         "metrics": [
           "total_plays"
-        ],
-        "dimensions": [
-          "content"
-        ],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": null
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.4,
-        "coverage": "partial"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "tokens": 5599
-    },
-    {
-      "id": "c19_detail_without_time",
-      "type": "risk",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 15938,
-      "status": "WAITING_APPROVAL",
-      "retry_count": 0,
-      "sql_source": "fallback",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "detail",
-        "metrics": [
-          "total_plays",
-          "total_likes",
-          "total_comments",
-          "total_shares"
         ],
         "dimensions": [],
         "time_range": {
@@ -878,14 +845,47 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3155
+      "tokens": 3721
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 33563,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays",
+          "total_play_duration",
+          "total_likes",
+          "total_comments",
+          "total_shares"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "tokens": 4953
     },
     {
       "id": "c20_open_analysis",
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 22388,
+      "latency_ms": 35099,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -898,25 +898,29 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
-          "relative": {},
-          "absolute": {},
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
-        "ordering": null,
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
         "confidence": 0.4,
         "coverage": "partial"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4336
+      "tokens": 5430
     },
     {
       "id": "c21_open_reason",
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12624,
+      "latency_ms": 11069,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -941,19 +945,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.8,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3076
+      "tokens": 2662
     },
     {
       "id": "c22_fact_full_scan_approval",
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 24012,
+      "latency_ms": 72245,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -961,17 +965,14 @@
       "resolved_intent": {
         "intent": "detail",
         "metrics": [
-          "total_plays",
-          "total_play_duration",
-          "total_likes",
-          "total_comments",
-          "total_shares"
+          "completion_rate",
+          "engagement_rate"
         ],
-        "dimensions": [],
+        "dimensions": [
+          "content"
+        ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -981,14 +982,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4145
+      "tokens": 8880
     },
     {
       "id": "c23_aggregate_full_scan_pass",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13661,
+      "latency_ms": 6788,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1014,7 +1015,7 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3080
+      "tokens": 2223
     },
     {
       "id": "c24_memory_repeat",
@@ -1047,7 +1048,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 28311,
+      "latency_ms": 30839,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -1087,14 +1088,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 5392
+      "tokens": 5582
     },
     {
       "id": "n02_multi_metric",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 24564,
+      "latency_ms": 35021,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -1123,23 +1124,25 @@
         ],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4603
+      "tokens": 5852
     },
     {
       "id": "n04_multi_filter",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 17471,
+      "latency_ms": 20919,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1180,19 +1183,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3590
+      "tokens": 3874
     },
     {
       "id": "n05_multi_filter",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12816,
+      "latency_ms": 22112,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1237,14 +1240,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3038
+      "tokens": 4149
     },
     {
       "id": "n06_multi_filter",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 21642,
+      "latency_ms": 13198,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1285,19 +1288,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4213
+      "tokens": 3034
     },
     {
       "id": "n07_multi_filter",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 20259,
+      "latency_ms": 27524,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1329,7 +1332,6 @@
             "amount": 7,
             "unit": "day"
           },
-          "absolute": null,
           "granularity": null
         },
         "filters": [
@@ -1343,19 +1345,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.85,
+        "confidence": 0.7,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3667
+      "tokens": 4635
     },
     {
       "id": "n09_ranked_time",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16832,
+      "latency_ms": 15519,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1387,7 +1389,6 @@
             "amount": 7,
             "unit": "day"
           },
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -1401,14 +1402,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3523
+      "tokens": 3353
     },
     {
       "id": "n10_ranked_time",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13944,
+      "latency_ms": 15865,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1454,14 +1455,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3074
+      "tokens": 3300
     },
     {
       "id": "n11_ranked_time",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 25375,
+      "latency_ms": 20652,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1490,8 +1491,8 @@
         "time_range": {
           "type": "relative",
           "relative": {
-            "amount": 7,
-            "unit": "day"
+            "amount": 1,
+            "unit": "week"
           },
           "absolute": null,
           "granularity": null
@@ -1502,19 +1503,19 @@
           "direction": "desc",
           "limit": 1
         },
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4808
+      "tokens": 4421
     },
     {
       "id": "n12_ranked_time",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10785,
+      "latency_ms": 9609,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1557,14 +1558,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2825
+      "tokens": 2219
     },
     {
       "id": "n14_cross_table",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11647,
+      "latency_ms": 13350,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1598,19 +1599,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2939
+      "tokens": 3005
     },
     {
       "id": "n15_cross_table",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13714,
+      "latency_ms": 22097,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1638,8 +1639,6 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -1649,14 +1648,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2993
+      "tokens": 3958
     },
     {
       "id": "n16_cross_table",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 25295,
+      "latency_ms": 37369,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1684,25 +1683,23 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 4489
+      "tokens": 5805
     },
     {
       "id": "n17_cross_table",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19955,
+      "latency_ms": 19686,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1740,40 +1737,40 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3783
+      "tokens": 3589
     },
     {
       "id": "n19_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19415,
+      "latency_ms": 13394,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": true,
-        "core_ok": true,
-        "field_hits": 6,
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
         "field_total": 6,
         "fields": {
           "intent": true,
-          "metrics": true,
+          "metrics": false,
           "dimensions": true,
           "time_range": true,
           "filters": true,
-          "ordering": true
+          "ordering": false
         }
       },
       "resolved_intent": {
         "intent": "ranking",
         "metrics": [
-          "engagement_rate"
+          "total_plays"
         ],
         "dimensions": [
           "content"
@@ -1784,23 +1781,23 @@
         },
         "filters": [],
         "ordering": {
-          "field": "engagement_rate",
+          "field": "total_plays",
           "direction": "desc",
           "limit": 10
         },
-        "confidence": 0.7,
-        "coverage": "partial"
+        "confidence": 0.9,
+        "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 3905
+      "tokens": 2934
     },
     {
       "id": "n20_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6976,
+      "latency_ms": 12590,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1838,19 +1835,19 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2184
+      "tokens": 2902
     },
     {
       "id": "n21_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9446,
+      "latency_ms": 6947,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1893,14 +1890,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2619
+      "tokens": 2207
     },
     {
       "id": "n22_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12055,
+      "latency_ms": 10990,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1940,14 +1937,14 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2679
+      "tokens": 2624
     },
     {
       "id": "n23_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12798,
+      "latency_ms": 20458,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1984,19 +1981,19 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2998
+      "tokens": 3890
     },
     {
       "id": "n25_longtail",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12756,
+      "latency_ms": 12797,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2026,17 +2023,16 @@
             "amount": 7,
             "unit": "day"
           },
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "tokens": 2870
+      "tokens": 2815
     }
   ]
 }

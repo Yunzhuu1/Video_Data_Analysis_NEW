@@ -1,0 +1,21 @@
+{
+  "aliases": [
+    {"alias": "播放走势", "metric_code": "total_plays", "covered_by": ["s05", "s17"]},
+    {"alias": "播放趋势", "metric_code": "total_plays", "covered_by": ["s06", "s18", "s19", "c07_compare_food_game_trend"]},
+    {"alias": "播放表现", "metric_code": "total_plays", "covered_by": ["h14"]},
+    {"alias": "播放数据", "metric_code": "total_plays", "covered_by": ["s01"]},
+    {"alias": "播放总量", "metric_code": "total_plays", "covered_by": ["h15"]},
+    {"alias": "播放次数", "metric_code": "total_plays", "covered_by": ["s02"]},
+    {"alias": "观看量", "metric_code": "total_plays", "covered_by": ["s01"]},
+    {"alias": "观看数", "metric_code": "total_plays", "covered_by": ["h10"]},
+    {"alias": "观看人次", "metric_code": "total_plays", "covered_by": ["h09"]},
+    {"alias": "点击量", "metric_code": "total_plays", "covered_by": ["h08"]},
+    {"alias": "点赞数", "metric_code": "total_likes", "covered_by": ["s03", "h05"]},
+    {"alias": "赞数", "metric_code": "total_likes", "covered_by": ["s04"]},
+    {"alias": "完播", "metric_code": "completion_rate", "covered_by": ["n20_longtail"]},
+    {"alias": "完播情况", "metric_code": "completion_rate", "covered_by": ["h01"]},
+    {"alias": "观看完成度", "metric_code": "completion_rate", "covered_by": ["h02"]},
+    {"alias": "完播表现", "metric_code": "completion_rate", "covered_by": ["n20_longtail"]},
+    {"alias": "互动", "metric_code": "engagement_rate", "covered_by": ["h03", "h07"]}
+  ]
+}
