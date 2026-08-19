@@ -5,12 +5,12 @@
 
 ## 2. 合成前展开集成
 
-- [ ] 2.1 nodes 增加 `_expand_relative_time`：relative 时查锚点（platform execute_sql `SELECT MAX(timeField)`；mock 固定 2023-10-31）→ 替换为 absolute；查询失败降级 + warning
+- [ ] 2.1 nodes 增加 `_expand_relative_time`：relative 时查锚点（platform execute_sql `SELECT MAX(timeField)`，**timeField 取经 `_resolve_path` 解析后 source 的列**，与合成过滤同源；mock 固定 2023-10-31）→ 替换为 absolute；查询失败降级 + warning
 - [ ] 2.2 单测：c03 展开后合成 SQL 含 `WHERE date BETWEEN '2023-10-25' AND '2023-10-31'`；mock/real 锚点一致性
 
 ## 3. R1 扩展
 
-- [ ] 3.1 relative 用例（c03/c13/n04/n09/n10/n11 等）取真值（独立手工 SQL，锚点=数据末日）→ 标 expected_result
+- [ ] 3.1 relative **可断言子集**（aggregate/trend：c03/c13/n04/n09/n10/n11 等）取真值（独立手工 SQL，锚点=数据末日）→ 标 expected_result；detail/歧义（n22/n23/n25）只验 SQL 形态
 - [ ] 3.2 单测：R1 对 relative 用例断言通过（修复后）
 
 ## 4. 评测与回归

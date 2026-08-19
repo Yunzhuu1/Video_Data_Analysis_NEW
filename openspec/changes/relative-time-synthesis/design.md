@@ -39,7 +39,7 @@ def time_expand(relative: dict, anchor_date: str) -> dict:
 - nodes 在合成前，若 intent.time_range 为 relative：
   - real：调 `platform.execute_sql("SELECT MAX(<timeField>) FROM <source>")`（走 Spring SQL 网关，符合"Python 不直连库"）。
   - mock：platform 返回固定锚点 `2023-10-31`（与 seed 42 数据末日一致，测试可复现）。
-- timeField/source 从 metric_defs 取（如 metric_daily.date / play_detail.created_at）。
+- **锚点同源（P2-1）**：timeField/source 取**经 `_resolve_path(mdef, intent, dims)` 解析后的 source + 对应 timeField**（与合成 SQL 的过滤列一致）——metric_daily 路径用 `metric_daily.date`，事实路径（如 trend+dims=[content] 路由到 user_behavior_fact）用 `DATE(user_behavior_fact.timestamp)`。不得用 metric_defs 原始 timeField（与合成过滤不同源时锚点会漂移；seed 42 下碰巧一致但设计上必须同源）。
 - 理由：锚点 = 数据末日（而非系统当前日期），与 seed 42 数据确定性一致；当前日期会随运行漂移破坏 R1 复现。
 
 ### D3：展开位置
@@ -48,9 +48,10 @@ def time_expand(relative: dict, anchor_date: str) -> dict:
   - 查询失败 → 保持 relative（合成器现状，降级不打断主链路）。
 - 理由：展开是语义层修正（"最近7天"的绝对区间），合成器保持纯函数（不注入数据依赖）。
 
-### D4：R1 闭环验证
-- 修复后为 relative 用例取真值（独立手工 SQL，锚点=数据末日）并标 expected_result。
-- R1 评测：c03/c13 等合成 SQL 应含 `WHERE date BETWEEN '2023-10-25' AND '2023-10-31'`，结果与真值一致 → R1 扩展到 relative 用例全绿。
+### D4：R1 闭环验证（区分可断言子集，P2-2）
+- **R1 可断言子集**：受影响的 11 个 relative 用例中，**R1 可断言子集 = aggregate/trend 用例（如 c03/c13/n04/n09/n10/n11，约 6 个）**；n22/n23/n25 等 detail/歧义用例按 eval-result-grading 规则 R1=N/A——它们只验证**合成 SQL 形态**（含时间过滤），不断言结果。
+- 修复后为可断言子集取真值（独立手工 SQL，锚点=数据末日）并标 expected_result。
+- R1 评测：子集合成 SQL 应含 `WHERE date BETWEEN '2023-10-25' AND '2023-10-31'`，结果与真值一致 → R1 扩展到 relative 子集全绿；detail/歧义用例单列"SQL 形态验证"。
 - 交叉诊断：修复前这些用例是"L1 对 + R1 错（value_mismatch）"候选，修复后归入通过——**R1 驱动修复闭环的完整证据**。
 
 ### D5：边界
@@ -77,4 +78,4 @@ def time_expand(relative: dict, anchor_date: str) -> dict:
 
 - 锚点：数据末日（本 change，R1 可复现）vs 系统当前日期（真实语义）→ MVP 数据末日，真实部署切换点记录。
 - unit 范围：day/week 够用，month 近似 30 天是否接受 → 标注边界。
-- 查询锚点的 platform 接口形态：复用 execute_sql 还是新只读端点 → 倾向复用 execute_sql（SELECT MAX 低风险）。
+- 查询锚点的 platform 接口形态：复用 execute_sql（**SELECT MAX 是安全聚合查询——AGGREGATE 表、无全扫担忧，过 validate + EXPLAIN 无阻；开销极小（一次索引 MAX）**）vs 新只读端点 → 倾向复用 execute_sql。

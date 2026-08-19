@@ -5,4 +5,4 @@
 
 #### Scenario: relative 时间用例纳入 R1
 - **WHEN** relative 时间语义修复后运行 R1 评测
-- **THEN** relative 用例（如 c03 最近7天）纳入可断言范围，合成 SQL 含时间过滤且结果与 seed 42 真值一致（R1 扩展到 relative 全绿）
+- **THEN** relative 可断言子集（aggregate/trend 用例，如 c03 最近7天）纳入断言范围，合成 SQL 含时间过滤且结果与 seed 42 真值一致（R1 扩展到 relative 子集全绿）；detail/歧义 relative 用例仅验证 SQL 形态（R1=N/A 不变）
