@@ -1,3 +1,5 @@
+import pytest
+
 from app.synthesis.sql_synthesizer import SynthesisError, synthesize
 
 METRIC_DEFS = {
@@ -123,3 +125,60 @@ def test_unsupported_multi_metric_raises():
     except SynthesisError:
         return
     raise AssertionError("expected SynthesisError for multi-metric intent")
+
+
+# ------------------------------------------------------------------ 多指标（multi-metric-synthesis）
+FULL_METRIC_DEFS = {
+    **METRIC_DEFS,
+    "total_likes": {
+        "metricCode": "total_likes", "formula": "total_likes",
+        "sourceTable": "metric_daily", "timeField": "date",
+        "factFormula": "COUNT(*)", "factEventFilter": "event_type = 'like'",
+    },
+    "engagement_rate": {
+        "metricCode": "engagement_rate",
+        "formula": "(SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0)",
+        "sourceTable": "user_behavior_fact",
+    },
+}
+
+
+def test_multi_metric_same_source_aggregate():
+    """n01：metric_daily 同源多指标聚合——单 FROM 多列，无 spurious JOIN，SUM 包裹。"""
+    intent = _intent(metrics=["total_plays", "total_likes"], dimensions=["category"])
+    sql = synthesize(intent, FULL_METRIC_DEFS)
+    assert "FROM metric_daily md" in sql
+    assert "SUM(total_plays) AS total_plays" in sql
+    assert "SUM(total_likes) AS total_likes" in sql
+    assert "GROUP BY md.category" in sql
+    assert "JOIN" not in sql  # P2：metric_daily 的 category 无 JOIN
+    assert sql.count("FROM") == 1  # 单 FROM
+
+
+def test_multi_metric_same_source_trend():
+    intent = _intent(intent="trend", metrics=["total_plays", "total_likes"], dimensions=["category"])
+    sql = synthesize(intent, FULL_METRIC_DEFS)
+    assert "md.date AS date, md.category AS category" in sql
+    assert "total_plays AS total_plays, total_likes AS total_likes" in sql
+    assert "GROUP BY md.date, md.category" in sql
+
+
+def test_multi_metric_cross_source_degrades():
+    """n02：跨源表多指标（play_detail + user_behavior_fact）→ SynthesisError（降级）。"""
+    intent = _intent(metrics=["completion_rate", "engagement_rate"], dimensions=["category"])
+    with pytest.raises(SynthesisError):
+        synthesize(intent, FULL_METRIC_DEFS)
+
+
+def test_multi_metric_fact_path_degrades():
+    """P1：trend+dims=[content] 触发事实路径路由（factEventFilter 不同会空结果）→ 降级。"""
+    intent = _intent(intent="trend", metrics=["total_plays", "total_likes"], dimensions=["content"])
+    with pytest.raises(SynthesisError):
+        synthesize(intent, FULL_METRIC_DEFS)
+
+
+def test_multi_metric_ranking_degrades():
+    intent = _intent(intent="ranking", metrics=["total_plays", "total_likes"],
+                     dimensions=["content"], ordering={"field": "total_plays", "direction": "desc", "limit": 5})
+    with pytest.raises(SynthesisError):
+        synthesize(intent, FULL_METRIC_DEFS)

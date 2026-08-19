@@ -85,7 +85,7 @@
 - **THEN** 门禁返回 `RETRYABLE`（LLM 形态写错，重写）
 
 ### Requirement: 语义记忆检索与写入
-`SEMANTIC_RESOLVE` SHALL 在调用 LLM 前先检索语义记忆：命中（高相似）直接复用历史 ResolvedIntent（含 metrics 一致性校验），近命中注入 few-shot 示例，未命中走 LLM；记忆写入 SHALL 仅发生在全链路成功之后，且记忆不直接进入 SQL。检索 SHALL 采用**语义 + 词面多信号融合**（embedding 语义 cosine 为主、BM25 词面为辅），并保留**精确匹配快路径**；embedding 模型不可用 SHALL 降级为文本相似度检索（行为不劣于现状）。
+`SEMANTIC_RESOLVE` SHALL 在调用 LLM 前先检索语义记忆：命中（高相似）直接复用历史 ResolvedIntent（含 metrics 一致性校验），近命中注入 few-shot 示例，未命中走 LLM；记忆写入 SHALL 仅发生在全链路成功之后，且记忆不直接进入 SQL。检索 SHALL 采用**语义 + 词面多信号融合**（embedding 语义 cosine 为主、BM25 词面为辅），并保留**精确匹配快路径**；embedding 模型不可用 SHALL 降级为文本相似度检索（行为不劣于现状）。metrics 一致性校验 SHALL 支持**指标表达映射**（别名表/表达指纹）扩展匹配，不再仅依赖问题文本中的 catalog 指标名字符串包含。
 
 #### Scenario: 精确匹配快路径
 - **WHEN** 规范化问题与记忆库某条目 `norm_question` 完全相等
@@ -114,6 +114,10 @@
 #### Scenario: 记忆失效
 - **WHEN** 记忆条目引用的指标不在当前 catalog（口径变更）、解析规则哈希已变化、或 embedding 模型版本已变化
 - **THEN** 该条目不参与命中（口径变更条目删除；embedding 模型变更条目重算）
+
+#### Scenario: 表达映射下的一致性校验
+- **WHEN** 命中条目的 metric_codes 与问题文本经表达映射（别名/指纹）判定出的指标 ID 一致
+- **THEN** 一致性校验通过，可直通；映射判定为空时仍降级（不直通）
 
 ### Requirement: 记忆命名空间隔离
 语义记忆 SHALL 按 namespace 读写：`/analyze` 请求可携带 `memoryNamespace`（默认 `"default"`），语义解析读路径与写钩子 SHALL 按该 namespace 读写记忆，使 eval/场景记忆与真实记忆互不污染。

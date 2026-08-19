@@ -50,6 +50,13 @@
 - 失分集中在 harder 用例的歧义（n19"最受欢迎"/n23"观看热度"意图漂移）与结构（n16/n17 ordering/dimensions）——正是更难样本的价值所在。
 - 多指标用例（n01/n02/n03）固定走降级路径（合成器 v1 单指标），L1-L4 不受影响（已知边界，见 §7）。
 
+### 2.2 多指标合成解锁（multi-metric-synthesis，2026-08-19）
+- **n01「统计各分类的播放量和点赞量」：sql_source=fallback → semantic**（同源表 metric_daily 多指标聚合，单 FROM 多列），L2 全字段正确。
+- **n02「各分类的完播率和互动率」：保持 fallback**（跨源表 play_detail + user_behavior_fact，MVP 明确降级边界），L1-L4 仍全对（intent 解析正确，SQL 走 raw 降级）。
+- **约束（防错误合成）**：全部指标经 `_resolve_path` 后落在 metric_daily 列路径 且 intent ∈ {aggregate, trend} 才合成；事实路径多指标（各指标 factEventFilter 不同会致空结果）显式降级。
+- **回归**：--memory off N=45 可用性 100%、L1 96.97%（32/33，与基线严格一致）、L2 81.82%（27/33，失分全为 source=semantic 单指标用例的 intent/时间/维度 LLM 解析方差，历轮 81-91% 波动范围内）、端到端 97.78%、拦截 100%。
+- **简历口径**：多指标 NL 查询从"降级 raw SQL"走向"确定性语义合成"——产品能力完整性补齐，n01 类缺口关闭。
+
 ## 3. 安全（门禁 / HITL）
 
 - **高风险拦截率 100%**（3/3 risk 用例全部 WAITING_APPROVAL）。
