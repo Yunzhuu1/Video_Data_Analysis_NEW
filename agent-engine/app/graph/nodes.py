@@ -172,6 +172,44 @@ async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient)
     return state
 
 
+async def _expand_relative_time(relative: dict, metric_defs: dict, intent: dict,
+                                  state: DataAgentState, platform: PlatformClient) -> dict:
+    """合成前 relative → absolute：锚点 = 数据末日（P2-1 同源：_resolve_path 后 source 的 timeField）。
+
+    - real：platform.execute_sql 查 MAX(时间列)（走 Spring SQL 网关，符合"Python 不直连库"）。
+    - mock：固定锚点 2023-10-31（与 seed 42 数据末日一致）。
+    """
+    from app.synthesis.sql_synthesizer import _ALIAS, _field_expr, _resolve_path
+    from app.synthesis.time_expand import time_expand
+
+    codes = list(intent.get("metrics") or [])
+    mdef = metric_defs.get(codes[0]) if codes else None
+    if mdef is None:
+        raise ValueError("no metric def for anchor query")
+    path = _resolve_path(mdef, intent.get("intent", "aggregate"), list(intent.get("dimensions") or []))
+    source = path["source"]
+    tcol = mdef.get("timeField") or "date"
+    rel_inner = relative.get("relative") or relative  # time_range 可能是 {type, relative:{...}, granularity}
+    if not settings.platform_calls_enabled:  # mock 固定锚点（seed 42 数据末日）
+        expanded = time_expand(rel_inner, "2023-10-31")
+        expanded["granularity"] = relative.get("granularity") or rel_inner.get("granularity")
+        return expanded
+    expr, joins = _field_expr(source, tcol)
+    alias = _ALIAS.get(source, source)
+    join_sql = (" " + " ".join(dict.fromkeys(joins))) if joins else ""
+    sql = f"SELECT MAX({expr}) FROM {source} {alias}{join_sql}"
+    qr = await platform.execute_sql(
+        run_id=state.get("run_id", ""), user_id=state.get("user_id", "eval"),
+        question=state.get("question", ""), sql=sql, purpose="anchor_time")
+    rows = qr.get("rows") or []
+    if not rows:
+        raise ValueError("anchor query returned no rows")
+    anchor = str(next(iter(rows[0].values())))
+    expanded = time_expand(rel_inner, anchor)
+    expanded["granularity"] = relative.get("granularity") or rel_inner.get("granularity")
+    return expanded
+
+
 async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
     """按 ResolvedIntent + 指标字典确定性合成 SQL。"""
     intent = state.get("resolved_intent") or {}
@@ -182,6 +220,15 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
         except Exception:  # noqa: BLE001 - degrade to raw SQL generation
             state["semantic_ok"] = False
             return state
+
+    # relative 时间展开（合成前，P2-1 同源锚点；失败降级 + warning，不打断主链路）
+    tr = intent.get("time_range") or {}
+    if tr.get("type") == "relative":
+        try:
+            intent["time_range"] = await _expand_relative_time(tr, metric_defs, intent, state, platform)
+            state["resolved_intent"] = intent
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("relative time expand failed: %s", exc)
 
     try:
         sql = synthesize(intent, metric_defs)

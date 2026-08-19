@@ -124,6 +124,21 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "trend_pattern",
+        "points": [
+          {
+            "date": "2023-10-26",
+            "direction": "up"
+          }
+        ],
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "anchor": "2023-10-31（数据末日）",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -497,6 +512,21 @@
         },
         "filters": [],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "trend_pattern",
+        "points": [
+          {
+            "date": "2023-10-26",
+            "direction": "up"
+          }
+        ],
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "anchor": "2023-10-31（数据末日）",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -670,6 +700,17 @@
           }
         ],
         "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 632,
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "anchor": "2023-10-31（数据末日）",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -795,6 +836,23 @@
           "direction": "desc",
           "limit": 5
         }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_2",
+          "content_5",
+          "content_4",
+          "content_6",
+          "content_1"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "anchor": "2023-10-31（数据末日）",
+          "sql": "独立手工 SQL（见 metrics-report）"
+        }
       }
     },
     {
@@ -824,6 +882,24 @@
           "field": "total_likes",
           "direction": "desc",
           "limit": 10
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_5",
+          "content_6",
+          "content_4",
+          "content_2",
+          "content_3",
+          "content_1"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-19",
+          "data_seed": "42",
+          "anchor": "2023-10-31（数据末日）",
+          "sql": "独立手工 SQL（见 metrics-report）"
         }
       }
     },
