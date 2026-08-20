@@ -31,14 +31,14 @@ def test_golden_cases_expanded_and_covered():
     """1.1：cases.yaml 45 条，新增用例含 category/difficulty，golden 指标都在 catalog。"""
     import json as _json
     cases = _json.loads(DEFAULT_CASES.read_text(encoding="utf-8"))["cases"]
-    assert len(cases) == 45
+    assert len(cases) == 57
     catalog = _json.loads((ROOT / "src" / "main" / "resources" / "metric_catalog.json").read_text(encoding="utf-8"))
     codes = {m["metricCode"] for m in catalog}
     new_ids = [c["id"] for c in cases if c["id"].startswith("n")]
-    assert len(new_ids) == 20
+    assert len(new_ids) == 32
     from collections import Counter
     cats = Counter(c["category"] for c in cases if c["id"].startswith("n"))
-    assert set(cats) == {"multi_metric", "multi_filter", "ranked_time", "cross_table", "longtail_ambiguous"}
+    assert {"multi_metric", "multi_filter", "ranked_time", "cross_table", "longtail_ambiguous", "ratio", "revenue", "distinct"} <= set(cats)
     for c in cases:
         if c.get("golden_spec"):
             assert set(c["golden_spec"]["metrics"]) <= codes, f"{c['id']} metric not in catalog"

@@ -13,7 +13,9 @@ import java.util.Set;
 public enum TableType {
     FACT, AGGREGATE, DIM;
 
-    private static final Set<String> FACT_TABLES = Set.of("user_behavior_fact", "play_detail");
+    private static final Set<String> FACT_TABLES = Set.of(
+            "user_behavior_fact", "play_detail",
+            "creator_revenue", "video_revenue", "user_retention");  // scale-data 新 FACT 表
     private static final Set<String> AGGREGATE_TABLES = Set.of("metric_daily");
 
     /** 按表名分类；未知表返回 null（门禁层决定裁决）。 */

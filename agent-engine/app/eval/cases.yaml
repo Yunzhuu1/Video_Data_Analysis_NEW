@@ -1253,6 +1253,394 @@
         "filters": [],
         "ordering": null
       }
+    },
+    {
+      "id": "n26_comment_rate",
+      "type": "text2sql",
+      "question": "各分类的评论率是多少",
+      "category": "ratio",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {
+          "游戏": 0.098,
+          "美妆": 0.0925,
+          "美食": 0.0974
+        },
+        "tolerance": 0.02,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n27_like_rate",
+      "type": "text2sql",
+      "question": "最近7天各分类的点赞率趋势",
+      "category": "ratio",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "like_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n28_share_rate",
+      "type": "text2sql",
+      "question": "各分类的分享率是多少",
+      "category": "ratio",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "share_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {
+          "游戏": 0.0,
+          "美妆": 0.0,
+          "美食": 0.0
+        },
+        "tolerance": 0.0,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n29_avg_completion",
+      "type": "text2sql",
+      "question": "平均完播率是多少",
+      "category": "ratio",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "avg_completion_ratio"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 43.660119,
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n30_creator_revenue",
+      "type": "text2sql",
+      "question": "创作者收益最高的3个创作者",
+      "category": "revenue",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "creator_revenue",
+          "direction": "desc",
+          "limit": 3
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "creator_3",
+          "creator_2",
+          "creator_1"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n31_video_revenue",
+      "type": "text2sql",
+      "question": "视频收益最高的5个视频",
+      "category": "revenue",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_5",
+          "content_6",
+          "content_4",
+          "content_3",
+          "content_2"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n32_active_creator",
+      "type": "text2sql",
+      "question": "活跃创作者数是多少",
+      "category": "distinct",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "active_creator_count"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 3,
+        "tolerance": 0.0,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n33_dau",
+      "type": "text2sql",
+      "question": "日活跃用户数是多少",
+      "category": "distinct",
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact",
+        "value": 50,
+        "tolerance": 0.0,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "type": "text2sql",
+      "question": "各创作者最近14天的收益趋势",
+      "category": "revenue",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 14,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "type": "text2sql",
+      "question": "各分类最近7天的评论率趋势",
+      "category": "ratio",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n36_dau_trend",
+      "type": "text2sql",
+      "question": "最近7天每天日活跃用户数趋势",
+      "category": "distinct",
+      "golden_spec": {
+        "intent": "trend",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null
+      }
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "type": "text2sql",
+      "question": "最近7天视频收益最高的5个视频",
+      "category": "revenue",
+      "golden_spec": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        }
+      },
+      "expected_result": {
+        "type": "top_set",
+        "items": [
+          "content_5",
+          "content_6",
+          "content_3",
+          "content_4",
+          "content_2"
+        ],
+        "ordered": true,
+        "truth_source": {
+          "fetched_at": "2026-08-20",
+          "data_seed": "42",
+          "anchor": "2023-10-31",
+          "sql": "独立手工 SQL"
+        }
+      }
     }
   ]
 }
