@@ -22,6 +22,9 @@ _ALIAS = {
     "metric_daily": "md",
     "user_behavior_fact": "ubf",
     "play_detail": "pd",
+    "creator_revenue": "cr",
+    "video_revenue": "vr",
+    "user_retention": "ur",
 }
 
 DIMENSIONS = [
@@ -50,6 +53,22 @@ def _field_expr(source: str, field: str) -> tuple[str, list[str]]:
             return f"DATE({alias}.created_at)", []
         if field == "content":
             return f"{alias}.content_id", []
+        return f"{alias}.{field}", []
+    if source == "creator_revenue":
+        if field == "date":
+            return f"{alias}.stat_date", []
+        if field == "creator":
+            return f"{alias}.creator_id", []
+        return f"{alias}.{field}", []
+    if source == "video_revenue":
+        if field == "date":
+            return f"{alias}.stat_date", []
+        if field == "content":
+            return f"{alias}.content_id", []
+        return f"{alias}.{field}", []
+    if source == "user_retention":
+        if field == "date":
+            return f"{alias}.stat_date", []
         return f"{alias}.{field}", []
     # metric_daily
     return f"{alias}.{field}", []
