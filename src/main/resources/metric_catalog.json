@@ -4,7 +4,10 @@
     "metricName": "播放量",
     "businessDefinition": "播放事件总数",
     "formula": "total_plays",
-    "dimensions": ["date", "category"],
+    "dimensions": [
+      "date",
+      "category"
+    ],
     "timeGranularity": "天",
     "sourceTable": "metric_daily",
     "timeField": "date",
@@ -16,7 +19,10 @@
     "metricName": "播放时长",
     "businessDefinition": "播放总时长（秒）",
     "formula": "total_play_duration",
-    "dimensions": ["date", "category"],
+    "dimensions": [
+      "date",
+      "category"
+    ],
     "timeGranularity": "天",
     "sourceTable": "metric_daily",
     "timeField": "date",
@@ -28,7 +34,10 @@
     "metricName": "点赞量",
     "businessDefinition": "点赞事件总数",
     "formula": "total_likes",
-    "dimensions": ["date", "category"],
+    "dimensions": [
+      "date",
+      "category"
+    ],
     "timeGranularity": "天",
     "sourceTable": "metric_daily",
     "timeField": "date",
@@ -40,7 +49,10 @@
     "metricName": "评论量",
     "businessDefinition": "评论事件总数",
     "formula": "total_comments",
-    "dimensions": ["date", "category"],
+    "dimensions": [
+      "date",
+      "category"
+    ],
     "timeGranularity": "天",
     "sourceTable": "metric_daily",
     "timeField": "date",
@@ -52,7 +64,10 @@
     "metricName": "分享量",
     "businessDefinition": "分享事件总数",
     "formula": "total_shares",
-    "dimensions": ["date", "category"],
+    "dimensions": [
+      "date",
+      "category"
+    ],
     "timeGranularity": "天",
     "sourceTable": "metric_daily",
     "timeField": "date",
@@ -64,7 +79,9 @@
     "metricName": "完播率",
     "businessDefinition": "完播率均值（0-100）",
     "formula": "AVG(completion_rate)",
-    "dimensions": ["content"],
+    "dimensions": [
+      "content"
+    ],
     "timeGranularity": "天",
     "sourceTable": "play_detail",
     "timeField": "created_at",
@@ -76,11 +93,137 @@
     "metricName": "互动率",
     "businessDefinition": "(点赞+评论)/播放",
     "formula": "(SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0)",
-    "dimensions": ["date", "category", "content"],
+    "dimensions": [
+      "date",
+      "category",
+      "content"
+    ],
     "timeGranularity": "天",
     "sourceTable": "user_behavior_fact",
     "timeField": "timestamp",
     "factFormula": null,
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "comment_rate",
+    "metricName": "评论率",
+    "businessDefinition": "评论数占播放数的比例",
+    "formula": "COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "dimensions": [
+      "date",
+      "category",
+      "content"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "user_behavior_fact",
+    "timeField": "timestamp",
+    "factFormula": "COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "like_rate",
+    "metricName": "点赞率",
+    "businessDefinition": "点赞数占播放数的比例",
+    "formula": "COUNT(CASE WHEN event_type = 'like' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "dimensions": [
+      "date",
+      "category",
+      "content"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "user_behavior_fact",
+    "timeField": "timestamp",
+    "factFormula": "COUNT(CASE WHEN event_type = 'like' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "share_rate",
+    "metricName": "分享率",
+    "businessDefinition": "分享数占播放数的比例",
+    "formula": "COUNT(CASE WHEN event_type = 'share' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "dimensions": [
+      "date",
+      "category",
+      "content"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "user_behavior_fact",
+    "timeField": "timestamp",
+    "factFormula": "COUNT(CASE WHEN event_type = 'share' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0)",
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "avg_completion_ratio",
+    "metricName": "平均完播率",
+    "businessDefinition": "播放记录的平均完播比例",
+    "formula": "AVG(completion_rate)",
+    "dimensions": [
+      "date",
+      "content"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "play_detail",
+    "timeField": "created_at",
+    "factFormula": null,
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "creator_revenue",
+    "metricName": "创作者收益",
+    "businessDefinition": "创作者日收益合计（收入-支出的口径由 profit 单独计）",
+    "formula": "SUM(revenue)",
+    "dimensions": [
+      "date",
+      "creator"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "creator_revenue",
+    "timeField": "stat_date",
+    "factFormula": null,
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "video_revenue",
+    "metricName": "视频收益",
+    "businessDefinition": "视频日收益合计",
+    "formula": "SUM(revenue)",
+    "dimensions": [
+      "date",
+      "content"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "video_revenue",
+    "timeField": "stat_date",
+    "factFormula": null,
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "active_creator_count",
+    "metricName": "活跃创作者数",
+    "businessDefinition": "有播放事件的创作者去重计数",
+    "formula": "COUNT(DISTINCT ubf.creator_id)",
+    "dimensions": [
+      "date",
+      "category"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "user_behavior_fact",
+    "timeField": "timestamp",
+    "factFormula": "COUNT(DISTINCT ubf.creator_id)",
+    "factEventFilter": null
+  },
+  {
+    "metricCode": "daily_active_users",
+    "metricName": "日活跃用户数",
+    "businessDefinition": "当日有行为的用户去重计数",
+    "formula": "COUNT(DISTINCT ubf.user_id)",
+    "dimensions": [
+      "date"
+    ],
+    "timeGranularity": "天",
+    "sourceTable": "user_behavior_fact",
+    "timeField": "timestamp",
+    "factFormula": "COUNT(DISTINCT ubf.user_id)",
     "factEventFilter": null
   }
 ]

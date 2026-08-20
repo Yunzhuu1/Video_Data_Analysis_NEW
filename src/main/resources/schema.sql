@@ -171,3 +171,48 @@ CREATE TABLE IF NOT EXISTS agent_audit_log (
     INDEX idx_run_id (run_id),
     INDEX idx_user_created (user_id, created_at)
 );
+
+-- ============================================================
+-- 规模化扩展（scale-data）新增表
+-- ============================================================
+
+-- 创作者收益事实表（creator_id + stat_date 粒度）
+CREATE TABLE IF NOT EXISTS creator_revenue (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    creator_id VARCHAR(64),
+    stat_date DATE,
+    revenue DECIMAL(12,2) DEFAULT 0,
+    expense DECIMAL(12,2) DEFAULT 0,
+    profit DECIMAL(12,2) DEFAULT 0,
+    INDEX idx_creator_date (creator_id, stat_date),
+    INDEX idx_stat_date (stat_date)
+);
+
+-- 视频收益事实表（content_id + stat_date 粒度）
+CREATE TABLE IF NOT EXISTS video_revenue (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    content_id VARCHAR(64),
+    stat_date DATE,
+    revenue DECIMAL(12,2) DEFAULT 0,
+    INDEX idx_content_date (content_id, stat_date),
+    INDEX idx_stat_date (stat_date)
+);
+
+-- 用户留存事实表（user_id + stat_date 粒度）
+CREATE TABLE IF NOT EXISTS user_retention (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(64),
+    stat_date DATE,
+    is_active TINYINT DEFAULT 0,
+    is_retained TINYINT DEFAULT 0,
+    INDEX idx_user_date (user_id, stat_date),
+    INDEX idx_stat_date (stat_date)
+);
+
+-- 内容质量表（content_id 粒度，DIM 型）
+CREATE TABLE IF NOT EXISTS content_quality (
+    content_id VARCHAR(64) PRIMARY KEY,
+    quality_score DECIMAL(5,2) DEFAULT 0,
+    publish_rate DECIMAL(5,2) DEFAULT 0,
+    category VARCHAR(32)
+);

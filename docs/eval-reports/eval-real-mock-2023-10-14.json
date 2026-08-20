@@ -9,11 +9,11 @@
   },
   "eval_date": "2023-10-14",
   "metrics": {
-    "total": 45,
-    "evaluated": 45,
+    "total": 57,
+    "evaluated": 57,
     "error_count": 0,
-    "passed": 43,
-    "end_to_end": 0.9555555555555556,
+    "passed": 56,
+    "end_to_end": 0.9824561403508771,
     "auto_fix": 1.0,
     "auto_fix_total": 2,
     "risk_interception": 1.0,
@@ -25,33 +25,35 @@
     "memory_hit_rate": 0.0,
     "memory_inject": 0,
     "memory_inject_rate": 0.0,
-    "tokens_total": 141251,
+    "tokens_total": 201567,
     "tokens_hit_avg": 0.0,
-    "tokens_miss_avg": 3138.911111111111,
-    "result_judged": 17,
-    "result_passed": 17,
-    "result_rate": 1.0,
-    "result_value_mismatch": [],
+    "tokens_miss_avg": 3536.2631578947367,
+    "result_judged": 25,
+    "result_passed": 24,
+    "result_rate": 0.96,
+    "result_value_mismatch": [
+      "n16_cross_table"
+    ],
     "repeat_pairs": 0,
     "direct_hit_pairs": 0,
     "direct_hit_avg_token_delta": 0.0,
     "direct_hit_avg_latency_delta": 0.0,
-    "judged": 33,
-    "core_accuracy": 0.9696969696969697,
-    "core_hits": 32,
-    "strict_accuracy": 0.6060606060606061,
-    "strict_hits": 20,
-    "avg_field_match": 0.9141414141414141,
+    "judged": 45,
+    "core_accuracy": 0.9777777777777777,
+    "core_hits": 44,
+    "strict_accuracy": 0.5555555555555556,
+    "strict_hits": 25,
+    "avg_field_match": 0.9074074074074074,
     "per_field": {
-      "intent": 0.9393939393939394,
-      "metrics": 0.9696969696969697,
-      "dimensions": 0.9696969696969697,
-      "time_range": 0.6666666666666666,
+      "intent": 0.9333333333333333,
+      "metrics": 0.9777777777777777,
+      "dimensions": 0.9777777777777777,
+      "time_range": 0.6444444444444445,
       "filters": 1.0,
-      "ordering": 0.9393939393939394
+      "ordering": 0.9111111111111111
     },
-    "latency_p50": 12913,
-    "latency_p95": 38193.199999999975
+    "latency_p50": 14959,
+    "latency_p95": 29506.599999999988
   },
   "cases": [
     {
@@ -59,7 +61,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11897,
+      "latency_ms": 6997,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -87,6 +89,8 @@
         ],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": "day"
         },
         "filters": [],
@@ -97,7 +101,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2907,
+      "tokens": 2517,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -110,7 +114,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11857,
+      "latency_ms": 12325,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -144,13 +148,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
-      "tokens": 2873,
+      "tokens": 3139,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -163,7 +167,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9833,
+      "latency_ms": 9958,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -197,13 +201,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 2645,
+      "tokens": 2867,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -216,7 +220,7 @@
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 5588,
+      "latency_ms": 20774,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -242,19 +246,19 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
-          "relative": {},
-          "absolute": {},
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd",
-      "tokens": 2000,
+      "tokens": 4074,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -267,7 +271,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10932,
+      "latency_ms": 14959,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -311,7 +315,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
-      "tokens": 2759,
+      "tokens": 3536,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -324,7 +328,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6423,
+      "latency_ms": 12460,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -351,10 +355,7 @@
           "content"
         ],
         "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": null
+          "type": "none"
         },
         "filters": [],
         "ordering": {
@@ -362,13 +363,13 @@
           "direction": "desc",
           "limit": 10
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
-      "tokens": 2168,
+      "tokens": 3116,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -379,9 +380,9 @@
     {
       "id": "c07_compare_food_game_trend",
       "type": "text2sql",
-      "passed": false,
-      "reason": "final report missing required fields",
-      "latency_ms": 11297,
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14824,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -409,8 +410,6 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": "day"
         },
         "filters": [
@@ -430,7 +429,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2883,
+      "tokens": 3495,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -443,7 +442,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13540,
+      "latency_ms": 10736,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -469,7 +468,6 @@
         "dimensions": [],
         "time_range": {
           "type": "absolute",
-          "relative": null,
           "absolute": {
             "start": "2023-10-01",
             "end": "2023-10-07"
@@ -478,13 +476,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
-      "tokens": 3199,
+      "tokens": 3036,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -497,7 +495,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8272,
+      "latency_ms": 16072,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -537,7 +535,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2431,
+      "tokens": 3807,
       "result_check": null
     },
     {
@@ -545,7 +543,7 @@
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 14792,
+      "latency_ms": 18728,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -577,13 +575,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf",
-      "tokens": 3360,
+      "tokens": 4111,
       "result_check": null
     },
     {
@@ -591,7 +589,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11916,
+      "latency_ms": 12940,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -631,7 +629,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_shares) AS total_shares FROM metric_daily md GROUP BY md.category",
-      "tokens": 2739,
+      "tokens": 3358,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -644,7 +642,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9896,
+      "latency_ms": 14165,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -682,13 +680,13 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' GROUP BY md.date ORDER BY md.date",
-      "tokens": 2643,
+      "tokens": 3245,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -701,7 +699,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9947,
+      "latency_ms": 17564,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -741,7 +739,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 2628,
+      "tokens": 3885,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -754,7 +752,7 @@
       "type": "answer_quality",
       "passed": false,
       "reason": "final report missing required fields",
-      "latency_ms": 6775,
+      "latency_ms": 19734,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -784,13 +782,13 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
-      "tokens": 2202,
+      "tokens": 4279,
       "result_check": null
     },
     {
@@ -798,40 +796,7 @@
       "type": "hard_guard",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 17528,
-      "status": "SUCCESS",
-      "retry_count": 1,
-      "sql_source": "fallback",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "trend",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
-          "granularity": "day"
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.95,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date, category",
-      "tokens": 3801,
-      "result_check": null
-    },
-    {
-      "id": "c16_dq_retry",
-      "type": "dq",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 31846,
+      "latency_ms": 17826,
       "status": "SUCCESS",
       "retry_count": 1,
       "sql_source": "fallback",
@@ -852,13 +817,46 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT md.date AS date, md.category AS category, md.total_plays AS total_plays FROM metric_daily md ORDER BY md.date, md.category",
-      "tokens": 5586,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date, category",
+      "tokens": 4180,
+      "result_check": null
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 19861,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT md.date AS date, md.category AS category, SUM(md.total_plays) AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date, md.category",
+      "tokens": 4442,
       "result_check": null
     },
     {
@@ -866,7 +864,7 @@
       "type": "dq",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10444,
+      "latency_ms": 7600,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -902,7 +900,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
-      "tokens": 2585,
+      "tokens": 2579,
       "result_check": null
     },
     {
@@ -910,10 +908,10 @@
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 5937,
+      "latency_ms": 15563,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
-      "sql_source": "semantic",
+      "sql_source": "fallback",
       "spec_score": null,
       "resolved_intent": {
         "intent": "detail",
@@ -923,45 +921,6 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": null
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.8,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "sql": "SELECT * FROM metric_daily md LIMIT 100",
-      "tokens": 1679,
-      "result_check": null
-    },
-    {
-      "id": "c19_detail_without_time",
-      "type": "risk",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 29303,
-      "status": "WAITING_APPROVAL",
-      "retry_count": 0,
-      "sql_source": "fallback",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "detail",
-        "metrics": [
-          "total_plays",
-          "total_play_duration",
-          "total_likes",
-          "total_comments",
-          "total_shares"
-        ],
-        "dimensions": [],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -971,8 +930,37 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT * FROM user_behavior LIMIT 100;",
-      "tokens": 4464,
+      "sql": "SELECT * FROM playback_detail LIMIT 1000;",
+      "tokens": 3260,
+      "result_check": null
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 22707,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.3,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT * FROM user_behavior LIMIT 100",
+      "tokens": 4034,
       "result_check": null
     },
     {
@@ -980,7 +968,7 @@
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 39780,
+      "latency_ms": 31713,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -1004,8 +992,8 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT date, play_count, play_user_count, total_play_duration_sec, avg_play_duration_sec FROM metric_daily ORDER BY date DESC LIMIT 30;",
-      "tokens": 6045,
+      "sql": "SELECT date, SUM(CASE WHEN metric_name = 'play_count' THEN metric_value ELSE 0 END) AS play_count, SUM(CASE WHEN metric_name = 'play_duration' THEN metric_value ELSE 0 END) AS play_duration FROM metric_daily WHERE metric_name IN ('play_count', 'play_duration') GROUP BY date ORDER BY date",
+      "tokens": 5449,
       "result_check": null
     },
     {
@@ -1013,7 +1001,7 @@
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 20074,
+      "latency_ms": 17239,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1021,7 +1009,7 @@
       "resolved_intent": {
         "intent": "trend",
         "metrics": [
-          "completion_rate"
+          "avg_completion_ratio"
         ],
         "dimensions": [],
         "time_range": {
@@ -1036,13 +1024,13 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS completion_rate FROM play_detail pd WHERE pd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY DATE(pd.created_at)",
-      "tokens": 3561,
+      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS avg_completion_ratio FROM play_detail pd WHERE pd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY DATE(pd.created_at)",
+      "tokens": 3851,
       "result_check": null
     },
     {
@@ -1050,7 +1038,7 @@
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 44643,
+      "latency_ms": 28955,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -1059,16 +1047,11 @@
         "intent": "detail",
         "metrics": [
           "total_plays",
-          "total_play_duration",
           "total_likes",
           "total_comments",
-          "total_shares",
-          "completion_rate",
-          "engagement_rate"
+          "total_shares"
         ],
-        "dimensions": [
-          "content"
-        ],
+        "dimensions": [],
         "time_range": {
           "type": "none",
           "relative": null,
@@ -1077,13 +1060,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.4,
+        "confidence": 0.3,
         "coverage": "partial"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT * FROM user_behavior LIMIT 100;",
-      "tokens": 5524,
+      "tokens": 4840,
       "result_check": null
     },
     {
@@ -1091,7 +1074,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12488,
+      "latency_ms": 11623,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1106,17 +1089,19 @@
         ],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
-      "tokens": 2788,
+      "tokens": 3126,
       "result_check": null
     },
     {
@@ -1150,7 +1135,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12913,
+      "latency_ms": 6407,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1179,6 +1164,8 @@
         ],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -1189,7 +1176,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays, SUM(total_likes) AS total_likes FROM metric_daily md GROUP BY md.category",
-      "tokens": 2816,
+      "tokens": 2462,
       "result_check": null
     },
     {
@@ -1197,7 +1184,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 28517,
+      "latency_ms": 45469,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -1232,13 +1219,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT category, AVG(completion_rate) AS avg_completion_rate, AVG(interaction_rate) AS avg_interaction_rate FROM metric_daily GROUP BY category;",
-      "tokens": 4772,
+      "sql": "SELECT category, SUM(completed_count) / NULLIF(SUM(play_count), 0) AS completion_rate, (SUM(like_count) + SUM(comment_count) + SUM(share_count)) / NULLIF(SUM(play_count), 0) AS interaction_rate FROM metric_daily GROUP BY category;",
+      "tokens": 7813,
       "result_check": null
     },
     {
@@ -1246,7 +1233,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 15350,
+      "latency_ms": 12450,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1292,7 +1279,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
-      "tokens": 3055,
+      "tokens": 3236,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -1305,7 +1292,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13804,
+      "latency_ms": 15115,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1345,13 +1332,13 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '游戏' AND md.date BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 3003,
+      "tokens": 3841,
       "result_check": null
     },
     {
@@ -1359,7 +1346,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 18311,
+      "latency_ms": 14973,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1385,6 +1372,7 @@
         "dimensions": [],
         "time_range": {
           "type": "absolute",
+          "relative": null,
           "absolute": {
             "start": "2023-10-01",
             "end": "2023-10-07"
@@ -1405,7 +1393,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT SUM(total_likes) AS total_likes FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
-      "tokens": 3471,
+      "tokens": 3446,
       "result_check": null
     },
     {
@@ -1413,7 +1401,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 55536,
+      "latency_ms": 33454,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1464,7 +1452,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT pd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd WHERE pd.category IN ('美食', '游戏') AND pd.created_at BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY pd.category",
-      "tokens": 7359,
+      "tokens": 5746,
       "result_check": null
     },
     {
@@ -1472,7 +1460,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16397,
+      "latency_ms": 13195,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1512,13 +1500,13 @@
           "direction": "desc",
           "limit": 5
         },
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 5",
-      "tokens": 3345,
+      "tokens": 3238,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -1531,7 +1519,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 26441,
+      "latency_ms": 21158,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1571,13 +1559,13 @@
           "direction": "desc",
           "limit": 10
         },
-        "confidence": 1.0,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
-      "tokens": 4273,
+      "tokens": 4139,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -1590,7 +1578,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 15725,
+      "latency_ms": 10218,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1630,13 +1618,13 @@
           "direction": "desc",
           "limit": 1
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY cd.category ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 1",
-      "tokens": 3473,
+      "tokens": 3267,
       "result_check": null
     },
     {
@@ -1644,7 +1632,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11839,
+      "latency_ms": 16357,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1672,8 +1660,6 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -1682,13 +1668,13 @@
           "direction": "desc",
           "limit": 3
         },
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id ORDER BY COUNT(*) DESC LIMIT 3",
-      "tokens": 2693,
+      "tokens": 3810,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -1701,7 +1687,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11287,
+      "latency_ms": 15875,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1735,13 +1721,13 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id",
-      "tokens": 2608,
+      "tokens": 3662,
       "result_check": null
     },
     {
@@ -1749,14 +1735,14 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11896,
+      "latency_ms": 15656,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": true,
+        "matched": false,
         "core_ok": true,
-        "field_hits": 6,
+        "field_hits": 5,
         "field_total": 6,
         "fields": {
           "intent": true,
@@ -1764,7 +1750,7 @@
           "dimensions": true,
           "time_range": true,
           "filters": true,
-          "ordering": true
+          "ordering": false
         }
       },
       "resolved_intent": {
@@ -1782,14 +1768,18 @@
           "granularity": null
         },
         "filters": [],
-        "ordering": null,
-        "confidence": 0.95,
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT pd.creator AS creator, AVG(completion_rate) AS completion_rate FROM play_detail pd GROUP BY pd.creator",
-      "tokens": 2674,
+      "tokens": 3518,
       "result_check": null
     },
     {
@@ -1797,17 +1787,17 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16860,
+      "latency_ms": 10607,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": true,
+        "matched": false,
         "core_ok": true,
-        "field_hits": 6,
+        "field_hits": 5,
         "field_total": 6,
         "fields": {
-          "intent": true,
+          "intent": false,
           "metrics": true,
           "dimensions": true,
           "time_range": true,
@@ -1816,7 +1806,7 @@
         }
       },
       "resolved_intent": {
-        "intent": "aggregate",
+        "intent": "detail",
         "metrics": [
           "total_likes"
         ],
@@ -1836,13 +1826,13 @@
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' GROUP BY ubf.content_id",
-      "tokens": 3201,
+      "sql": "SELECT * FROM user_behavior_fact ubf WHERE event_type = 'like' LIMIT 100",
+      "tokens": 2933,
       "result_check": {
         "kind": "exact_per_key",
-        "passed": true,
-        "detail": "all keys match",
-        "fail_reason": null
+        "passed": false,
+        "detail": "content_1:missing; content_2:missing; content_3:missing; content_4:missing; content_5:missing; content_6:missing",
+        "fail_reason": "value_mismatch"
       }
     },
     {
@@ -1850,7 +1840,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10473,
+      "latency_ms": 17666,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1894,7 +1884,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
-      "tokens": 2482,
+      "tokens": 3840,
       "result_check": null
     },
     {
@@ -1902,28 +1892,28 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 26481,
+      "latency_ms": 24135,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": false,
-        "core_ok": false,
-        "field_hits": 4,
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
         "field_total": 6,
         "fields": {
           "intent": true,
-          "metrics": false,
+          "metrics": true,
           "dimensions": true,
           "time_range": true,
           "filters": true,
-          "ordering": false
+          "ordering": true
         }
       },
       "resolved_intent": {
         "intent": "ranking",
         "metrics": [
-          "total_plays"
+          "engagement_rate"
         ],
         "dimensions": [
           "content"
@@ -1936,17 +1926,17 @@
         },
         "filters": [],
         "ordering": {
-          "field": "total_plays",
+          "field": "engagement_rate",
           "direction": "desc",
           "limit": 10
         },
-        "confidence": 0.7,
-        "coverage": "partial"
+        "confidence": 0.8,
+        "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
-      "tokens": 4244,
+      "sql": "SELECT ubf.content_id AS content, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf GROUP BY ubf.content_id ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 10",
+      "tokens": 4705,
       "result_check": null
     },
     {
@@ -1954,7 +1944,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16527,
+      "latency_ms": 14458,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1992,13 +1982,13 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd WHERE pd.category = '游戏'",
-      "tokens": 3054,
+      "tokens": 3263,
       "result_check": null
     },
     {
@@ -2006,7 +1996,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6753,
+      "latency_ms": 18750,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2050,7 +2040,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 3",
-      "tokens": 2208,
+      "tokens": 4036,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -2063,7 +2053,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 14599,
+      "latency_ms": 19659,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2103,7 +2093,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-30' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 3104,
+      "tokens": 4040,
       "result_check": null
     },
     {
@@ -2111,7 +2101,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12937,
+      "latency_ms": 13094,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2153,7 +2143,7 @@
       "memory_hit": false,
       "memory_band": null,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.category",
-      "tokens": 2923,
+      "tokens": 3381,
       "result_check": null
     },
     {
@@ -2161,7 +2151,484 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 14303,
+      "latency_ms": 10961,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 2910,
+      "result_check": null
+    },
+    {
+      "id": "n26_comment_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25608,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
+      "tokens": 5084,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n27_like_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12245,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "like_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'like' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS like_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
+      "tokens": 3474,
+      "result_check": null
+    },
+    {
+      "id": "n28_share_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 17222,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "share_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'share' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS share_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
+      "tokens": 3940,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n29_avg_completion",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9415,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "avg_completion_ratio"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT AVG(completion_rate) AS avg_completion_ratio FROM play_detail pd",
+      "tokens": 2726,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "avg_completion_ratio=43.660119 vs 43.660119 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n30_creator_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18133,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "creator_revenue",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr GROUP BY cr.creator_id ORDER BY SUM(revenue) DESC LIMIT 3",
+      "tokens": 3765,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n31_video_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20676,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
+      "tokens": 4137,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n32_active_creator",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7951,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "active_creator_count"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT COUNT(DISTINCT ubf.creator_id) AS active_creator_count FROM user_behavior_fact ubf",
+      "tokens": 2502,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "active_creator_count=3.0 vs 3.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n33_dau",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11506,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf",
+      "tokens": 3059,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "daily_active_users=50.0 vs 50.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7441,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2180,11 +2647,161 @@
         }
       },
       "resolved_intent": {
-        "intent": "aggregate",
+        "intent": "trend",
         "metrics": [
-          "total_plays"
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-18",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT cr.stat_date AS date, cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr WHERE cr.stat_date BETWEEN '2023-10-18' AND '2023-10-31 23:59:59' GROUP BY cr.stat_date, cr.creator_id ORDER BY cr.stat_date",
+      "tokens": 2637,
+      "result_check": null
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9048,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
+      "tokens": 3057,
+      "result_check": null
+    },
+    {
+      "id": "n36_dau_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10055,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "daily_active_users"
         ],
         "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp) ORDER BY DATE(ubf.timestamp)",
+      "tokens": 2997,
+      "result_check": null
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8054,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
         "time_range": {
           "type": "absolute",
           "absolute": {
@@ -2194,15 +2811,24 @@
           "granularity": null
         },
         "filters": [],
-        "ordering": null,
-        "confidence": 0.85,
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
-      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
-      "tokens": 3023,
-      "result_check": null
+      "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr WHERE vr.stat_date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
+      "tokens": 2677,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
     }
   ]
 }

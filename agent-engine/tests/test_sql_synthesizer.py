@@ -182,3 +182,46 @@ def test_multi_metric_ranking_degrades():
                      dimensions=["content"], ordering={"field": "total_plays", "direction": "desc", "limit": 5})
     with pytest.raises(SynthesisError):
         synthesize(intent, FULL_METRIC_DEFS)
+
+
+# ------------------------------------------------------------------ scale-data 新指标（比率/去重/收益）
+def _load_catalog():
+    import json as _json
+    from pathlib import Path
+    return {m["metricCode"]: m for m in
+            _json.loads(Path("../src/main/resources/metric_catalog.json").read_text())}
+
+
+def test_rate_metric_synthesizes():
+    """P2-1：比率型指标用完整 factFormula（COUNT CASE/NULLIF），不可被 SUM 包裹错。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["comment_rate"], dimensions=["category"])
+    sql = synthesize(intent, mdefs)
+    assert "FROM user_behavior_fact ubf" in sql
+    assert "COUNT(CASE WHEN event_type = 'comment'" in sql
+    assert "NULLIF(COUNT(CASE WHEN event_type = 'play'" in sql
+    assert "GROUP BY cd.category" in sql
+
+
+def test_distinct_count_synthesizes():
+    """P2-2：去重计数带合成器别名 ubf，防 JOIN 后歧义。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["daily_active_users"], dimensions=[])
+    sql = synthesize(intent, mdefs)
+    assert "COUNT(DISTINCT ubf.user_id)" in sql
+    assert "FROM user_behavior_fact ubf" in sql
+
+
+def test_new_table_revenue_synthesizes():
+    """新表收益指标走自己的 sourceTable（不误路由到 fact）。"""
+    mdefs = _load_catalog()
+    # video_revenue 聚合
+    sql1 = synthesize(_intent(metrics=["video_revenue"], dimensions=[]), mdefs)
+    assert "FROM video_revenue vr" in sql1
+    assert "SUM(revenue)" in sql1
+    # creator_revenue ranking
+    sql2 = synthesize(_intent(intent="ranking", metrics=["creator_revenue"], dimensions=["creator"],
+                              ordering={"field": "creator_revenue", "direction": "desc", "limit": 3}), mdefs)
+    assert "FROM creator_revenue cr" in sql2
+    assert "cr.creator_id AS creator" in sql2
+    assert "ORDER BY SUM(revenue) DESC LIMIT 3" in sql2

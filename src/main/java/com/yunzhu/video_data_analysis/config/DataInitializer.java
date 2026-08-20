@@ -82,7 +82,8 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (hasData()) {
-            log.info("user_behavior_fact 已有数据，跳过初始化");
+            log.info("user_behavior_fact 已有数据，仅增量补充规模化新表（旧数据字节级不变）");
+            insertScaleTables();
             return;
         }
 
@@ -97,6 +98,7 @@ public class DataInitializer implements CommandLineRunner {
         insertUserBehaviorFact();
         insertMetricDaily();
         insertPlayDetail();
+        insertScaleTables();
 
         log.info("测试数据初始化完成");
     }
@@ -423,4 +425,131 @@ public class DataInitializer implements CommandLineRunner {
         Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM metric_daily", Integer.class);
         log.info("  metric_daily: {} 行聚合数据已注入", count);
     }
+
+    /* ==================== 规模化扩展（scale-data）新表 ==================== */
+
+    /**
+     * 灌入规模化新增的 4 张表（creator_revenue / video_revenue / user_retention / content_quality）。
+     * 幂等：各表已有数据则跳过；旧表（fact/metric_daily）不受影响（字节级不变，P1）。
+     * 真实业务模式：长尾 80/20（头部收益集中）、稀疏（美妆创作者部分天无记录）、
+     * 异常峰值（某日收益暴涨）、复用 10/1-7 活动激增（收入随播放量）。
+     * 确定性：全部由 seed 42 派生，重灌可复现。
+     */
+    private void insertScaleTables() {
+        insertCreatorRevenue();
+        insertVideoRevenue();
+        insertUserRetention();
+        insertContentQuality();
+    }
+
+    private boolean scaleTableHasData(String table) {
+        Integer count = jdbcTemplate.queryForObject("SELECT COUNT(1) FROM " + table, Integer.class);
+        return count != null && count > 0;
+    }
+
+    private void insertCreatorRevenue() {
+        if (scaleTableHasData("creator_revenue")) {
+            log.info("creator_revenue 已有数据，跳过");
+            return;
+        }
+        String sql = "INSERT INTO creator_revenue (creator_id, stat_date, revenue, expense, profit) VALUES (?,?,?,?,?)";
+        List<Object[]> batch = new ArrayList<>();
+        LocalDate start = LocalDate.of(2023, 10, 1);
+        LocalDate end = LocalDate.of(2023, 11, 30);
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            // creator_3（游戏主播，头部）：高收入 500-900；10/12 异常峰值 ×3
+            boolean spikeDay = d.equals(LocalDate.of(2023, 10, 12));
+            double rev3 = 500 + random.nextInt(400) * (spikeDay ? 3 : 1);
+            // creator_1（美妆，稀疏）：10 月前 10 天 + 11 月前 5 天有记录，其余缺失
+            boolean creator1HasData = (d.getMonthValue() == 10 && d.getDayOfMonth() <= 10)
+                    || (d.getMonthValue() == 11 && d.getDayOfMonth() <= 5);
+            // creator_2（普通）：低-中收入，10/1-7 活动期略高
+            int dayInMonth = d.getDayOfMonth();
+            double rev2 = (dayInMonth <= 7 ? 150 : 60) + random.nextInt(60);
+            // 长尾：creator_3 >> creator_1 > creator_2
+            if (creator1HasData) {
+                double rev1 = 200 + random.nextInt(150);
+                double exp1 = rev1 * 0.3;
+                batch.add(new Object[]{"creator_1", java.sql.Date.valueOf(d), rev1, exp1, rev1 - exp1});
+            }
+            double exp3 = rev3 * 0.25;
+            batch.add(new Object[]{"creator_3", java.sql.Date.valueOf(d), rev3, exp3, rev3 - exp3});
+            double exp2 = rev2 * 0.4;
+            batch.add(new Object[]{"creator_2", java.sql.Date.valueOf(d), rev2, exp2, rev2 - exp2});
+        }
+        jdbcTemplate.batchUpdate(sql, batch);
+        log.info("creator_revenue 灌入 {} 条", batch.size());
+    }
+
+    private void insertVideoRevenue() {
+        if (scaleTableHasData("video_revenue")) {
+            log.info("video_revenue 已有数据，跳过");
+            return;
+        }
+        String sql = "INSERT INTO video_revenue (content_id, stat_date, revenue) VALUES (?,?,?)";
+        List<Object[]> batch = new ArrayList<>();
+        LocalDate start = LocalDate.of(2023, 10, 1);
+        LocalDate end = LocalDate.of(2023, 11, 30);
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            int dayInMonth = d.getDayOfMonth();
+            double act = (dayInMonth <= 7 ? 1.5 : (dayInMonth >= 8 && dayInMonth <= 10 ? 0.6 : 1.0));
+            // 长尾：content_5/6 高收益（头部），content_1-4 低
+            double[] bases = {25, 30, 35, 40, 120, 110};
+            for (int i = 0; i < 6; i++) {
+                String cid = "content_" + (i + 1);
+                double rev = bases[i] * act + random.nextInt(20);
+                batch.add(new Object[]{cid, java.sql.Date.valueOf(d), rev});
+            }
+        }
+        jdbcTemplate.batchUpdate(sql, batch);
+        log.info("video_revenue 灌入 {} 条", batch.size());
+    }
+
+    private void insertUserRetention() {
+        if (scaleTableHasData("user_retention")) {
+            log.info("user_retention 已有数据，跳过");
+            return;
+        }
+        String sql = "INSERT INTO user_retention (user_id, stat_date, is_active, is_retained) VALUES (?,?,?,?)";
+        List<Object[]> batch = new ArrayList<>();
+        LocalDate start = LocalDate.of(2023, 10, 1);
+        LocalDate end = LocalDate.of(2023, 11, 30);
+        // 记录每个 user 前一日是否活跃（用于 is_retained）
+        java.util.Map<String, Boolean> prevActive = new java.util.HashMap<>();
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
+            for (int u = 1; u <= 50; u++) {
+                String uid = "user_" + u;
+                boolean active = random.nextInt(100) < 60; // 60% 活跃
+                boolean retained = Boolean.TRUE.equals(prevActive.get(uid)) && active;
+                batch.add(new Object[]{uid, java.sql.Date.valueOf(d), active ? 1 : 0, retained ? 1 : 0});
+                prevActive.put(uid, active);
+            }
+        }
+        jdbcTemplate.batchUpdate(sql, batch);
+        log.info("user_retention 灌入 {} 条", batch.size());
+    }
+
+    private void insertContentQuality() {
+        if (scaleTableHasData("content_quality")) {
+            log.info("content_quality 已有数据，跳过");
+            return;
+        }
+        String sql = "INSERT INTO content_quality (content_id, quality_score, publish_rate, category) VALUES (?,?,?,?)";
+        List<Object[]> batch = new ArrayList<>();
+        // content_3/4 质量高、content_1 低；category 对齐 content_dim
+        Object[][] rows = {
+            {"content_1", 55, 30, "美妆"},
+            {"content_2", 72, 60, "美妆"},
+            {"content_3", 90, 85, "游戏"},
+            {"content_4", 88, 80, "游戏"},
+            {"content_5", 78, 70, "美食"},
+            {"content_6", 82, 75, "美食"},
+        };
+        for (Object[] r : rows) {
+            batch.add(r);
+        }
+        jdbcTemplate.batchUpdate(sql, batch);
+        log.info("content_quality 灌入 {} 条", batch.size());
+    }
+
 }
