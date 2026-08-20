@@ -22,13 +22,14 @@ scale-data（C1）后：指标 15、表 16、N=57 基线。两个生产查询能
 
 ### D1：指标值过滤（HAVING）
 - **判定**：`filters[].field` 是 `metric_defs` 的指标 code → 指标过滤（HAVING）；是维度 code → WHERE。
-- **合成**：`HAVING <agg_expr> op value`——agg_expr = 该指标的聚合表达式（同 SELECT 的 agg_expr，如 `COUNT(CASE WHEN event_type='play' THEN 1 END)`）；op ∈ {>, >=, <, <=}。
+- **合成**：`HAVING <agg_expr> op value`——agg_expr = **代码复用 SELECT 的同一 agg_expr 变量**（P3，防 HAVING/SELECT 的 SUM 包裹不一致，不重新推导）；op ∈ {>, >=, <, <=}。示例：`HAVING AVG(pd.completion_rate) > 50`（"完播率>50%" 的 agg_expr 是 AVG 类，非 play 的 CASE）。
 - **无 GROUP BY**：MySQL 允许 HAVING 无 GROUP BY（等价聚合后过滤）。
 - **多指标过滤**：多个 HAVING 条件 AND。
-- 边界：MVP 限 intent ∈ {aggregate, trend}（ranking + 指标过滤留后续）。
+- 边界：MVP 限 intent ∈ {aggregate, trend}（ranking + 指标过滤留后续）；**跨源多指标 + 指标值过滤组合 → 降级**（P2-2：HAVING 位置未定义，MVP 不做，与 ranking+指标过滤同列后续）。
 
-### D2：跨源同粒度多指标（子查询 JOIN）
-- **条件**：metrics 来自不同 sourceTable + 共享 dims/time/filters/ordering + 各指标在自身表内可聚合到同一组维度键。
+### D2：冲突多指标（子查询 JOIN）——统一解跨源与同源 fact 冲突（P2-1）
+- **触发条件（统一）**：任一指标组合存在**来源冲突**（不同 sourceTable）或 **eventFilter 冲突**（同源 fact 但各自 eventFilter 不同，如 total_plays 的 play vs total_likes 的 like）→ 走子查询 JOIN；同源且同 filter 仍走单 FROM 多列（现状）。
+- **前提**：共享 dims/time/filters/ordering + 各指标在自身表内可聚合到同一组维度键。
 - **方案**：对每个指标生成子查询 `SELECT <dim_keys>, <agg_expr> AS <code> FROM <source> [JOIN...] WHERE ... GROUP BY <dim_keys>`，再按维度键 JOIN：
   ```sql
   SELECT a.category AS category, a.completion_rate, b.engagement_rate
@@ -38,8 +39,8 @@ scale-data（C1）后：指标 15、表 16、N=57 基线。两个生产查询能
         FROM user_behavior_fact ubf JOIN content_dim cd ... GROUP BY cd.category) b
        ON a.category = b.category
   ```
-- **维度键**：dims +（trend 时 date）。
-- **跨源 vs 同源 fact 优势**：各子查询独立带自己的 eventFilter（play/like 互不冲突）——这就是"跨源能解、同源 fact 多指标会空结果"的本质区别。
+- **维度键**：dims +（trend 时 date）；**维度键 expr 必须跨子查询一致**（如都 `cd.category`，JOIN 才能对齐；共享 dims 保证）。
+- **本质**：各子查询独立带自己的 eventFilter（play/like 互不冲突）——这就是"冲突能解、单 FROM 硬拼会空结果"的关键。**一个技术同时闭环**：跨源多指标（n02）+ 同源 fact 冲突多指标（multi-metric-synthesis 的 P1 场景 total_plays+total_likes dims=[content]）。
 - **约束（防错）**：任一指标无法按维度键聚合（粒度不对齐）→ SynthesisError 降级。
 
 ### D3：LLM prompt / 契约 / 比较器同步

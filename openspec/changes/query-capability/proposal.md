@@ -11,11 +11,11 @@ scale-data（C1）扩大了数据模型后，两个**生产级查询能力缺口
 ### 模块 1：指标值过滤（HAVING）
 - `ResolvedIntent.filters` 扩展 op：`>`、`>=`、`<`、`<=`（现有 `=`/`in`/`between` 保留）。
 - **区分维度过滤 vs 指标过滤**：field 是维度（category）→ WHERE；field 是指标（completion_rate）→ **HAVING**（聚合后过滤）。
-- 合成器：`_filter_cond` 生成 HAVING 条件（聚合表达式 = 指标公式）；无 GROUP BY 的聚合同样适用（MySQL HAVING 无 GROUP BY 等价 WHERE 聚合）。
+- 合成器：`_filter_cond` 生成 HAVING 条件（**复用 SELECT 同一 agg_expr**）；无 GROUP BY 的聚合同样适用（MySQL HAVING 无 GROUP BY 等价 WHERE 聚合）。
 - LLM prompt：教它解析"超过/高于/低于 N" → 指标过滤（op >/<）；`_acceptable_intent` 与比较器同步支持新 op。
 
 ### 模块 2：跨源多指标（n02 解锁）
-- 合成器支持**同粒度跨源多指标**：不同 sourceTable 的指标，若共享同一 group-by 集（date/category 等）且时间/过滤一致 → **分别聚合子查询 + JOIN**（按维度键对齐）。
+- 合成器支持**冲突多指标（子查询 JOIN）**：任一指标组合存在来源冲突（跨 sourceTable）或 eventFilter 冲突（同源 fact 不同 filter）→ **分别聚合子查询 + JOIN**（按维度键对齐）——一个技术同时闭环跨源多指标（n02）与同源 fact 冲突（multi-metric P1 场景）。
 - 约束（防错）：跨源多指标**必须共享 dims/time/filters/ordering**；粒度不对齐（如一个按 category、一个按 content）→ 显式降级。
 - n02「各分类的完播率和互动率」从 fallback → semantic（子查询 JOIN）。
 - LLM prompt：支持多指标跨源组合；比较器/评测同步。
