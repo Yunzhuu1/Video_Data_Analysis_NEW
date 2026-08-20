@@ -1,9 +1,9 @@
 ## 1. 数据模型扩展
 
 - [ ] 1.1 schema.sql 新增 4 表（creator_revenue/video_revenue/user_retention/content_quality）DDL
-- [ ] 1.2 DataInitializer 灌新表数据：seed 42 确定性 + 真实业务模式（长尾 80/20、稀疏分类、异常峰值/断档、节日效应）
+- [ ] 1.2 DataInitializer 灌新表数据：seed 42 确定性 + 真实业务模式（长尾 80/20、稀疏分类、异常峰值/断档；节日效应复用既有 10/1-7 模式，可选 10/10 返场）
 - [ ] 1.3 TableSchemaRegistry 注册 4 新表（表类型 FACT/DIM）+ 敏感列评估
-- [ ] 1.4 数据量放大（fact 行数/天数/用户数增加，seed 42 复现）
+- [ ] 1.4 数据放大：**既有 2023-10 数据字节级不变**（旧 R1 真值稳定），放大通过新增日期区间（2023-11/12）与新表实现（seed 42 复现）
 
 ## 2. 指标与别名
 
@@ -14,7 +14,7 @@
 
 - [ ] 3.1 cases.yaml 新增 ~25 用例（新指标/新表/新关系/真实分布），标 golden_spec
 - [ ] 3.2 新用例用独立手工 SQL 取 R1 真值（expected_result + truth_source）
-- [ ] 3.3 全量 pytest（Python 主链路零改动应全绿）+ ruff
+- [ ] 3.3 全量 pytest（Python 主链路零改动应全绿）+ ruff；**合成器单测补比率/去重指标**（防静默错误 SQL，P2-1/P2-2）
 
 ## 4. 评测与基线
 
