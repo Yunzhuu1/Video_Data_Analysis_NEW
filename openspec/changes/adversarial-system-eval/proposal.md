@@ -6,7 +6,7 @@
 
 - 新增 20 条独立对抗样本，按 Semantic/Recall、Planning/Lineage、SQL Synthesis、Safety/Recovery 四层各 5 条组织，不把既有普通用例重复计入新分母。
 - 新增多入口评测协议：自然语言 `question`、固定 `ResolvedIntent`、篡改 Candidate/Snapshot、raw SQL/故障注入；每条固定 expected disposition/stage/code、must-visit/must-not-visit nodes 与 truth source。
-- 统一最终处置为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_REQUIRED | SUPPORTED_FALLBACK | RECOVERED | SYSTEM_ERROR`，将 Harness 完整性与 System Adversarial Readiness 分开判定。
+- 独立定义 `observation_status=OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED`；只有 `OK` observation 才进入 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_REQUIRED | SUPPORTED_FALLBACK | RECOVERED | SYSTEM_ERROR` 六类系统处置，避免环境/适配器问题污染产品统计，并将 Harness 完整性与 System Adversarial Readiness 分开判定。
 - 扩展评测报告，分别展示 Expected Disposition、Unsafe Pass、R1、Illegal Plan Rejection、Graceful Fallback、Recovery Success、Audit Completeness 的原始计数和逐例诊断；拒绝/审批/fallback 不进入 R1 分母。
 - 固定评测卫生：可执行结果真值来自独立手工 SQL，path/处置 golden 人工填写且不得由被测系统反向生成；真实 LLM 仅跑 5 条 Semantic 与 2 条 Planner 取舍，标注 N=7 单轮方向性，其余为确定性硬证据。
 - 冻结评测与产品修复边界：本 change 只修 harness、fixture、fault adapter 和缺失审计字段；产品能力失败进入 P1/P2 backlog，安全漏洞另开 hotfix，不在同一 change 中移动 expected 追求全绿。

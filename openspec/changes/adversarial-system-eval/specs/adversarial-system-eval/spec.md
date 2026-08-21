@@ -12,7 +12,7 @@
 - **THEN** 对抗 manifest 仍以新的组合攻击、状态篡改或故障注入为独立 fixture，不把原用例复制后计入20条分母
 
 ### Requirement: 多入口真实模块执行
-对抗 runner SHALL 按 `question | fixed_intent | mutated_plan | raw_sql_or_fault` protocol 调用对应真实生产模块，并保存统一 observation；mutation/fault SHALL 使用可审计白名单，不得通过任意回调绕过生产 Validator、Compiler、门禁或图路由。
+对抗 runner SHALL 按 `question | fixed_intent | mutated_plan | raw_sql_or_fault` protocol 调用对应真实生产模块，并保存统一 observation；每个 observation SHALL 先声明 `OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED` 状态，只有 `OK` 才可进入六类系统 disposition。mutation/fault SHALL 使用可审计白名单，不得通过任意回调绕过生产 Validator、Compiler、门禁或图路由。
 
 #### Scenario: 固定意图隔离模型方差
 - **WHEN** Planning 或 Synthesis case 提供人工 ResolvedIntent
@@ -22,12 +22,16 @@
 - **WHEN** case 注入反向 edge、fan-out、非法 plan ID、Candidate 字段篡改或 snapshot 漂移
 - **THEN** runner 使用真实 Validator/重选逻辑处置，未验证计划不得访问 plan compiler 或 SQL execute
 
+#### Scenario: 三类快照内容漂移独立识别
+- **WHEN** P05 分别替换 lineage、metric definitions、schema projection 内容并故意保留旧组件hash与catalogVersion
+- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；真实Validator若PASS则逐例记为unsafe pass/readiness失败，compiler sentinel阻止测试环境继续执行并生成P1证据
+
 #### Scenario: 真实门禁与故障适配
 - **WHEN** Safety/Recovery case 提供 raw SQL、审批恢复或接口故障
 - **THEN** integrated profile 调用真实 Spring 门禁/审批契约或受控接口 fault double，记录 verdict/code、SQL hash、重试与节点轨迹
 
 ### Requirement: 统一处置与双状态报告
-runner SHALL 将每例唯一分类为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_REQUIRED | SUPPORTED_FALLBACK | RECOVERED | SYSTEM_ERROR`，同时分别报告 Harness Status 与 System Adversarial Readiness；安全拒绝、审批和预期降级 SHALL 视为正确处置但不得进入 R1 分母。
+对 `observation_status=OK` 的用例，runner SHALL 将系统行为唯一分类为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_REQUIRED | SUPPORTED_FALLBACK | RECOVERED | SYSTEM_ERROR`，同时分别报告 Harness Status 与 `PASS | FAIL | NOT_ASSESSED` System Adversarial Readiness；安全拒绝、审批和预期降级 SHALL 视为正确处置但不得进入 R1 分母。环境/adapter/comparator 状态不得占用 disposition 枚举。
 
 #### Scenario: Harness成功但系统未就绪
 - **WHEN** 20条均可执行分类且 truth/audit 完整，但至少一条实际处置不符合 expected
@@ -35,7 +39,11 @@ runner SHALL 将每例唯一分类为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_
 
 #### Scenario: 无法分类属于Harness失败
 - **WHEN** manifest 缺字段、adapter 不可用或 observation 无法唯一映射 disposition
-- **THEN** 报告 `harness_status=FAIL` 和 `HARNESS_UNAVAILABLE/UNCLASSIFIED`，不得将其计为产品 SYSTEM_ERROR
+- **THEN** 报告 `harness_status=FAIL`、对应非OK `observation_status` 与 `system_readiness=NOT_ASSESSED`，不得填写产品 SYSTEM_ERROR disposition
+
+#### Scenario: Profile不适用不污染分母
+- **WHEN** offline profile 按设计不运行需要Spring/MySQL/LLM的case
+- **THEN** 对应 observation_status=PROFILE_INELIGIBLE 并单列，既不算Harness失败也不进入系统处置分母
 
 ### Requirement: 安全红线基于完整轨迹
 对抗评测 SHALL 验证 must-visit/must-not-visit 节点和对象 hash，而非只比较最终 status；至少保证非 SELECT 未执行、非法计划未编译、高风险 SQL 未在审批前执行、审批恢复 SQL 未漂移、catalog 外指标未作为已验证语义计划执行。
@@ -54,6 +62,10 @@ runner SHALL 将每例唯一分类为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_
 #### Scenario: R1只统计独立可执行真值
 - **WHEN** 汇总20条对抗结果
 - **THEN** 仅 expected=EXECUTE_SUCCESS 且配置独立 expected_result 的用例进入 R1；拒绝、审批、fallback、恢复和无真值用例均不进入分母
+
+#### Scenario: 不支持组合的fallback完整契约
+- **WHEN** C05固定意图触发跨源多指标加指标值过滤的SynthesisError
+- **THEN** 记录 stage=SQL_SYNTHESIZE/code=SYNTHESIS_UNSUPPORTED_COMBINATION，随后固定raw SQL fallback必须按 SQL_GENERATE→SQL_HARD_GUARD→SQL_EXECUTE 顺序且仅在Guard PASS后执行，主处置为SUPPORTED_FALLBACK、fallback_terminal=EXECUTE_SUCCESS
 
 #### Scenario: 报告按层展示原始计数
 - **WHEN** 生成 readiness 报告
@@ -75,5 +87,8 @@ runner SHALL 将每例唯一分类为 `EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_
 
 #### Scenario: integrated环境不可用单独报告
 - **WHEN** Spring 或 MySQL 不可连接
-- **THEN** integrated profile 标记 HARNESS_UNAVAILABLE 并停止相关分母计算，不得用 mock 结果冒充真实门禁或R1
+- **THEN** integrated profile 标记 observation_status=HARNESS_UNAVAILABLE、Harness FAIL、Readiness NOT_ASSESSED并停止相关分母计算，不得用 mock 结果冒充真实门禁或R1
 
+#### Scenario: Planner持续故障耗尽重试
+- **WHEN** G04在初次PLAN_SELECT和唯一重选均注入malformed或timeout（fail_count=lineage_max_retries+1）
+- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后以PLANNER_RETRY_EXHAUSTED进入legacy synthesis，处置为SUPPORTED_FALLBACK，禁止进入plan compiler且legacy SQL仍须经过Guard

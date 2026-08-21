@@ -1,11 +1,15 @@
 ## ADDED Requirements
 
 ### Requirement: 多协议对抗评测调度
-既有评测 runner SHALL 支持从独立 adversarial manifest 调度 question、fixed intent、mutated plan/snapshot 与 raw SQL/fault injection，并将各 adapter 的 observation 归一为统一的 disposition/stage/code/node trace/audit/result 结构；普通 N=61 runner 行为 SHALL 保持不变。
+既有评测 runner SHALL 支持从独立 adversarial manifest 调度 question、fixed intent、mutated plan/snapshot 与 raw SQL/fault injection，并将各 adapter 的 observation 归一为 observation_status、可选 disposition、stage/code/node trace/audit/result 结构；非OK observation不得填写或进入系统 disposition 统计，普通 N=61 runner 行为 SHALL 保持不变。
 
 #### Scenario: 对抗协议统一执行
 - **WHEN** 使用 adversarial CLI 运行指定 profile
 - **THEN** runner 按 case protocol 调用对应 adapter，输出20条逐例 observation 和按层聚合，不将 adapter 异常静默吞为产品失败
+
+#### Scenario: Observation与系统处置正交
+- **WHEN** adapter环境不可用、执行异常、profile不适用或comparator无法分类
+- **THEN** runner填写对应observation_status且disposition为空；只有status=OK时才聚合六类系统处置
 
 #### Scenario: 普通评测零行为回退
 - **WHEN** 使用既有参数运行 N=61 replay/mock 回归
@@ -21,4 +25,3 @@
 #### Scenario: 处置错误与审计缺失分离
 - **WHEN** 某 case 的 disposition 符合 expected 但缺少 required audit field
 - **THEN** Expected Disposition 可通过但 Audit Completeness 失败，报告不得合并为一个模糊错误
-

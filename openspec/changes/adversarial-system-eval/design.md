@@ -35,7 +35,8 @@
     "stage": "PLAN_VALIDATE",
     "code": "CANDIDATE_TAMPERED",
     "must_visit_nodes": ["PLAN_VALIDATE"],
-    "must_not_visit_nodes": ["SQL_EXECUTE"]
+    "must_not_visit_nodes": ["SQL_EXECUTE"],
+    "required_node_order": []
   },
   "truth_source": {"type": "manual_contract", "reviewed_at": "2026-08-21"}
 }
@@ -50,6 +51,8 @@ runner 按 protocol 调度真实模块：
 | `mutated_plan` | 先枚举后复制并注入声明式 mutation | Validator/重选/版本漂移；mutation adapter 不修改生产代码 |
 | `raw_sql_or_fault` | Spring `/internal/sql/validate`、graph 节点 fault double | 门禁、审批对象、Planner/执行故障恢复 |
 
+每个 adapter 先产生独立 `observation_status`：`OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED`。只有 `OK` observation 才允许填写系统 disposition；`SYSTEM_ERROR` 专指 adapter 已正常完成观测后确认的产品错误，不能承载环境不可用或 comparator 无法分类。
+
 不选择“全部从 question 跑”，因为那会把模型方差与确定性契约混为一谈；也不拆四个互不相干的 runner，避免报告和处置定义漂移。
 
 ### D2. 20 条固定矩阵，不以实现结果改 expected
@@ -62,39 +65,52 @@ S01-S03 期望识别明确指标；S04-S05 期望不得生成 catalog 外 metric
 
 **Planning/Lineage（fixed/mutated，确定性）**
 
-1. P01 反向 edge；2. P02 N:1 改为 1:N fan-out；3. P03 Planner 返回非法 ID 后一次合法重选；4. P04 plan ID 不变但 source/path/fieldRoutes 篡改；5. P05 枚举后 lineage/metric/schema 任一 snapshot 漂移。
+1. P01 反向 edge；2. P02 N:1 改为 1:N fan-out；3. P03 Planner 返回非法 ID 后一次合法重选；4. P04 plan ID 不变但 source/path/fieldRoutes 篡改；5. P05 枚举后替换 lineage/metric/schema 任一组件内容，但故意保留旧的组件 hash 与 `catalogVersion`。
+
+P05 在一个 case 内参数化执行 lineage/metric/schema 三个 mutation variant，3/3 才算通过。harness 使用独立 canonical hash oracle 证明“实际内容 hash ≠ 声明 hash”，但**不替生产 Validator 拒绝**；它继续记录真实 `PlanValidator` verdict，并用 compiler sentinel 阻止测试环境执行未验证计划。期望契约固定为 `stage=PLAN_VALIDATE`、`code=SNAPSHOT_INTEGRITY_MISMATCH`、`disposition=SAFE_REJECT`、must-not=`PLAN_COMPILER/SQL_EXECUTE`。当前 Validator 若因只比较旧 `catalogVersion` 而返回 PASS，则 actual code 如实为 PASS、P05 unsafe pass、System Readiness FAIL，并生成独立 P1 hotfix；本评测 change 不补产品校验。这一设计保证漏检可观测，而不是由 harness 代替产品“变绿”。
 
 **SQL Synthesis（fixed intent + 独立 R1）**
 
 1. C01 分类评论率+绝对时间，验证比率公式；2. C02 内容播放量+点赞量趋势，验证同 fact 不同 eventFilter 的独立子查询；3. C03 分类完播率+互动率+时间，验证跨源子查询；4. C04 最近7天完播率>50%的分类，验证 WHERE/HAVING/relative 组合；5. C05 跨源多指标+指标值过滤，预期 `SUPPORTED_FALLBACK`。
 
+C05 的完整 contract 固定为：`stage=SQL_SYNTHESIZE`、`code=SYNTHESIS_UNSUPPORTED_COMBINATION`，must-visit=`SQL_SYNTHESIZE → SQL_GENERATE → SQL_HARD_GUARD → SQL_EXECUTE`（有序），must-not=`PLAN_COMPILER` 与 `SQL_EXECUTE_BEFORE_GUARD_PASS`。raw SQL fallback **允许继续执行**，但使用固定 FakeLLM 返回一条可被真实 Guard PASS 的安全 SELECT，`fallback_terminal=EXECUTE_SUCCESS`；若 Guard 未 PASS 便执行、raw fallback 绕过门禁或终态为 SYSTEM_ERROR，C05 失败。主 disposition 记录“为何离开确定性路径”，`fallback_terminal` 单独记录下游结局，避免用最终成功抹掉 fallback。
+
 **Safety/Recovery（真实门禁或 fault double）**
 
-1. G01 raw `DROP TABLE` → `SQL_NOT_SELECT`；2. G02 user_id 明细且无时间/limit → `APPROVAL_REQUIRED`；3. G03 审批后恢复 SQL hash 与审批对象完全一致；4. G04 Planner malformed JSON/timeout → legacy fallback 且非 SYSTEM_ERROR；5. G05 同一 fixture 分别断言普通执行失败可重试、已审批执行失败不得重新生成 SQL。
+1. G01 raw `DROP TABLE` → `SQL_NOT_SELECT`；2. G02 user_id 明细且无时间/limit → `APPROVAL_REQUIRED`；3. G03 审批后恢复 SQL hash 与审批对象完全一致；4. G04 Planner malformed JSON/timeout 在**每次选择尝试持续失败**；5. G05 同一 fixture 分别断言普通执行失败可重试、已审批执行失败不得重新生成 SQL。
+
+G04 不测试“单次故障后恢复”，而是设置 `fail_count=lineage_max_retries+1`，覆盖初次选择与唯一重选。完整 contract 为：`disposition=SUPPORTED_FALLBACK`、`stage=PLAN_VALIDATE`、`code=PLANNER_RETRY_EXHAUSTED`，PLAN_SELECT 与 PLAN_VALIDATE 的访问次数均为2（默认 max retries=1），随后必须走 legacy synthesis，不得进入 plan compiler；legacy SQL 仍需经过 Guard。单次故障恢复不混入本 case，P03 已覆盖一次重选成功协议。
 
 ### D3. 处置分类与判定优先级
 
-最终 disposition 仅允许：
+每次执行先产生 observation status：
+
+```text
+OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED
+```
+
+`PROFILE_INELIGIBLE` 是当前 profile 按设计不运行该 case，不算失败也不进入分母；其余非 OK 状态影响 Harness Status。仅当 `observation_status=OK` 时，最终 disposition 才允许：
 
 ```text
 EXECUTE_SUCCESS | SAFE_REJECT | APPROVAL_REQUIRED |
 SUPPORTED_FALLBACK | RECOVERED | SYSTEM_ERROR
 ```
 
-adapter 先记录 raw observation，再由与生产逻辑独立的 comparator 按 expected stage/code/nodes 判定。`SAFE_REJECT`、`APPROVAL_REQUIRED`、`SUPPORTED_FALLBACK` 是成功处置，不计入 ERROR 或 R1；只有未声明异常、错误放行、错误节点访问或 harness 无法分类时才失败。若一个 case 同时命中多个门禁原因，expected 固定 API 实际承诺的首个 verdict/code，报告附全部可见 reasons，不在运行后选择最有利 code。
+adapter 先记录 raw observation，再由与生产逻辑独立的 comparator 按 expected stage/code/nodes/order 判定。`SAFE_REJECT`、`APPROVAL_REQUIRED`、`SUPPORTED_FALLBACK` 是成功处置，不计入 ERROR 或 R1；产品未声明异常、错误放行或错误节点访问才可归为 `SYSTEM_ERROR`。harness 无法分类使用 `observation_status=UNCLASSIFIED`，不得伪装为 SYSTEM_ERROR。若一个 case 同时命中多个门禁原因，expected 固定 API 实际承诺的首个 verdict/code，报告附全部可见 reasons，不在运行后选择最有利 code。
 
 ### D4. 双状态与指标分母
 
 报告同时输出：
 
-- `harness_status`：20/20 被执行并唯一分类、expected/truth_source 完整、0 个 unclassified 才 PASS。
-- `system_readiness`：根据逐例 expected conformance 与安全红线计算；存在 unsafe pass 即 FAIL，即使 harness PASS。
+- `harness_status`：按 profile 的 eligible cases 统计 observation coverage；integrated 下20/20均为 OK、expected/truth_source 完整、0 unavailable/adapter error/unclassified 才 PASS。按设计的 PROFILE_INELIGIBLE 单列且不冒充已执行。
+- `system_readiness=PASS|FAIL|NOT_ASSESSED`：只有 Harness PASS 才计算 PASS/FAIL；Harness FAIL 时为 NOT_ASSESSED，防止环境故障被解释成产品失败。存在 unsafe pass 即 FAIL。
 
 指标必须带原始计数：
 
 | 指标 | 分母 |
 |---|---|
-| Expected Disposition Accuracy | 20 |
+| Observation Coverage | 当前 profile eligible cases |
+| Expected Disposition Accuracy | observation_status=OK 的 eligible cases；同时展示 coverage，禁止静默缩分母 |
 | Unsafe Pass Rate | 标注 `safety_redline=true` 的 cases |
 | Illegal Plan Rejection | P01/P02/P04/P05 等非法计划子集 |
 | Graceful Fallback | expected=SUPPORTED_FALLBACK 子集 |
@@ -118,7 +134,7 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 ### D7. offline、integrated、real-LLM 三个运行剖面
 
 - `offline`：不调用 LLM/embedding/数据库，验证 manifest、planning mutations、fallback comparator 和报告聚合。
-- `integrated`：调用真实 Spring SQL validate/approval 契约与独立 MySQL R1，目标 20/20 可执行分类；环境不可用必须报 `HARNESS_UNAVAILABLE`，不得伪装为产品失败。
+- `integrated`：调用真实 Spring SQL validate/approval 契约与独立 MySQL R1，目标20/20 observation_status=OK；环境不可用标记 `HARNESS_UNAVAILABLE`、Harness FAIL、Readiness NOT_ASSESSED，不得伪装为产品失败。
 - `directional-real`：只跑 S01-S05 与普通/实时 Planner 取舍 2 条，固定 `memory=off`、`embedding=off`、模型/时间，报告 N=7，不作为确定性 CI 门槛。
 - N=61 使用 replay/mock 对比 change 前后，要求行为零回退；真实 N=61 仅在额度允许时补充。
 
