@@ -1,4 +1,5 @@
 import pytest
+import pytest_asyncio
 
 from app.graph import graph_builder, nodes
 from app.graph.graph_builder import run_chatbi_graph
@@ -7,8 +8,8 @@ from app.memory.store import MemoryStore, compute_resolver_hash
 from app.settings import settings
 
 
-@pytest.fixture(autouse=True)
-def fresh_graph():
+@pytest_asyncio.fixture(autouse=True)
+async def fresh_graph():
     from langgraph.checkpoint.memory import InMemorySaver
 
     settings.trace_callback_enabled = False
@@ -16,6 +17,8 @@ def fresh_graph():
     settings.memory_enabled = True
     graph_builder.init_graph(InMemorySaver())
     yield
+    if nodes.memory is not None:
+        await nodes.memory.close()
     nodes.memory = None
     settings.memory_enabled = False
 

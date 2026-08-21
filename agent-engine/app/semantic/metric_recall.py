@@ -119,6 +119,16 @@ class MetricCandidateRetriever:
         if not catalog or any(not code for code in codes) or len(set(codes)) != len(codes):
             return self._fallback(catalog, "invalid_catalog", "catalog metricCode invalid")
         by_code = {code: item for code, item in zip(codes, catalog)}
+        unknown_aliases = sorted(
+            (str(alias), str(code)) for alias, code in aliases.items() if code not in by_code
+        )
+        if unknown_aliases:
+            alias, code = unknown_aliases[0]
+            return self._fallback(
+                catalog,
+                "invalid_catalog",
+                f"alias {alias!r} references unknown metricCode {code!r}",
+            )
         expressions: list[_Expression] = []
         for code, item in by_code.items():
             expressions.extend(self._valid_expressions([
@@ -126,7 +136,7 @@ class MetricCandidateRetriever:
                 (str(item.get("metricName") or ""), code, "metric_name"),
             ]))
         expressions.extend(self._valid_expressions([
-            (alias, code, "alias") for alias, code in aliases.items() if code in by_code
+            (alias, code, "alias") for alias, code in aliases.items()
         ]))
 
         normalized_question = normalize_metric_text(question)
@@ -198,7 +208,8 @@ class MetricCandidateRetriever:
         source_order = {"metric_name": 0, "metric_code": 1, "alias": 2}
         ordered = sorted(
             expressions,
-            key=lambda x: (-len(x.normalized), source_order.get(x.source, 9), x.text, x.metric_code),
+            key=lambda x: (-len(x.normalized), x.metric_code,
+                           source_order.get(x.source, 9), x.text),
         )
         found: list[_Expression] = []
         for expression in ordered:
