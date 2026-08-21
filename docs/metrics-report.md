@@ -81,6 +81,13 @@
 - **规模副作用可测（呼应 metric-recall）**：catalog 7→15 使 prompt 变长，既有用例 L1 出现单轮波动（93.9% vs 96.97%）——**这正是"规模变大 → 全量 prompt 不稳定的真实证据**，为后续 schema linking（C3）提供基线对比。
 - **已知边界**：trend 用例 L2 的 time_range 字段（relative 时间比较问题，既有已知）；新增 trend 用例（n27/n34/n35/n36/n37）继承该问题。
 
+### 2.6 query-capability：HAVING + 冲突多指标 JOIN（2026-08-21）
+- **能力补全**：指标值过滤由语义层解析为 `filters[].field=metric_code`，确定性合成器生成 `HAVING`；维度过滤仍生成 `WHERE`。新增 `>`/`>=`/`<`/`<=` 四条用例，全部 semantic，且 4/4 R1 通过。
+- **n02 解锁**：`各分类的完播率和互动率` 从 fallback 改为 semantic；`play_detail` 与 `user_behavior_fact` 分别聚合后按 category 子查询 JOIN，避免跨源硬拼或 eventFilter 冲突。
+- **评测（--llm real --platform mock --memory off，N=61）**：可用性 100%（61/61）、端到端 98.36%（60/61）、L1 95.92%（47/49）、R1 **29/29（100%）**。R1 由独立 MySQL 审计执行合成 SQL，真值来自独立手工 SQL；本轮未使用 embedding。
+- **基线子集**：原有 57 条端到端 56/57；新增 4 条 L1/R1 均 4/4。原有子集 L1 为 43/45，较上一轮 44/45 的差异来自真实 LLM 解析方差（n19/n25），不是新增能力用例回退；唯一端到端失败是 c07 报告字段缺失。
+- **边界**：跨源多指标 + 指标值过滤组合、ranking + 指标值过滤仍按 MVP 约束降级；L2 受 time_range 字段与模型方差影响，不能把 L1/R1 数字混为一谈。
+
 ## 3. 安全（门禁 / HITL）
 
 - **高风险拦截率 100%**（3/3 risk 用例全部 WAITING_APPROVAL）。

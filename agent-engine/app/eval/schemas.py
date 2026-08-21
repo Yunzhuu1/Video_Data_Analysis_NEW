@@ -1,6 +1,8 @@
 """golden_spec schema：与 app/graph/state.ResolvedIntent 同构（评测契约 = agent 契约）。"""
 from typing import Any, Literal, TypedDict
 
+from app.graph.state import FilterOp
+
 
 class GoldenTimeRange(TypedDict, total=False):
     type: Literal["none", "relative", "absolute"]
@@ -11,7 +13,7 @@ class GoldenTimeRange(TypedDict, total=False):
 
 class GoldenFilter(TypedDict, total=False):
     field: str
-    op: str
+    op: FilterOp
     value: Any
 
 
