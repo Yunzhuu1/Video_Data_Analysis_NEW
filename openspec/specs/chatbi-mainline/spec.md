@@ -3,11 +3,9 @@
 ## Purpose
 
 ChatBI 主链路能力：单一主图、Python 唯一编排、Java 平台治理，移除模板匹配与 RAG 支撑设施，审批契约统一。
-
 ## Requirements
-
 ### Requirement: 单一 ChatBI 主线
-系统 SHALL 只提供 ChatBI 主图（ROUTER → SCHEMA → SEMANTIC_RESOLVE → SQL_SYNTHESIZE（失败降级 SQL_GENERATE）→ SQL_HARD_GUARD → SQL_EXECUTE → SQL_SOFT_DQ → ANSWER），不得暴露 RAG/归因/DBQA 等全量图分支，且不得存在冗余的 SQL_VALIDATE 节点。
+系统 SHALL 只提供 ChatBI 主图（ROUTER → SCHEMA → SEMANTIC_RESOLVE → PLAN_ENUMERATE → 条件式 PLAN_SELECT → PLAN_VALIDATE → SQL_SYNTHESIZE（规划未覆盖/失败走 legacy，合成失败降级 SQL_GENERATE）→ SQL_HARD_GUARD → SQL_EXECUTE → SQL_SOFT_DQ → ANSWER），不得暴露 RAG/归因/DBQA 等全量图分支，且不得存在冗余的 SQL_VALIDATE 节点。PLAN_SELECT 仅在多个合法候选存在真实取舍时调用独立 Planner LLM，规划重选最多一次，不得改变审批恢复路径。
 
 #### Scenario: 请求只走 chatbi 主图
 - **WHEN** 客户端调用 Python `/analyze` 且不传 `graphMode`（或传 `chatbi`）
@@ -19,7 +17,11 @@ ChatBI 主链路能力：单一主图、Python 唯一编排、Java 平台治理�
 
 #### Scenario: 主图不含冗余校验节点
 - **WHEN** 引擎构建 chatbi 主图
-- **THEN** 图中不存在 `SQL_VALIDATE` 节点；SQL 执行结果的成败判定由 `SQL_EXECUTE` 直接承担
+- **THEN** 图中不存在 `SQL_VALIDATE` 节点；物理 QueryPlan 由 `PLAN_VALIDATE` 校验，SQL 的语法/安全/执行结果仍分别由 `SQL_HARD_GUARD` 与 `SQL_EXECUTE` 承担
+
+#### Scenario: 规划节点不破坏审批恢复
+- **WHEN** 已生成 SQL 进入门禁或等待审批恢复
+- **THEN** 不重新运行 PLAN_ENUMERATE/PLAN_SELECT，审批通过后继续执行审批时刻的同一条 SQL
 
 ### Requirement: Python 是唯一的编排实现
 系统 SHALL 只保留 Python Agent Engine 作为编排层；Java 侧不得保留任何 agent 编排入口（如 `DataAnalysisAgent`/`CoordinatorAgent` 及其 HTTP 端点）。

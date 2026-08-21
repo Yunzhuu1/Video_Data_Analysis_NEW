@@ -3,9 +3,7 @@
 ## Purpose
 
 基于 golden_spec 的评测体系：确定性比较器、FakeLLM 录制回放、真实指标报告与 A/B 对比、回归门禁。
-
 ## Requirements
-
 ### Requirement: golden_spec 结构化标准答案
 每个可判定 golden case SHALL 包含 `golden_spec`（`{intent, metrics, dimensions, time_range, filters, ordering}`），与 agent 的 `ResolvedIntent` 输出同构。
 
@@ -285,3 +283,71 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 #### Scenario: 指标报告
 - **WHEN** 生成 `docs/metrics-report.md`
 - **THEN** 包含历史轨迹表（逐轮端到端/L1/拦截率/命中率，附 commit）、正确性/安全/效率/记忆价值指标、实验协议与可复现说明，以及样本量 N 与难度分层
+
+### Requirement: 指标候选召回评测
+评测 SHALL 仅使用 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 独立测量指标候选召回（两个 recall 分母均为 49），其余 12 条不得进入 recall 分母；该评测不调用 LLM、embedding 或数据库。报告 SHALL 同时提供传统 `recall@configured_k`（检查 `ranked_candidates[:configured_k]`）与 pinned-aware `strict_recall@effective_k`（检查 `ranked_candidates[:max(configured_k,pinned_count)]`）；前者为可比诊断指标，后者为正确性门禁。full fallback 不得因最终看到完整目录而自动提高上述指标；effective recall SHALL 检查实际 Prompt catalog。报告 SHALL 明示 configured_k、pinned_expansion_count、逐例 effective_k、多指标完整召回率和 fallback 率，并展示原始分子/分母与逐例失败明细；显式 `mode=full` 不计入 fallback rate。
+
+#### Scenario: golden metrics 召回门禁
+- **WHEN** 对所有具有 `golden_spec.metrics` 的用例运行离线指标召回评测
+- **THEN** `strict_recall@effective_k` 与 effective recall 均为 49/49；`recall@configured_k` 同时报告真实分子/49但不因预期 pinned 扩容单独阻塞；失败明细列出用例、golden、configured/effective candidates
+
+#### Scenario: 多指标完整召回
+- **WHEN** golden 用例包含两个或以上指标
+- **THEN** 报告单列“全部 golden metrics 均被召回”的用例数/总数，不以命中任意一个指标代替完整召回
+
+#### Scenario: pinned 超过配置 K 的双 recall
+- **WHEN** 某 judged case 显式命中的 pinned 指标数大于 configured K
+- **THEN** `recall@configured_k` 按固定 K 如实计算，`strict_recall@effective_k` 使用 `effective_k=pinned_count` 检查全部 pinned 候选，并增加 pinned_expansion_count，禁止混用两个指标名称
+
+#### Scenario: 回退口径分离
+- **WHEN** 某用例因低信号或异常使用完整 catalog
+- **THEN** effective recall 按最终完整 Prompt catalog 判定；两个 ranked recall 仍分别按回退前 configured/effective candidates 判定，不能因回退自动成功；报告按原因展示 fallback 原始计数
+
+#### Scenario: 无 golden 用例不进入召回分母
+- **WHEN** 全量 N=61 中存在 12 条未配置 `golden_spec.metrics` 的用例
+- **THEN** 这些用例只参与端到端 A/B，`recall@configured_k` 与 `strict_recall@effective_k` 分母均保持 49
+
+### Requirement: 完整目录与候选目录 A/B
+评测 SHALL 支持在相同用例、LLM、平台、记忆和模型配置下对比 `metric_recall_mode=full` 与 `topk`。A/B SHALL 单独报告全量 N=61 与既有 N=57 子集的 L1-L4、ERROR、sql_source、Prompt 字符数和召回回退；真实 LLM 单轮结果 SHALL 标注为方向性观测，不把随机波动直接归因为召回收益或回退。
+
+#### Scenario: 无 embedding 的真实 A/B
+- **WHEN** 以 `--llm real --platform mock --memory off` 对比 full 与 topk，且 embedding 不可用
+- **THEN** 两组均不调用 embedding，报告记录模型、用例数、两种 recall、configured_k、pinned_expansion_count、L1-L4 原始计数和 ERROR 明细
+
+#### Scenario: 既有子集回归口径
+- **WHEN** N=61 全量 A/B 完成
+- **THEN** 报告分别展示既有 N=57 子集和新增用例整体，禁止用新增用例改变分布后的整体数字代替既有子集回归结论
+
+#### Scenario: Prompt 缩减口径
+- **WHEN** 对比 full 与 topk 的语义输入规模
+- **THEN** 两组均以实际发送的最终 user prompt `len(build_semantic_user_prompt(...))` 统计字符数（不含 system prompt；包含实际 inject examples；本轮 memory off 因而均无 examples），以总量/均值/分位数作为确定性主指标；provider prompt token 若不能按语义阶段归因则标注方向性，不得用整条链路 total tokens 冒充召回阶段节省
+
+### Requirement: 血缘规划分层评测
+评测 SHALL 使用人工独立标注的 lineage path cases 分别测量 Enumerator、Planner 与 Compiler：固定 ResolvedIntent 的 Path Recall 不受 Semantic LLM 方差影响；Plan Selection Accuracy 只在多候选 judged 子集计算；非法计划拒绝与一次重选单列原始计数；golden path/edge 不得由被测 Enumerator 反向生成。
+
+#### Scenario: 固定意图测 Path Recall
+- **WHEN** 对具有 golden metricPath/fieldRoutes/edge IDs 的 path cases 运行离线 Enumerator
+- **THEN** 报告候选是否包含完整 golden plan，展示命中数/总数与逐例 rejected reasons，不调用 LLM、embedding 或数据库
+
+#### Scenario: Planner 选择准确率
+- **WHEN** path case 提供多个合法候选及 expected selected plan/preference
+- **THEN** 只在该 judged 子集报告 Plan Selection Accuracy 原始分子/分母，并区分 AUTO_POLICY 与 PLANNER_AGENT
+
+#### Scenario: 非法计划与重选协议
+- **WHEN** FakeLLM 返回伪造 plan ID 或首个候选被注入 validation failure
+- **THEN** 报告 Illegal Plan Rejection 与 Replan Success 原始计数，断言未验证计划未进入 compiler
+
+### Requirement: 血缘规划端到端回归与成本口径
+评测 SHALL 在 planning off/shadow/active 下报告 N=61 的 L1-L4、ERROR、sql_source、selection source、Planner invocation、legacy fallback、规划重试和可归因成本，并保持既有 R1 可断言子集结果不回退。真实 Planner LLM 单轮正确率/延迟变化 SHALL 标注方向性；无法按阶段归因的总 token 不得冒充 Planner 成本。
+
+#### Scenario: Off 模式零行为回退
+- **WHEN** `LINEAGE_PLANNING_MODE=off` 运行既有 N=61
+- **THEN** SQL/状态路由与 change 前基线一致，新增规划字段为空或明确 off
+
+#### Scenario: Active 模式结果回归
+- **WHEN** active 模式运行 N=61 且覆盖路径由新 compiler 生成
+- **THEN** 报告全量与覆盖子集，R1 保持 29/29、ERROR 不增加，任何 legacy fallback 均按原因逐例展示
+
+#### Scenario: Planner 成本独立计量
+- **WHEN** 某用例实际调用 QueryPlannerAgent
+- **THEN** 报告 planner prompt chars、latency 与可可靠归因的 token；AUTO_SINGLE/AUTO_POLICY 用例 planner 调用成本为零
