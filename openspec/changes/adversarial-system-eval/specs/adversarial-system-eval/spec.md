@@ -76,8 +76,16 @@
 - **THEN** 四层分别列 expected/actual、stage/code、node invariants、audit fields 与通过数/总数，不用单一总成功率代替
 
 #### Scenario: 非OK observation不缩Expected分母
-- **WHEN** profile-eligible case 的observation_status不是OK
+- **WHEN** profile已通过preflight并进入STARTED后，某个eligible case的observation_status不是OK
 - **THEN** 该case在case_coverage和Expected Disposition numerator均不命中，但仍保留在两个eligible case denominator中；报告不得只对OK observations计算Expected Disposition Accuracy
+
+#### Scenario: Profile启动前环境不可用不产生产品分母
+- **WHEN** integrated或directional-real在执行任何case前的Spring/MySQL/LLM必需依赖preflight失败
+- **THEN** profile_execution_status=NOT_STARTED、Harness FAIL、case_coverage=0/eligible仅表示执行覆盖、product_denominator_status=NOT_COMPUTED、Readiness=NOT_ASSESSED；Expected Disposition/Unsafe/R1等产品指标为N/A且不得显示0%或构造逐例HARNESS_UNAVAILABLE分母
+
+#### Scenario: Profile启动后环境中断锁定分母
+- **WHEN** preflight成功、profile进入STARTED后某依赖中断
+- **THEN** 全部eligible case/variant分母保持锁定，受影响case标记对应非OK observation并只减少numerator，不得将profile退回NOT_COMPUTED
 
 ### Requirement: 评测发现与产品修复隔离
 本 change 的交付 SHALL 允许系统 readiness 非全绿，并将产品能力失败输出为带 case ID 和证据的 P1/P2 backlog；除 harness、fixture、fault adapter、comparator、报告和纯观测字段外，不得修改产品决策以追求20/20。
@@ -95,8 +103,12 @@
 
 #### Scenario: integrated环境不可用单独报告
 - **WHEN** Spring 或 MySQL 不可连接
-- **THEN** integrated profile 标记 observation_status=HARNESS_UNAVAILABLE、Harness FAIL、Readiness NOT_ASSESSED并停止相关分母计算，不得用 mock 结果冒充真实门禁或R1
+- **THEN** 若发生在preflight则按NOT_STARTED/NOT_COMPUTED报告；若发生在STARTED后则按已锁定分母的case级HARNESS_UNAVAILABLE报告；两者均不得用mock冒充真实门禁或R1
 
 #### Scenario: Planner持续故障耗尽重试
-- **WHEN** G04 fixture强制并记录lineage_max_retries=1、fail_count=2，在初次PLAN_SELECT和写死的唯一重选均注入malformed或timeout
-- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后的生产validation code保持INVALID_PLAN_ID；仅当planning_retry_count=2且legacy fallback为true时派生fallback_reason=PLANNER_RETRY_EXHAUSTED，处置为SUPPORTED_FALLBACK，禁止调用`synthesize_plan`且legacy SQL仍须经过Guard，fixture结束恢复原配置
+- **WHEN** G04由独立worker子进程在import graph/settings前设置LINEAGE_MAX_RETRIES=1并固定fail_count=2，在初次PLAN_SELECT和写死的唯一重选均注入malformed或timeout
+- **THEN** 父进程全局settings不变；两次PLAN_SELECT/PLAN_VALIDATE后的生产code保持INVALID_PLAN_ID，仅当retry_count=2且legacy fallback=true时派生PLANNER_RETRY_EXHAUSTED；worker无论成功/异常/超时均被回收，禁止调用`synthesize_plan`且legacy SQL仍须经过Guard
+
+#### Scenario: G04并行隔离
+- **WHEN** G04 worker与其他lineage/graph测试并行运行
+- **THEN** 其他进程观察不到G04的环境/settings/fault double，且G04报告effective retry配置为1；不得以修改父进程singleton加锁代替进程隔离

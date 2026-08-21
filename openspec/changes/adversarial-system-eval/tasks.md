@@ -9,20 +9,20 @@
 - [ ] 2.1 实现统一 `AdversarialObservation` 与 question adapter，复用既有 graph/eval runner，采集 recall/ResolvedIntent/sql_source/node trace/plan/catalog/guard/approval/result；catalog 外 metric 或非SELECT执行作为 must-not 证据，不因最终SUCCESS被覆盖
 - [ ] 2.2 实现 fixed_intent adapter，直接调用真实 Enumerator/selection/Validator/plan compiler/legacy synthesizer；不调用Semantic LLM；为SynthesisError增加不改变路由的state/Run Trace/debug观测字段（generic code+原始reason），覆盖C01-C05 stage/SQL/fieldRoutes及C05真实降级证据
 - [ ] 2.3 实现白名单 mutated_plan adapter，以独立canonical oracle重算三组件实际hash但不替Validator拒绝；sentinel先记录compiler invocation/参数hash再阻断且受控异常不算adapter失败；Validator PASS时variant固定为OK+SYSTEM_ERROR+unsafe；P05 case_coverage/Expected按1个case且须3/3，variant_coverage/Audit/Unsafe/Illegal Rejection各固定3个机会
-- [ ] 2.4 实现 raw_sql_or_fault adapter：integrated模式调用真实Spring门禁/审批契约，fault double仅在Planner/execute边界注入；G04 fixture强制lineage_max_retries=1/fail_count=2并finally恢复，实际code断言INVALID_PLAN_ID，仅由retry_count=2+legacy flag派生fallback reason；覆盖两次选择/校验、禁止compiler调用、审批前节点顺序和SQL hash
+- [ ] 2.4 实现 raw_sql_or_fault adapter：integrated模式调用真实Spring门禁/审批契约；G04通过专用短生命周期子进程在import前设置LINEAGE_MAX_RETRIES=1/fail_count=2，父进程不改singleton，worker串行+timeout+全路径回收并输出effective config JSON；断言INVALID_PLAN_ID、retry_count=2+legacy派生reason、两次选择/校验、禁止compiler调用，并增加并行隔离测试
 
 ## 3. Comparator, Safety Redlines, and Reporting
 
-- [ ] 3.1 实现 observation/disposition 两阶段 comparator：先唯一映射OK/PROFILE_INELIGIBLE/HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED，仅OK再映射六类处置并比较 stage、code、must-visit/must-not-visit/required order；同例多个门禁原因按fixture预先声明首个API code判定
+- [ ] 3.1 实现profile preflight与observation/disposition两阶段comparator：preflight失败写profile级HARNESS_UNAVAILABLE且不创建伪case observations；profile启动后case先映射OK/PROFILE_INELIGIBLE/HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED，仅OK再映射六类处置并比较stage/code/node/order/function invariants
 - [ ] 3.2 实现按层 required audit fields 比较器，分别验证Semantic recall/mode、Planning hashes/candidates/validation/compiler invocation、Synthesis error code/reason/sql source/fallback、Safety verdict/approval/run trace；处置正确与Audit缺失分开计分，不把派生fallback reason冒充生产code
-- [ ] 3.3 实现双状态聚合：拆分case_coverage（全部eligible cases，P05须3/3才OK）和variant_coverage（P05固定3）；Expected Disposition以全部eligible cases为分母、非OK计未命中；Harness FAIL时Readiness=NOT_ASSESSED，仅Harness PASS计算PASS/FAIL；其余指标均输出固定eligible分子/分母
+- [ ] 3.3 实现profile preflight/分母状态与双状态聚合：NOT_STARTED preflight失败时case_coverage=0/eligible但产品指标N/A、product_denominator_status=NOT_COMPUTED；STARTED时锁定全部case/variant分母，后续非OK只减numerator；拆分case/variant coverage，Harness FAIL时Readiness=NOT_ASSESSED
 - [ ] 3.4 生成 JSON 原始报告和 Markdown 摘要，逐例展示 expected/actual、stage/code、trace invariant、truth/audit/result；readiness失败自动生成只读P1/P2 backlog（case/evidence/severity），不得自动修改expected或产品实现
 
 ## 4. Reproducible Evaluation Profiles
 
 - [ ] 4.1 为 CLI 增加 `--adversarial-profile offline|integrated|directional-real` 与 report 参数；offline 禁用 LLM/embedding/数据库并验证 manifest、mutation、comparator、aggregation，新增 runner 单测且不改变既有参数行为
 - [ ] 4.2 运行 offline 全20条manifest可加载测试及eligible确定性子集，要求 schema 20/20、eligible observation均OK、0 unclassified、非法计划/安全不变式门禁可复现；未执行的Spring/MySQL/LLM case标记PROFILE_INELIGIBLE并单列，不得冒充分母
-- [ ] 4.3 在真实 Spring+MySQL 环境运行 integrated：目标20/20 observation_status=OK，C01-C04 R1使用独立真值，G01/G02/G03走真实门禁/审批；如环境不可用以HARNESS_UNAVAILABLE、Harness FAIL、Readiness NOT_ASSESSED交付，不用mock替代
+- [ ] 4.3 为integrated实现case前Spring/MySQL preflight并运行：目标20/20 OK，C01-C04独立R1，G01-G03真实门禁/审批；preflight失败输出NOT_STARTED/NOT_COMPUTED，STARTED后中断保持锁定分母；两种均Harness FAIL/Readiness NOT_ASSESSED且不用mock替代
 - [ ] 4.4 在 memory/embedding off 下仅对 S01-S05 与普通/实时 Planner 两例运行真实 LLM N=7，报告模型/配置/逐例原始结果并标注单轮方向性；发现产品失败只进backlog
 - [ ] 4.5 运行既有 N=61 replay/mock、lineage offline、metric recall offline 与全量 Python/Java/ruff，证明新增 runner 对既有L1-L4/R1/sql_source/状态路由零行为回退；真实N=61仅在额度允许时补充且不作完成门槛
 
