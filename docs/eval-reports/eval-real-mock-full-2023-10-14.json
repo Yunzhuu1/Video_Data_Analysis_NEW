@@ -1,0 +1,3852 @@
+{
+  "config": {
+    "llm": "real",
+    "platform": "mock",
+    "model": "deepseek-v4-flash",
+    "eval_date": "2023-10-14",
+    "cassette": "-",
+    "memory": "off",
+    "metric_recall": "full"
+  },
+  "eval_date": "2023-10-14",
+  "metrics": {
+    "total": 61,
+    "evaluated": 61,
+    "error_count": 0,
+    "passed": 60,
+    "end_to_end": 0.9836065573770492,
+    "auto_fix": 1.0,
+    "auto_fix_total": 2,
+    "risk_interception": 1.0,
+    "risk_total": 3,
+    "auto_released": 0,
+    "auto_released_ratio": 0.0,
+    "unexpected_intercepts": 0,
+    "memory_hit": 0,
+    "memory_hit_rate": 0.0,
+    "memory_inject": 0,
+    "memory_inject_rate": 0.0,
+    "metric_recall_fallback_count": 0,
+    "metric_recall_fallback_rate": 0.0,
+    "metric_recall_fallback_reasons": {},
+    "semantic_prompt_chars_total": 62561,
+    "semantic_prompt_chars_count": 59,
+    "semantic_prompt_chars_avg": 1060.3559322033898,
+    "semantic_prompt_chars_p50": 1060,
+    "semantic_prompt_chars_p95": 1065.0,
+    "tokens_total": 221103,
+    "tokens_hit_avg": 0.0,
+    "tokens_miss_avg": 3624.6393442622953,
+    "result_judged": 29,
+    "result_passed": 29,
+    "result_rate": 1.0,
+    "result_value_mismatch": [],
+    "repeat_pairs": 0,
+    "direct_hit_pairs": 0,
+    "direct_hit_avg_token_delta": 0.0,
+    "direct_hit_avg_latency_delta": 0.0,
+    "judged": 49,
+    "core_accuracy": 0.9591836734693877,
+    "core_hits": 47,
+    "strict_accuracy": 0.5714285714285714,
+    "strict_hits": 28,
+    "avg_field_match": 0.9081632653061225,
+    "per_field": {
+      "intent": 0.9591836734693877,
+      "metrics": 0.9591836734693877,
+      "dimensions": 0.9795918367346939,
+      "time_range": 0.673469387755102,
+      "filters": 1.0,
+      "ordering": 0.8775510204081632
+    },
+    "latency_p50": 12564,
+    "latency_p95": 27600.0
+  },
+  "subsets": {
+    "all": {
+      "total": 61,
+      "evaluated": 61,
+      "error_count": 0,
+      "passed": 60,
+      "end_to_end": 0.9836065573770492,
+      "auto_fix": 1.0,
+      "auto_fix_total": 2,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 0,
+      "metric_recall_fallback_rate": 0.0,
+      "metric_recall_fallback_reasons": {},
+      "semantic_prompt_chars_total": 62561,
+      "semantic_prompt_chars_count": 59,
+      "semantic_prompt_chars_avg": 1060.3559322033898,
+      "semantic_prompt_chars_p50": 1060,
+      "semantic_prompt_chars_p95": 1065.0,
+      "tokens_total": 221103,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 3624.6393442622953,
+      "result_judged": 29,
+      "result_passed": 29,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 49,
+      "core_accuracy": 0.9591836734693877,
+      "core_hits": 47,
+      "strict_accuracy": 0.5714285714285714,
+      "strict_hits": 28,
+      "avg_field_match": 0.9081632653061225,
+      "per_field": {
+        "intent": 0.9591836734693877,
+        "metrics": 0.9591836734693877,
+        "dimensions": 0.9795918367346939,
+        "time_range": 0.673469387755102,
+        "filters": 1.0,
+        "ordering": 0.8775510204081632
+      },
+      "latency_p50": 12564,
+      "latency_p95": 27600.0
+    },
+    "existing_57": {
+      "total": 57,
+      "evaluated": 57,
+      "error_count": 0,
+      "passed": 56,
+      "end_to_end": 0.9824561403508771,
+      "auto_fix": 1.0,
+      "auto_fix_total": 2,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 0,
+      "metric_recall_fallback_rate": 0.0,
+      "metric_recall_fallback_reasons": {},
+      "semantic_prompt_chars_total": 58311,
+      "semantic_prompt_chars_count": 55,
+      "semantic_prompt_chars_avg": 1060.2,
+      "semantic_prompt_chars_p50": 1060,
+      "semantic_prompt_chars_p95": 1065.0,
+      "tokens_total": 205357,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 3602.754385964912,
+      "result_judged": 25,
+      "result_passed": 25,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 45,
+      "core_accuracy": 0.9555555555555556,
+      "core_hits": 43,
+      "strict_accuracy": 0.5333333333333333,
+      "strict_hits": 24,
+      "avg_field_match": 0.9,
+      "per_field": {
+        "intent": 0.9555555555555556,
+        "metrics": 0.9555555555555556,
+        "dimensions": 0.9777777777777777,
+        "time_range": 0.6444444444444445,
+        "filters": 1.0,
+        "ordering": 0.8666666666666667
+      },
+      "latency_p50": 12551,
+      "latency_p95": 28342.999999999985
+    },
+    "added_4": {
+      "total": 4,
+      "evaluated": 4,
+      "error_count": 0,
+      "passed": 4,
+      "end_to_end": 1.0,
+      "auto_fix": 0.0,
+      "auto_fix_total": 0,
+      "risk_interception": 0.0,
+      "risk_total": 0,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 0,
+      "metric_recall_fallback_rate": 0.0,
+      "metric_recall_fallback_reasons": {},
+      "semantic_prompt_chars_total": 4250,
+      "semantic_prompt_chars_count": 4,
+      "semantic_prompt_chars_avg": 1062.5,
+      "semantic_prompt_chars_p50": 1062.5,
+      "semantic_prompt_chars_p95": 1063.0,
+      "tokens_total": 15746,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 3936.5,
+      "result_judged": 4,
+      "result_passed": 4,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 4,
+      "core_accuracy": 1.0,
+      "core_hits": 4,
+      "strict_accuracy": 1.0,
+      "strict_hits": 4,
+      "avg_field_match": 1.0,
+      "per_field": {
+        "intent": 1.0,
+        "metrics": 1.0,
+        "dimensions": 1.0,
+        "time_range": 1.0,
+        "filters": 1.0,
+        "ordering": 1.0
+      },
+      "latency_p50": 15108.0,
+      "latency_p95": 23893.149999999998
+    }
+  },
+  "cases": [
+    {
+      "id": "c01_category_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8541,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 2843,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "series match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c02_category_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14984,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
+      "tokens": 3635,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c03_last7d_daily_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11750,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 3559,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c04_completion_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11203,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1055,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd",
+      "tokens": 3090,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "completion_rate=43.660119 vs 43.660119 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c05_food_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18473,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
+      "tokens": 4114,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=3828.0 vs 3828.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c06_top10_videos",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 6546,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 2683,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "6 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c07_compare_food_game_trend",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "final report missing required fields",
+      "latency_ms": 11063,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 3172,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "series match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c08_oct1to7_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11873,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "relative": null,
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1066,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
+      "tokens": 3283,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=2924.0 vs 2924.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c09_likes_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14082,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1057,
+      "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 3582,
+      "result_check": null
+    },
+    {
+      "id": "c10_engagement_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13261,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1055,
+      "sql": "SELECT (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf",
+      "tokens": 3662,
+      "result_check": null
+    },
+    {
+      "id": "c11_shares_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12551,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_shares"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.99,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT md.category AS category, SUM(total_shares) AS total_shares FROM metric_daily md GROUP BY md.category",
+      "tokens": 3222,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c12_food_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10988,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' GROUP BY md.date ORDER BY md.date",
+      "tokens": 3149,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c13_lastweek_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14303,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 3596,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c14_answer_structure",
+      "type": "answer_quality",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9771,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
+      "tokens": 3111,
+      "result_check": null
+    },
+    {
+      "id": "c15_hard_guard_retry",
+      "type": "hard_guard",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 33144,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date, category;",
+      "tokens": 6149,
+      "result_check": null
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16588,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT md.date AS date, md.category AS category, SUM(md.total_plays) AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date ASC",
+      "tokens": 4534,
+      "result_check": null
+    },
+    {
+      "id": "c17_dq_warning",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9709,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
+      "tokens": 3015,
+      "result_check": null
+    },
+    {
+      "id": "c18_detail_playback",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18094,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.7,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1057,
+      "sql": "SELECT * FROM metric_daily md LIMIT 100",
+      "tokens": 3559,
+      "result_check": null
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 26471,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays",
+          "total_likes",
+          "total_comments",
+          "total_shares"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT user_id, item_id, category_id, behavior_type, behavior_time FROM user_behavior ORDER BY behavior_time LIMIT 1000;",
+      "tokens": 4484,
+      "result_check": null
+    },
+    {
+      "id": "c20_open_analysis",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 27600,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1055,
+      "sql": "SELECT day, total_plays, total_play_duration, unique_viewers FROM metric_daily WHERE day >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) ORDER BY day",
+      "tokens": 5650,
+      "result_check": null
+    },
+    {
+      "id": "c21_open_reason",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18758,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "avg_completion_ratio"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.8,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS avg_completion_ratio FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY DATE(pd.created_at)",
+      "tokens": 4153,
+      "result_check": null
+    },
+    {
+      "id": "c22_fact_full_scan_approval",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 31315,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays",
+          "total_likes",
+          "total_comments",
+          "total_shares",
+          "total_play_duration"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT * FROM user_behavior LIMIT 1000;",
+      "tokens": 5352,
+      "result_check": null
+    },
+    {
+      "id": "c23_aggregate_full_scan_pass",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 6477,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
+      "tokens": 2594,
+      "result_check": null
+    },
+    {
+      "id": "c24_memory_repeat",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "c25_memory_counterexample",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "n01_multi_metric",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12037,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays",
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays, SUM(total_likes) AS total_likes FROM metric_daily md GROUP BY md.category",
+      "tokens": 3315,
+      "result_check": null
+    },
+    {
+      "id": "n02_multi_metric",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25660,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate",
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT a.category, a.completion_rate, b.engagement_rate FROM (SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id GROUP BY cd.category) a JOIN (SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category) b ON a.category = b.category",
+      "tokens": 5563,
+      "result_check": null
+    },
+    {
+      "id": "n04_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10623,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 3181,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=632.0 vs 632.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n05_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12248,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-02",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1065,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '游戏' AND md.date BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 3469,
+      "result_check": null
+    },
+    {
+      "id": "n06_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20910,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "relative": null,
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1067,
+      "sql": "SELECT SUM(total_likes) AS total_likes FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
+      "tokens": 4830,
+      "result_check": null
+    },
+    {
+      "id": "n07_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 37627,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.7,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category IN ('美食', '游戏') AND pd.created_at BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY cd.category",
+      "tokens": 7059,
+      "result_check": null
+    },
+    {
+      "id": "n09_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11559,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 5",
+      "tokens": 3510,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n10_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11515,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-02",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_likes",
+          "direction": "desc",
+          "limit": 10
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1065,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 3436,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "6 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n11_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16531,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 1
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY cd.category ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 1",
+      "tokens": 4160,
+      "result_check": null
+    },
+    {
+      "id": "n12_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10993,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id ORDER BY COUNT(*) DESC LIMIT 3",
+      "tokens": 3240,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n14_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10988,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id",
+      "tokens": 3028,
+      "result_check": null
+    },
+    {
+      "id": "n15_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15191,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": {
+            "amount": null,
+            "unit": null
+          },
+          "absolute": {
+            "start": null,
+            "end": null
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT pd.creator AS creator, AVG(completion_rate) AS completion_rate FROM play_detail pd GROUP BY pd.creator",
+      "tokens": 3761,
+      "result_check": null
+    },
+    {
+      "id": "n16_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13513,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1057,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' GROUP BY ubf.content_id",
+      "tokens": 3459,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n17_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20217,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": false,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
+      "tokens": 4297,
+      "result_check": null
+    },
+    {
+      "id": "n19_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10669,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": null
+        },
+        "confidence": 0.8,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1057,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 3070,
+      "result_check": null
+    },
+    {
+      "id": "n20_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15262,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '游戏'",
+      "tokens": 3701,
+      "result_check": null
+    },
+    {
+      "id": "n21_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8226,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 3",
+      "tokens": 2769,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n22_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13384,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-30",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-30' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 3581,
+      "result_check": null
+    },
+    {
+      "id": "n23_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18053,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 3,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.category",
+      "tokens": 4276,
+      "result_check": null
+    },
+    {
+      "id": "n25_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 22168,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 4688,
+      "result_check": null
+    },
+    {
+      "id": "n26_comment_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12036,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
+      "tokens": 3225,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n27_like_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12082,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "like_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'like' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS like_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
+      "tokens": 3459,
+      "result_check": null
+    },
+    {
+      "id": "n28_share_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8643,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "share_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'share' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS share_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
+      "tokens": 2850,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n29_avg_completion",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8354,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "avg_completion_ratio"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1057,
+      "sql": "SELECT AVG(completion_rate) AS avg_completion_ratio FROM play_detail pd",
+      "tokens": 2767,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "avg_completion_ratio=43.660119 vs 43.660119 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n30_creator_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 5989,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "creator_revenue",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr GROUP BY cr.creator_id ORDER BY SUM(revenue) DESC LIMIT 3",
+      "tokens": 2710,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n31_video_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15114,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1060,
+      "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
+      "tokens": 3907,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n32_active_creator",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8700,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "active_creator_count"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT COUNT(DISTINCT ubf.creator_id) AS active_creator_count FROM user_behavior_fact ubf",
+      "tokens": 2881,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "active_creator_count=3.0 vs 3.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n33_dau",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11433,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.98,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1058,
+      "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf",
+      "tokens": 3208,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "daily_active_users=50.0 vs 50.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12564,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "creator_revenue"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-18",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT cr.stat_date AS date, cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr WHERE cr.stat_date BETWEEN '2023-10-18' AND '2023-10-31 23:59:59' GROUP BY cr.stat_date, cr.creator_id ORDER BY cr.stat_date",
+      "tokens": 3516,
+      "result_check": null
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13408,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "comment_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
+      "tokens": 3684,
+      "result_check": null
+    },
+    {
+      "id": "n36_dau_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13538,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "daily_active_users"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT DATE(ubf.timestamp) AS date, COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp) ORDER BY DATE(ubf.timestamp)",
+      "tokens": 3755,
+      "result_check": null
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 22699,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "video_revenue"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "video_revenue",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1064,
+      "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr WHERE vr.stat_date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
+      "tokens": 4811,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n38_metric_filter_gt",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16907,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": ">",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) > 3000",
+      "tokens": 3922,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25126,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": ">=",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) >= 3000",
+      "tokens": 5031,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n40_metric_filter_lt",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13309,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": "<",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1062,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) < 3000",
+      "tokens": 3487,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n41_metric_filter_lte",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11391,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": "<=",
+            "value": 2669
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) <= 2669",
+      "tokens": 3306,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    }
+  ]
+}

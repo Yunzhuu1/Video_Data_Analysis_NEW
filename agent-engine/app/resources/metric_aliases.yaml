@@ -118,6 +118,13 @@
       ]
     },
     {
+      "alias": "最受欢迎",
+      "metric_code": "engagement_rate",
+      "covered_by": [
+        "n19_longtail"
+      ]
+    },
+    {
       "alias": "互动",
       "metric_code": "engagement_rate",
       "covered_by": [

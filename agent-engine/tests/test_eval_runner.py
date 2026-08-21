@@ -9,6 +9,7 @@ from app.eval.runner import (
     compare_reports,
     error_result,
     render_report,
+    subset_aggregates,
 )
 from app.settings import settings
 
@@ -16,12 +17,14 @@ from app.settings import settings
 def test_apply_run_config_llm_and_platform(monkeypatch):
     monkeypatch.setattr(settings, "eval_llm_mode", "mock")
     monkeypatch.setattr(settings, "platform_calls_enabled", False)
-    cfg = apply_run_config(llm="real", platform="mock", cassette=None)
+    cfg = apply_run_config(llm="real", platform="mock", cassette=None, metric_recall="full")
 
     assert cfg["llm"] == "real"
     assert cfg["platform"] == "mock"
     assert settings.eval_llm_mode == "real"
     assert settings.platform_calls_enabled is False
+    assert cfg["metric_recall"] == "full"
+    assert settings.metric_recall_mode == "full"
 
 
 def test_apply_run_config_illegal_record_plus_real(monkeypatch):
@@ -81,6 +84,18 @@ def test_render_report_headers_include_config_and_denominators():
     assert "平台: `mock`" in md
     assert "评测可用性" in md
     assert "0/0" in md
+
+
+def test_subset_aggregates_separates_existing_57_from_added_4():
+    results = [{
+        "id": f"c{i}", "type": "text2sql", "passed": True, "status": "SUCCESS",
+        "retry_count": 0, "latency_ms": 1, "sql_source": "semantic", "spec_score": None,
+        "semantic_prompt_chars": 100, "metric_recall_fallback": False,
+    } for i in range(61)]
+    subsets = subset_aggregates(results)
+    assert subsets["all"]["total"] == 61
+    assert subsets["existing_57"]["total"] == 57
+    assert subsets["added_4"]["total"] == 4
 
 
 def test_compare_reports_rejects_mismatched_config():
@@ -168,6 +183,15 @@ async def test_run_real_case_parses_observability(monkeypatch):
             },
             "sqlRetryCount": 0,
             "sqlSource": "semantic",
+            "metricCandidates": [{"metricCode": "total_plays", "score": 1.0}],
+            "metricRecallMode": "topk",
+            "metricRecallFallback": False,
+            "metricRecallConfiguredK": 5,
+            "metricRecallPinnedCount": 1,
+            "metricRecallEffectiveK": 5,
+            "metricRecallFullCatalogCount": 15,
+            "metricRecallPromptCatalogCount": 5,
+            "semanticPromptChars": 1200,
         },
     }
 
@@ -196,6 +220,8 @@ async def test_run_real_case_parses_observability(monkeypatch):
     assert r["sql_source"] == "semantic"
     assert r["passed"] is True
     assert r["spec_score"]["core_ok"] is True
+    assert r["metric_recall_mode"] == "topk"
+    assert r["semantic_prompt_chars"] == 1200
 
 def test_avg_tokens():
     assert _avg_tokens([]) == 0.0

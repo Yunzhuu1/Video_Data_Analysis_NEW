@@ -13,5 +13,15 @@ public record EngineAnalyzeResponse(
         Integer sqlRetryCount,
         String sqlSource,
         Boolean memoryHit,
-        String memoryBand
+        String memoryBand,
+        List<Map<String, Object>> metricCandidates,
+        String metricRecallMode,
+        Boolean metricRecallFallback,
+        String metricRecallReason,
+        Integer metricRecallConfiguredK,
+        Integer metricRecallPinnedCount,
+        Integer metricRecallEffectiveK,
+        Integer metricRecallFullCatalogCount,
+        Integer metricRecallPromptCatalogCount,
+        Integer semanticPromptChars
 ) {}

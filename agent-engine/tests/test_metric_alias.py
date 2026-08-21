@@ -4,7 +4,7 @@ import pytest
 import json
 from pathlib import Path
 
-from app.memory.aliases import get_aliases, reset_aliases
+from app.memory.aliases import get_alias_bundle, get_aliases, load_alias_bundle, reset_aliases
 from app.memory.retriever import (
     extract_metric_names,
     hit_allowed,
@@ -33,17 +33,40 @@ def _aliases() -> dict[str, str]:
 
 # ------------------------------------------------------------------ 数据校验
 def test_aliases_yaml_valid_and_covered():
-    a = json.loads(Path("app/eval/aliases.yaml").read_text())["aliases"]
+    bundle = get_alias_bundle()
+    a = bundle.alias_records
     codes = {m["metricCode"] for m in CATALOG}
     names = {m["metricName"] for m in CATALOG}
-    assert all(x["metric_code"] in codes for x in a)
-    assert all(x["alias"] not in names for x in a)          # 不覆盖 catalog 精确名
-    assert len({x["alias"] for x in a}) == len(a)           # 无重复别名
+    assert len(a) == 25
+    assert all(x.metric_code in codes for x in a)
+    assert all(x.alias not in names for x in a)          # 不覆盖 catalog 精确名
+    assert len({x.alias for x in a}) == len(a)           # 无重复别名
     cases = json.loads(Path("app/eval/cases.yaml").read_text())["cases"]
     syn = json.loads(Path("app/eval/synonym_cases.yaml").read_text())["cases"]
     ids = {c["id"] for c in cases} | {s["id"] for s in syn}
     for x in a:
-        assert all(cid in ids for cid in x["covered_by"]), f"{x['alias']} bad covered_by"
+        assert all(cid in ids for cid in x.covered_by), f"{x.alias} bad covered_by"
+
+
+def test_alias_bundle_map_and_records_are_same_source():
+    bundle = get_alias_bundle()
+    expected = {
+        r.alias: r.metric_code
+        for r in sorted(bundle.alias_records, key=lambda x: (-len(x.alias), x.alias, x.metric_code))
+    }
+    assert bundle.alias_map == get_aliases() == expected
+    lengths = [len(x) for x in bundle.alias_map]
+    assert lengths == sorted(lengths, reverse=True)
+
+
+def test_alias_bundle_rejects_conflicting_duplicate(tmp_path):
+    path = tmp_path / "aliases.json"
+    path.write_text(json.dumps({"aliases": [
+        {"alias": "热度", "metric_code": "total_plays", "covered_by": []},
+        {"alias": "热度", "metric_code": "total_likes", "covered_by": []},
+    ]}, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(ValueError, match="conflicting alias"):
+        load_alias_bundle(path)
 
 
 # ------------------------------------------------------------------ 别名匹配

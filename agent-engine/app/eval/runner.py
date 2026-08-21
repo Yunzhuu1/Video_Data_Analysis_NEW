@@ -16,6 +16,7 @@ except ModuleNotFoundError:  # pragma: no cover
 
 from app.clients.token_meter import meter
 from app.eval.comparator import SpecScore, aggregate_scores, compare_spec
+from app.eval.metric_recall_eval import evaluate_metric_recall, scan_metric_recall
 from app.eval.metrics import contains_all, required_fields_present
 from app.graph import graph_builder
 from app.graph.graph_builder import run_chatbi_graph
@@ -37,7 +38,7 @@ def load_cases(path: Path) -> tuple[str, list[dict[str, Any]]]:
 
 
 def apply_run_config(llm: str | None, platform: str | None, cassette: str | None,
-                    memory: str | None = None) -> dict[str, str]:
+                    memory: str | None = None, metric_recall: str | None = None) -> dict[str, str]:
     """把 --llm / --platform / --memory 落到 settings，返回自描述运行配置。"""
     if llm is not None:
         settings.eval_llm_mode = llm
@@ -46,6 +47,8 @@ def apply_run_config(llm: str | None, platform: str | None, cassette: str | None
     platform_real = settings.platform_calls_enabled
     memory_on = (memory or "off").lower() in ("on", "1", "true")
     settings.memory_enabled = memory_on
+    if metric_recall is not None:
+        settings.metric_recall_mode = metric_recall
 
     if settings.eval_llm_mode == "record" and platform_real:
         raise SystemExit("illegal combination: --llm record requires platform=mock")
@@ -60,11 +63,15 @@ def apply_run_config(llm: str | None, platform: str | None, cassette: str | None
         "eval_date": "",
         "cassette": settings.eval_llm_cassette if settings.eval_llm_mode in ("record", "replay") else "-",
         "memory": "on" if memory_on else "off",
+        "metric_recall": settings.metric_recall_mode,
     }
 
 
 def report_json_path(eval_date: str, run_config: dict[str, str]) -> Path:
-    return DEFAULT_REPORT_DIR / f"eval-{run_config['llm']}-{run_config['platform']}-{eval_date}.json"
+    recall = run_config.get("metric_recall", "topk")
+    return DEFAULT_REPORT_DIR / (
+        f"eval-{run_config['llm']}-{run_config['platform']}-{recall}-{eval_date}.json"
+    )
 
 
 async def run_case(case: dict[str, Any], llm: str, platform: str, eval_date: str) -> dict[str, Any]:
@@ -869,6 +876,16 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
         "resolved_intent": state.get("resolved_intent"),
         "memory_hit": bool(state.get("memory_hit")),
         "memory_band": state.get("memory_band"),
+        "metric_candidates": state.get("metric_candidates") or [],
+        "metric_recall_mode": state.get("metric_recall_mode"),
+        "metric_recall_fallback": bool(state.get("metric_recall_fallback")),
+        "metric_recall_reason": state.get("metric_recall_reason"),
+        "metric_recall_configured_k": state.get("metric_recall_top_k"),
+        "metric_recall_pinned_count": state.get("metric_recall_pinned_count"),
+        "metric_recall_effective_k": state.get("metric_recall_effective_k"),
+        "metric_recall_full_catalog_count": state.get("metric_recall_full_catalog_count"),
+        "metric_recall_prompt_catalog_count": state.get("metric_recall_prompt_catalog_count"),
+        "semantic_prompt_chars": state.get("semantic_prompt_chars"),
         "sql": (state.get("sql_attempts") or [{}])[-1].get("sql"),
     }
 
@@ -928,6 +945,11 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
             auto_released = True
     # Spring /api/agent/analyze 直接返回 AnalysisReport（无 finalReport 包装）
     final_report = payload.get("finalReport") or payload.get("final_report") or payload
+
+    def observed(key: str):
+        value = debug.get(key)
+        return value if value is not None else payload.get(key)
+
     state = {
         "route": "complex",
         "approval_status": "waiting" if payload.get("status") == "WAITING_APPROVAL" else None,
@@ -938,6 +960,16 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "sql_source": debug.get("sqlSource") or payload.get("sqlSource"),
         "memory_hit": debug.get("memoryHit") or payload.get("memoryHit"),
         "memory_band": debug.get("memoryBand") or payload.get("memoryBand"),
+        "metric_candidates": observed("metricCandidates") or [],
+        "metric_recall_mode": observed("metricRecallMode"),
+        "metric_recall_fallback": observed("metricRecallFallback"),
+        "metric_recall_reason": observed("metricRecallReason"),
+        "metric_recall_configured_k": observed("metricRecallConfiguredK"),
+        "metric_recall_pinned_count": observed("metricRecallPinnedCount"),
+        "metric_recall_effective_k": observed("metricRecallEffectiveK"),
+        "metric_recall_full_catalog_count": observed("metricRecallFullCatalogCount"),
+        "metric_recall_prompt_catalog_count": observed("metricRecallPromptCatalogCount"),
+        "semantic_prompt_chars": observed("semanticPromptChars"),
     }
     latency_ms = int((time.perf_counter() - start) * 1000)
     passed, reason = evaluate_case(case, state)
@@ -956,6 +988,16 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "resolved_intent": state.get("resolved_intent"),
         "memory_hit": bool(state.get("memory_hit")),
         "memory_band": state.get("memory_band"),
+        "metric_candidates": state.get("metric_candidates") or [],
+        "metric_recall_mode": state.get("metric_recall_mode"),
+        "metric_recall_fallback": bool(state.get("metric_recall_fallback")),
+        "metric_recall_reason": state.get("metric_recall_reason"),
+        "metric_recall_configured_k": state.get("metric_recall_configured_k"),
+        "metric_recall_pinned_count": state.get("metric_recall_pinned_count"),
+        "metric_recall_effective_k": state.get("metric_recall_effective_k"),
+        "metric_recall_full_catalog_count": state.get("metric_recall_full_catalog_count"),
+        "metric_recall_prompt_catalog_count": state.get("metric_recall_prompt_catalog_count"),
+        "semantic_prompt_chars": state.get("semantic_prompt_chars"),
         "sql": final_report.get("sql", ""),
     }
 
@@ -1158,6 +1200,11 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
     layer = aggregate_scores(scores)
 
     latencies = sorted(r["latency_ms"] for r in evaluated)
+    prompt_chars = sorted(
+        int(r["semantic_prompt_chars"]) for r in evaluated
+        if r.get("semantic_prompt_chars") is not None
+    )
+    recall_fallbacks = [r for r in evaluated if r.get("metric_recall_fallback")]
     return {
         "total": total,
         "evaluated": len(evaluated),
@@ -1175,6 +1222,18 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         "memory_hit_rate": _percent(sum(1 for r in evaluated if r.get("memory_hit")), len(evaluated)),
         "memory_inject": sum(1 for r in evaluated if r.get("memory_band") == "inject"),
         "memory_inject_rate": _percent(sum(1 for r in evaluated if r.get("memory_band") == "inject"), len(evaluated)),
+        "metric_recall_fallback_count": len(recall_fallbacks),
+        "metric_recall_fallback_rate": _percent(len(recall_fallbacks), len(evaluated)),
+        "metric_recall_fallback_reasons": {
+            reason: sum(1 for r in recall_fallbacks if r.get("metric_recall_reason") == reason)
+            for reason in sorted({str(r.get("metric_recall_reason") or "unknown")
+                                  for r in recall_fallbacks})
+        },
+        "semantic_prompt_chars_total": sum(prompt_chars),
+        "semantic_prompt_chars_count": len(prompt_chars),
+        "semantic_prompt_chars_avg": (sum(prompt_chars) / len(prompt_chars)) if prompt_chars else 0.0,
+        "semantic_prompt_chars_p50": statistics.median(prompt_chars) if prompt_chars else 0,
+        "semantic_prompt_chars_p95": _percentile(prompt_chars, 0.95),
         "tokens_total": sum(r.get("tokens", 0) for r in evaluated),
         "tokens_hit_avg": _avg_tokens([r for r in evaluated if r.get("memory_hit")]),
         "tokens_miss_avg": _avg_tokens([r for r in evaluated if not r.get("memory_hit")]),
@@ -1255,13 +1314,23 @@ def _percentile(sorted_values: list[float], p: float) -> float:
     return sorted_values[f] + (sorted_values[c] - sorted_values[f]) * (k - f)
 
 
+def subset_aggregates(results: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    """C3 固定口径：全量 N=61、C2 前既有 N=57、新增 4 条分别报告。"""
+    subsets = {"all": aggregate(results)}
+    if len(results) == 61:
+        subsets["existing_57"] = aggregate(results[:57])
+        subsets["added_4"] = aggregate(results[57:])
+    return subsets
+
+
 def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eval_date: str) -> str:
     agg = aggregate(results)
     lines = [
         "# DataAgent Evaluation Report",
         "",
         f"- LLM: `{run_config['llm']}` | 平台: `{run_config['platform']}` | 模型: `{run_config['model']}`",
-        f"- eval_date: `{eval_date}` | cassette: `{run_config.get('cassette', '-')}`",
+        (f"- eval_date: `{eval_date}` | cassette: `{run_config.get('cassette', '-')}`"
+         f" | metric_recall: `{run_config.get('metric_recall', '-')}`"),
         f"- 时间: {time.strftime('%Y-%m-%d %H:%M:%S')}",
         "",
         "## Metrics",
@@ -1278,6 +1347,8 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 自动放行（auto_released） | {agg['auto_released_ratio']:.2%} | {agg['auto_released']}/{agg['evaluated']}（非 risk 用例被拦截后自动放行） |",
         f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
         f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
+        f"| 指标召回回退率 | {agg['metric_recall_fallback_rate']:.2%} | {agg['metric_recall_fallback_count']}/{agg['evaluated']} |",
+        f"| 语义 User Prompt 字符数 | {agg['semantic_prompt_chars_avg']:.0f} avg | total={agg['semantic_prompt_chars_total']} / p50={agg['semantic_prompt_chars_p50']:.0f} / p95={agg['semantic_prompt_chars_p95']:.0f} / N={agg['semantic_prompt_chars_count']} |",
         f"| 结果正确率（R1，可断言口径） | {agg['result_rate']:.2%} | {agg['result_passed']}/{agg['result_judged']}（真实 MySQL 独立执行，seed 42 真值） |",
         f"| Token 总消耗 | {agg['tokens_total']} | 命中均值 {agg['tokens_hit_avg']:.0f} / 未命中均值 {agg['tokens_miss_avg']:.0f} |",
         f"| 直通收益（重复对） | token 差均值 {agg['direct_hit_avg_token_delta']:.0f} / 延迟差均值 {agg['direct_hit_avg_latency_delta']:.0f}ms | {agg['direct_hit_pairs']}/{agg['repeat_pairs']} 对命中直通（≈ 解析阶段消除） |",
@@ -1291,6 +1362,21 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
     ]
     for name, value in agg["per_field"].items():
         lines.append(f"| {name} | {value:.2%} |")
+    subsets = subset_aggregates(results)
+    if "existing_57" in subsets:
+        lines.extend([
+            "", "## 固定子集回归口径", "",
+            "| Subset | E2E | L1 | L2 | Prompt chars avg | Fallback |",
+            "|---|---:|---:|---:|---:|---:|",
+        ])
+        for label in ("all", "existing_57", "added_4"):
+            item = subsets[label]
+            lines.append(
+                f"| {label} | {item['passed']}/{item['evaluated']} | "
+                f"{item['core_hits']}/{item['judged']} | {item['strict_hits']}/{item['judged']} | "
+                f"{item['semantic_prompt_chars_avg']:.0f} | "
+                f"{item['metric_recall_fallback_count']}/{item['evaluated']} |"
+            )
     mismatches = agg.get("result_value_mismatch") or []
     if mismatches:
         lines.extend(["", "## 交叉诊断：L1 对 + R1 错（value_mismatch）", "",
@@ -1348,6 +1434,11 @@ def compare_reports(report_a: dict[str, Any], report_b: dict[str, Any]) -> str:
         av = a.get(key, 0.0)
         bv = b.get(key, 0.0)
         lines.append(f"| {key} | {av}ms | {bv}ms | {bv - av:+.0f}ms |")
+    for key in ["semantic_prompt_chars_avg"]:
+        av = a.get(key, 0.0)
+        bv = b.get(key, 0.0)
+        reduction = ((av - bv) / av) if av else 0.0
+        lines.append(f"| {key} | {av:.0f} | {bv:.0f} | reduction {reduction:.2%} |")
     return "\n".join(lines)
 
 
@@ -1370,6 +1461,12 @@ async def main() -> None:
     parser.add_argument("--cassette", default=None)
     parser.add_argument("--memory", choices=["off", "on"], default="off",
                         help="语义记忆开关（默认 off，回归隔离；on 需配合独立记忆库）")
+    parser.add_argument("--metric-recall", choices=["topk", "full"], default=None,
+                        help="指标目录输入：topk（默认）| full（A/B 基线/回滚）")
+    parser.add_argument("--metric-recall-eval", action="store_true", default=False,
+                        help="仅运行离线指标召回门禁（不调用 LLM/embedding/数据库）")
+    parser.add_argument("--metric-recall-report", type=Path,
+                        default=DEFAULT_REPORT_DIR / "metric-recall-offline.json")
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     parser.add_argument("--synonym-cases", type=Path, default=None,
                         help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
@@ -1391,9 +1488,39 @@ async def main() -> None:
         print(compare_reports(a, b))
         return
 
-    run_config = apply_run_config(args.llm, args.platform, args.cassette, args.memory)
+    run_config = apply_run_config(
+        args.llm, args.platform, args.cassette, args.memory, args.metric_recall
+    )
     eval_date, cases = load_cases(args.cases)
     run_config["eval_date"] = eval_date
+
+    if args.metric_recall_eval:
+        from app.clients.platform_client import _load_metric_catalog
+
+        catalog = _load_metric_catalog()
+        report = evaluate_metric_recall(
+            cases,
+            catalog,
+            configured_k=settings.metric_recall_top_k,
+            lexical_threshold=settings.metric_recall_lexical_threshold,
+        )
+        report["scan"] = [{
+            "configured_k": item["configured_k"],
+            "lexical_threshold": item["lexical_threshold"],
+            "recall@configured_k": item["recall@configured_k"],
+            "strict_recall@effective_k": item["strict_recall@effective_k"],
+            "effective_recall": item["effective_recall"],
+            "fallback_count": item["fallback_count"],
+            "gate_passed": item["gate_passed"],
+        } for item in scan_metric_recall(cases, catalog)]
+        args.metric_recall_report.parent.mkdir(parents=True, exist_ok=True)
+        args.metric_recall_report.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        print(json.dumps({key: value for key, value in report.items() if key != "cases"},
+                         ensure_ascii=False, indent=2))
+        print(f"wrote {args.metric_recall_report}")
+        return
 
     if args.virtual_clarify:
         if not args.synonym_cases:
@@ -1497,6 +1624,7 @@ async def main() -> None:
         "config": run_config,
         "eval_date": eval_date,
         "metrics": aggregate(results),
+        "subsets": subset_aggregates(results),
         "cases": results,
     }
     json_path.write_text(json.dumps(json_report, ensure_ascii=False, indent=2), encoding="utf-8")

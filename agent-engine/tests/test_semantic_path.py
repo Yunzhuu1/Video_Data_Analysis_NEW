@@ -185,6 +185,7 @@ async def test_replay_cassette_drives_semantic_path(monkeypatch, tmp_path):
 
     llm_settings.eval_llm_mode = "replay"
     llm_settings.eval_llm_cassette = str(path)
+    monkeypatch.setattr(settings, "metric_recall_mode", "full")
     monkeypatch.setattr(
         nodes,
         "semantic_resolver",

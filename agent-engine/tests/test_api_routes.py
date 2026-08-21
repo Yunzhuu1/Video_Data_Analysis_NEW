@@ -15,6 +15,16 @@ async def test_analyze_passthroughs_resolved_intent(monkeypatch):
             "resolved_intent": {"intent": "aggregate", "metrics": ["total_plays"]},
             "sql_retry_count": 2,
             "sql_source": "semantic",
+            "metric_candidates": [{"metricCode": "total_plays", "score": 1.0}],
+            "metric_recall_mode": "topk",
+            "metric_recall_fallback": False,
+            "metric_recall_reason": None,
+            "metric_recall_top_k": 5,
+            "metric_recall_pinned_count": 1,
+            "metric_recall_effective_k": 5,
+            "metric_recall_full_catalog_count": 15,
+            "metric_recall_prompt_catalog_count": 5,
+            "semantic_prompt_chars": 1234,
             "final_report": {"summary": "s", "sql": "SELECT 1", "metrics": []},
             "warnings": [],
             "approval_status": None,
@@ -30,6 +40,15 @@ async def test_analyze_passthroughs_resolved_intent(monkeypatch):
     assert data["resolvedIntent"] == {"intent": "aggregate", "metrics": ["total_plays"]}
     assert data["sqlRetryCount"] == 2
     assert data["sqlSource"] == "semantic"
+    assert data["metricCandidates"] == [{"metricCode": "total_plays", "score": 1.0}]
+    assert data["metricRecallMode"] == "topk"
+    assert data["metricRecallFallback"] is False
+    assert data["metricRecallConfiguredK"] == 5
+    assert data["metricRecallPinnedCount"] == 1
+    assert data["metricRecallEffectiveK"] == 5
+    assert data["metricRecallFullCatalogCount"] == 15
+    assert data["metricRecallPromptCatalogCount"] == 5
+    assert data["semanticPromptChars"] == 1234
 
 
 @pytest.mark.asyncio
@@ -45,6 +64,8 @@ async def test_analyze_omits_observations_when_absent(monkeypatch):
     assert resp.resolved_intent is None
     assert resp.sql_retry_count is None
     assert resp.sql_source is None
+    assert resp.metric_candidates is None
+    assert resp.semantic_prompt_chars is None
 
 
 @pytest.mark.asyncio
@@ -68,4 +89,3 @@ async def test_approve_run_passthroughs_resolved_intent(monkeypatch):
     assert resp.resolved_intent == {"intent": "ranking", "metrics": ["total_plays"]}
     assert resp.sql_retry_count == 1
     assert resp.sql_source == "fallback"
-

@@ -20,6 +20,14 @@ class SemanticResolver:
         if not self.llm_client.enabled():
             return None
         user_prompt = build_semantic_user_prompt(question, catalog, dimensions, examples)
+        return await self.resolve_user_prompt(question, user_prompt)
+
+    async def resolve_user_prompt(
+        self, question: str, user_prompt: str,
+    ) -> dict[str, Any] | None:
+        """消费已构造的最终 user prompt，供节点做精确字符计量且不重复构造。"""
+        if not self.llm_client.enabled():
+            return None
         try:
             result = await self.llm_client.complete_json(SEMANTIC_SYSTEM_PROMPT, user_prompt)
             return self._apply_fallbacks(question, self._normalize(result))

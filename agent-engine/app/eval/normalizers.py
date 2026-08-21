@@ -59,9 +59,6 @@ FIELD_ALIASES = {
 }
 
 UNIT_DAYS = {"day": 1, "week": 7, "month": 30}
-FILTER_OPS = frozenset({"=", "in", "between", ">", ">=", "<", "<="})
-
-
 def normalize_metric(value: Any) -> str:
     s = str(value).strip()
     return METRIC_ALIASES.get(s, s)
@@ -98,8 +95,7 @@ def normalize_filter_op(value: Any) -> str:
     Unknown operators are preserved so a malformed LLM output mismatches the
     golden spec instead of being silently treated as equality.
     """
-    op = str(value or "=").strip().lower()
-    return op if op in FILTER_OPS else op
+    return str(value or "=").strip().lower()
 
 
 def _parse_date(value: str) -> date:

@@ -202,10 +202,13 @@ def _synthesize_join_multi(intent: dict[str, Any], metric_defs: dict[str, dict[s
         aliases.append(alias_letter)
 
     # 外层
-    outer_dims = ", ".join(f"{aliases[0]}.{f}" for f in sorted(set(gb) | ({"date"} if it == "trend" else set())))
+    join_keys = sorted(set(gb) | ({"date"} if it == "trend" else set()))
+    outer_dims = ", ".join(f"{aliases[0]}.{f}" for f in join_keys)
     outer_metrics = ", ".join(f"{aliases[i]}.{code}" for i, code in enumerate(metrics))
     joins_sql = " JOIN ".join(
-        f"({subs[i]}) {aliases[i]} ON {aliases[0]}.{sorted(set(gb) | ({"date"} if it == "trend" else set()))[0]} = {aliases[i]}.{sorted(set(gb) | ({"date"} if it == "trend" else set()))[0]}"
+        f"({subs[i]}) {aliases[i]} ON " + " AND ".join(
+            f"{aliases[0]}.{key} = {aliases[i]}.{key}" for key in join_keys
+        )
         for i in range(1, len(subs))
     )
     sql = f"SELECT {outer_dims}, {outer_metrics} FROM ({subs[0]}) {aliases[0]}"
@@ -304,7 +307,8 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         if f in agg_map:
             if it not in ("aggregate", "trend"):
                 raise SynthesisError(f"metric-value filter not supported for intent={it}")
-            having_conds.append(f"{agg_map[f]} {str(flt.get('op') or '=')} {_format_value(flt.get('value'))}")
+            op = flt.get("op") or "="
+            having_conds.append(f"{agg_map[f]} {op!s} {_format_value(flt.get('value'))}")
         else:
             where_filters.append(flt)
 

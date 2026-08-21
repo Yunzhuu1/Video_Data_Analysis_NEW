@@ -13,6 +13,8 @@ from app.memory.retriever import (
     normalize_question,
 )
 from app.memory.store import MemoryStore, compute_resolver_hash
+from app.prompts.semantic import build_semantic_user_prompt
+from app.semantic.metric_recall import MetricCandidateRetriever, MetricRecallResult
 from app.settings import settings
 from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
 
@@ -92,7 +94,44 @@ def _acceptable_intent(intent: dict) -> bool:
     )
 
 
-async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
+async def _resolve_with_prompt(
+    state: DataAgentState,
+    catalog: list[dict],
+    examples: list[tuple[str, dict]] | None = None,
+):
+    """构造一次最终 user prompt；真实 resolver 直接消费同一字符串。"""
+    user_prompt = build_semantic_user_prompt(state["question"], catalog, DIMENSIONS, examples)
+    state["semantic_prompt_chars"] = len(user_prompt)
+    resolve_user_prompt = getattr(semantic_resolver, "resolve_user_prompt", None)
+    if callable(resolve_user_prompt):
+        return await resolve_user_prompt(state["question"], user_prompt)
+    # 测试 fake/兼容扩展仍走旧接口；真实 SemanticResolver 不进入此分支。
+    kwargs = {"question": state["question"], "catalog": catalog, "dimensions": DIMENSIONS}
+    if examples is not None:
+        kwargs["examples"] = examples
+    return await semantic_resolver.resolve(**kwargs)
+
+
+def _record_metric_recall(state: DataAgentState, result: MetricRecallResult) -> None:
+    state["metric_candidates"] = [item.debug_dict() for item in result.ranked_candidates]
+    state["metric_recall_mode"] = result.mode
+    state["metric_recall_fallback"] = result.fallback
+    state["metric_recall_reason"] = result.fallback_reason
+    state["metric_recall_top_k"] = result.configured_k
+    state["metric_recall_pinned_count"] = result.pinned_count
+    state["metric_recall_effective_k"] = result.effective_k
+    state["metric_recall_full_catalog_count"] = result.full_catalog_count
+    state["metric_recall_prompt_catalog_count"] = result.prompt_catalog_count
+    state["semantic_prompt_chars"] = None
+    if result.warnings:
+        state.setdefault("warnings", []).extend(
+            f"metric recall fallback: {warning}" for warning in result.warnings
+        )
+
+
+async def _memory_pre_resolve(
+    state: DataAgentState, full_catalog: list[dict], prompt_catalog: list[dict],
+):
     """记忆前置：hit → 直通复用；inject → few-shot；失败静默降级。返回处理后的 state 或 None。"""
     if memory is None or not settings.memory_enabled:
         return None
@@ -102,7 +141,9 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
         if not hits:
             return None
         best = hits[0]
-        if best.band == "hit" and hit_allowed(state["question"], best.entry, catalog, get_aliases()):
+        if best.band == "hit" and hit_allowed(
+            state["question"], best.entry, full_catalog, get_aliases()
+        ):
             intent = best.entry.resolved_intent
             state["resolved_intent"] = intent
             state["semantic_ok"] = True
@@ -130,9 +171,7 @@ async def _memory_pre_resolve(state: DataAgentState, catalog: list[dict]):
                     break
             state["memory_band"] = "inject"
             try:
-                intent = await semantic_resolver.resolve(
-                    question=state["question"], catalog=catalog, dimensions=DIMENSIONS,
-                    examples=examples)
+                intent = await _resolve_with_prompt(state, prompt_catalog, examples)
             except Exception:  # noqa: BLE001
                 intent = None
             if intent is None:
@@ -151,15 +190,17 @@ async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient)
     """LLM 只做语义匹配：把问题解析为结构化 ResolvedIntent（不写 SQL）。"""
     catalog = await platform.metric_catalog()
     catalog = catalog or []
-    handled = await _memory_pre_resolve(state, catalog)
+    recall = MetricCandidateRetriever(
+        top_k=settings.metric_recall_top_k,
+        lexical_threshold=settings.metric_recall_lexical_threshold,
+        mode=settings.metric_recall_mode,
+    ).retrieve(state["question"], catalog)
+    _record_metric_recall(state, recall)
+    handled = await _memory_pre_resolve(state, catalog, recall.prompt_catalog)
     if handled is not None:
         return handled
     try:
-        intent = await semantic_resolver.resolve(
-            question=state["question"],
-            catalog=catalog,
-            dimensions=DIMENSIONS,
-        )
+        intent = await _resolve_with_prompt(state, recall.prompt_catalog)
     except Exception:  # noqa: BLE001 - degrade to raw SQL generation
         intent = None
     if intent is None:
