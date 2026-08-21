@@ -22,12 +22,12 @@
 
 ## 5. 离线门禁与 A/B 评测
 
-- [ ] 5.1 为 eval runner 增加独立 metric-recall 评测及 `--metric-recall full|topk` A/B 配置；strict Recall@K 固定以 49 条的回退前 `ranked_candidates[:max(K,pinned_count)]` 为分母并单列 pinned 扩容，effective recall 按实际 prompt catalog，另报多指标完整召回/fallback 原因和逐例候选
-- [ ] 5.2 仅在 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 上扫描 K/阈值并固化配置（Recall 分母=49）：effective recall=100%，所有 topk 用例 golden metrics 零遗漏；其余 12 条不进入 Recall 分母
+- [ ] 5.1 为 eval runner 增加独立 metric-recall 评测及 `--metric-recall full|topk` A/B 配置；同时报告固定 `recall@configured_k` 与门禁 `strict_recall@effective_k`（均分母 49）、configured_k、pinned_expansion_count/逐例 effective_k；effective recall 按实际 prompt catalog，另报多指标完整召回/fallback 原因和逐例候选
+- [ ] 5.2 仅在 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 上扫描 K/阈值并固化配置（两个 recall 分母均为 49）：`strict_recall@effective_k=100%`、effective recall=100%，传统 `recall@configured_k` 如实报告；其余 12 条不进入 recall 分母
 - [ ] 5.3 运行全量 Python 测试与相关 Java 测试，确认别名迁移、记忆校验、语义解析、API 契约和既有 SQL 合成无回退
 - [ ] 5.4 在 embedding 关闭条件下运行 `--llm real --platform mock --memory off` 的 full/topk N=61 A/B，单列既有 N=57 子集，报告 L1-L4/ERROR/sql_source/fallback 和 Prompt chars；真实单轮结果标注方向性并逐例审计差异
 
 ## 6. 文档与收尾
 
-- [ ] 6.1 将架构动机、算法/回退口径、Recall@K 与 A/B 原始计数、局限性整理进开发日志、metrics report 和面试素材库，不把 full fallback 或单轮 LLM 波动包装成召回收益
+- [ ] 6.1 将架构动机、算法/回退口径、`recall@configured_k`/`strict_recall@effective_k`/effective recall 与 A/B 原始计数、局限性整理进开发日志、metrics report 和面试素材库，不把 pinned 扩容、full fallback 或单轮 LLM 波动包装成召回收益
 - [ ] 6.2 运行 `openspec validate metric-recall --strict`、确认全部任务勾选并提交实现（仅 commit，由用户 push/merge）

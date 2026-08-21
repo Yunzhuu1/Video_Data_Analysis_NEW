@@ -11,7 +11,7 @@
 - 在 LLM 前召回与问题相关的 Top-K 指标，降低目录规模对 Prompt 和语义解析稳定性的影响。
 - 对显式多指标问法保证所有名称/别名命中项都进入候选，不因 K 截断。
 - 以安全回退保证召回不确定时行为不劣于现有“完整 catalog”路径。
-- 建立独立于 LLM 的 Recall@K 门禁，以及完整 catalog / Top-K 的真实 LLM A/B 口径。
+- 建立独立于 LLM 的固定 K 诊断指标、pinned-aware 召回门禁，以及完整 catalog / Top-K 的真实 LLM A/B 口径。
 - 让候选、分数、原因、模式和 Prompt 体积可观测、可审计。
 
 **Non-Goals:**
@@ -59,7 +59,7 @@ top_k / lexical_threshold / full_catalog_count / prompt_catalog_count
 4. 计算 `effective_k = max(configured_top_k, pinned_count)`；pinned 指标全部保留，再按 `(-score, metric_code)` 填充到 `effective_k`。若 pinned 数量超过配置 K，返回全部 pinned，不截断真实多指标表达；结果必须记录 `pinned_count` 与 `effective_k`；
 5. 没有 pinned 且最高词面分低于阈值时，不做强猜，回退完整 catalog。
 
-默认候选 K 从 5 开始，词面阈值从 0.55 开始；apply 阶段仅对 N=61 中含 `golden_spec.metrics` 的 **49 条 judged cases（Recall 分母=49）**离线扫描标定并写死最终值。若 K=5 不能达到 judged golden metrics Recall@K=100%，增大 K 或对失败类型增加经审核 alias，不能以降低召回门槛掩盖漏召回。报告必须记录最终 K、阈值、表达数据版本和原始计数；其余 12 条无 golden case 不进入 Recall 分母。
+默认候选 K 从 5 开始，词面阈值从 0.55 开始；apply 阶段仅对 N=61 中含 `golden_spec.metrics` 的 **49 条 judged cases（两个 recall 分母均为 49）**离线扫描标定并写死最终值。若 K=5 不能达到 judged golden metrics `strict_recall@effective_k=100%`，增大 K 或对失败类型增加经审核 alias，不能以降低召回门槛掩盖漏召回。传统 `recall@configured_k` 同时报告但不作为 pinned 扩容场景的正确性门禁。报告必须记录最终 K、阈值、表达数据版本和原始计数；其余 12 条无 golden case 不进入 recall 分母。
 
 选择字符 n-gram 而不是 `difflib`：它对中文无需分词、可解释、无网络依赖，并且表达覆盖口径不会因“最近 7 天……按分类”之类上下文变长而急剧降低。它不是语义模型，所以低信号时必须回退。
 
@@ -76,7 +76,7 @@ memory pre-resolve(full_catalog, prompt_catalog)
 normal: prompt_catalog 调 SemanticResolver
 ```
 
-`mode=topk` 时 `prompt_catalog` 取 `ranked_candidates`；`mode=full`（显式基线/回滚）或 `mode=full_fallback`（被迫回退）时取完整 catalog。`fallback` 仅在 `mode=full_fallback` 时为 true，显式 `full` 必须为 false 且不计入 fallback rate。可计算排名时，即使最终低信号回退，也保留回退前 `ranked_candidates` 供 strict Recall@K 审计；invalid/error 无法排名时该列表为空。这样候选裁剪不会削弱记忆命中的 catalog 一致性校验，也不会让已失效指标通过。召回异常只记录 warning 并回退完整 catalog，不允许打断主链路。
+`mode=topk` 时 `prompt_catalog` 取 `ranked_candidates`；`mode=full`（显式基线/回滚）或 `mode=full_fallback`（被迫回退）时取完整 catalog。`fallback` 仅在 `mode=full_fallback` 时为 true，显式 `full` 必须为 false 且不计入 fallback rate。可计算排名时，即使最终低信号回退，也保留回退前 `ranked_candidates` 供两个 recall 指标审计；invalid/error 无法排名时该列表为空。这样候选裁剪不会削弱记忆命中的 catalog 一致性校验，也不会让已失效指标通过。召回异常只记录 warning 并回退完整 catalog，不允许打断主链路。
 
 为支持 A/B，配置 `METRIC_RECALL_MODE=topk|full`：默认 `topk`，`full` 仅用于基线/紧急回滚。K 与阈值也进入 settings；线上无需修改请求协议。
 
@@ -91,11 +91,12 @@ normal: prompt_catalog 调 SemanticResolver
 
 回退用例仍可正常由 LLM 解析，但单独计入 `metric_recall_fallback_rate`。不能把 full fallback 计作 Top-K 命中来夸大裁剪覆盖；离线指标同时报告：
 
-- `strict_recall@K`：固定分母 49；每例先取 `effective_k=max(configured_top_k,pinned_count)`，再检查**回退前 `ranked_candidates[:effective_k]`**是否包含全部 golden metrics。报告同时展示 configured K、发生 pinned 扩容的用例数及逐例 effective_k；full fallback 不因看到完整目录自动成功，显式 full 基线不参与该离线运行；
+- `recall@configured_k`：传统固定 K 诊断口径，分母 49，检查回退前 `ranked_candidates[:configured_k]`；当 pinned_count>K 时允许因固定截断而低于 100%，不作为线上“是否漏掉显式指标”的验收门禁；
+- `strict_recall@effective_k`：pinned-aware 验收口径，分母 49；每例取 `effective_k=max(configured_top_k,pinned_count)`，检查回退前 `ranked_candidates[:effective_k]` 是否包含全部 golden metrics。报告同时展示 configured K、`pinned_expansion_count` 及逐例 effective_k；full fallback 不因看到完整目录自动成功，显式 full 基线不参与该离线运行；
 - `effective_recall`：包含 full fallback 后是否可见全部 golden metrics；
 - fallback 原始计数和原因分布。
 
-验收硬门槛为 effective recall 49/49，且 strict Recall@K 必须报告真实分子/49；任何实际 `mode=topk` 用例不得漏 golden metric。若某用例只能靠 full fallback 保真，要如实报告为“未裁剪覆盖”，不能用完整目录抬高 strict Recall@K。
+验收硬门槛为 `strict_recall@effective_k=49/49` 且 `effective_recall=49/49`；`recall@configured_k` 必须报告真实分子/49，但 pinned 扩容造成的固定 K 截断只作诊断。任何实际 `mode=topk` 用例不得在其 effective candidates 中漏 golden metric。若某用例只能靠 full fallback 保真，要如实报告为“未裁剪覆盖”，不能用完整目录抬高任一 strict 指标。
 
 ### D5：观测字段走既有 debug 通道
 
@@ -109,7 +110,7 @@ Agent `/analyze` 响应和 Spring `includeDebug=true` 增量透传上述 camelCa
 
 评测分三层：
 
-1. **离线确定性门禁**：仅对 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 直接调用召回器（分母=49），输出 Recall@K、effective recall、多指标完整召回率、fallback 率和逐例候选；其余 12 条仅参与端到端 A/B，不进入 Recall 分母。该层不调用 LLM、embedding 或数据库。
+1. **离线确定性门禁**：仅对 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 直接调用召回器（分母=49），同时输出 `recall@configured_k`、`strict_recall@effective_k`、effective recall、configured K、pinned expansion count、多指标完整召回率、fallback 率和逐例候选；其余 12 条仅参与端到端 A/B，不进入 recall 分母。该层不调用 LLM、embedding 或数据库。
 2. **单元/回放回归**：验证最长匹配、稳定排序、pinned>K、低信号回退、异常回退、记忆 inject 使用候选 catalog，以及 debug 透传。
 3. **真实 LLM A/B**：同一 N=61、`--platform mock --memory off`，A=`mode=full`，B=`mode=topk`。分别报告整体 N=61 和既有 N=57 子集的 L1-L4、sql_source、ERROR、fallback 原始计数。模型单轮存在随机性，真实 A/B 只作方向性观测；若 B 下降，必须逐例核查是否与漏召回相关，必要时复跑，不把单轮波动直接归因于召回。
 
@@ -120,7 +121,7 @@ embedding 不参与上述三层，因此当前额度不足不影响验收。
 ## Risks / Trade-offs
 
 - **[词面召回不理解真正语义]** → 无可靠信号回退完整 catalog；后续 C4 可在相同接口下增加 embedding/reranker，但不得改变本轮评测口径。
-- **[alias 错配导致高置信漏召回]** → alias 变更必须带 golden 覆盖；Top-K 填充保留多个相近候选；离线 golden Recall@K 是合并门禁。
+- **[alias 错配导致高置信漏召回]** → alias 变更必须带 golden 覆盖；Top-K 填充保留多个相近候选；离线 `strict_recall@effective_k` 是合并门禁，传统固定 K recall 单独保留作诊断。
 - **[在 49 条 judged cases 上标定过拟合]** → 报告明确 Recall 分母=49 的小样本；增加未进入阈值调优的对抗/低信号单测，不宣称生产泛化率。N=61 只用于端到端 A/B。
 - **[full fallback 让 effective recall 虚高]** → strict/effective/fallback 三个口径分开，逐例列出 fallback 原因。
 - **[运行时迁移 alias 路径破坏记忆校验或丢失评测元数据]** → `AliasBundle` 同时提供 `alias_map` 与 `alias_records`，增加旧别名数量、covered_by、最长匹配和 memory consistency 回归测试。
