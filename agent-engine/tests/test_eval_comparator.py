@@ -109,6 +109,31 @@ def test_filter_misclassified_as_dimension():
     assert score.fields["filters"] is False
 
 
+def test_metric_comparison_filter_operators_are_compared():
+    golden = dict(
+        GOLDEN_TREND,
+        intent="aggregate",
+        dimensions=["creator"],
+        filters=[{"field": "completion_rate", "op": ">=", "value": 50}],
+        time_range={"type": "none", "granularity": None},
+        ordering=None,
+    )
+    assert compare_spec(_actual(
+        intent="aggregate",
+        dimensions=["creator"],
+        filters=[{"field": "completion_rate", "op": ">=", "value": 50}],
+        time_range={"type": "none", "granularity": None},
+        ordering=None,
+    ), golden, EVAL_DATE).fields["filters"] is True
+    assert compare_spec(_actual(
+        intent="aggregate",
+        dimensions=["creator"],
+        filters=[{"field": "completion_rate", "op": ">", "value": 50}],
+        time_range={"type": "none", "granularity": None},
+        ordering=None,
+    ), golden, EVAL_DATE).fields["filters"] is False
+
+
 def test_unresolved_intent_scores_zero():
     score = compare_spec(None, GOLDEN_TREND, EVAL_DATE)
     assert score.matched is False
