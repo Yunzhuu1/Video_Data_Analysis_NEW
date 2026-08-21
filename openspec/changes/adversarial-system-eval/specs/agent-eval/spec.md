@@ -35,12 +35,16 @@
 - **THEN** observation以compiler_invocation_attempted和参数hash记录函数调用尝试，不得虚构PLAN_COMPILER节点或因sentinel阻断而报告为从未尝试
 
 ### Requirement: 对抗运行日志与中断终结
-对抗runner SHALL 在profile进入STARTED前原子持久化完整execution ledger与锁定分母，并逐case原子写observation；runner SHALL 提供可重复调用的finalizer，使正常异常、超时和进程被杀后均能生成不缺case/variant的COMPLETED或ABORTED终态报告。
+对抗runner SHALL 在profile进入STARTED前以稳定`case_id`或`case_id::variant_id`构造唯一execution-unit registry，原子持久化完整ledger与锁定分母，并以unit ID为幂等键逐条原子写terminal observation；runner SHALL 提供可重复调用的finalizer，使正常异常、超时和进程被杀后均能生成每个expected unit恰好一条terminal record的COMPLETED或ABORTED终态报告。
 
 #### Scenario: STARTED事务边界持久化
 - **WHEN** profile preflight通过准备执行case
-- **THEN** runner先原子写run ID、manifest/config hash、eligible case/variant IDs、锁定分母、process identity、lease和全部PENDING状态，成功后才将profile标记STARTED
+- **THEN** runner先原子写run ID、manifest/config hash、key唯一的execution-unit registry、锁定分母、process identity、lease和全部PENDING状态，成功后才将profile标记STARTED；重复unit ID在STARTED前fail-fast
 
 #### Scenario: Finalizer幂等
 - **WHEN** 对同一COMPLETED或ABORTED run多次调用finalizer
-- **THEN** 结果文件hash和所有合成observation保持一致，不重复计数、不覆盖真实terminal observation，也不改变锁定分母
+- **THEN** terminal record数量、每条record hash、结果文件hash和锁定分母完全不变，不新增重复record、不覆盖真实terminal observation；任何existing duplicate不得通过幂等路径被静默去重
+
+#### Scenario: Execution unit严格一一对应
+- **WHEN** finalizer或reporter读取冻结registry与terminal records
+- **THEN** 同时校验registry/record基数相等、每个expected unit出现次数恰为1、missing/duplicate/unknown/orphan均为0；任一失败直接Harness FAIL且禁止产品指标聚合

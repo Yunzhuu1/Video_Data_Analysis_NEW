@@ -15,13 +15,13 @@
 
 - [ ] 3.1 实现profile preflight与observation/disposition两阶段comparator：preflight失败写profile级HARNESS_UNAVAILABLE且不创建伪case observations；profile启动后case先映射OK/PROFILE_INELIGIBLE/HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED，仅OK再映射六类处置并比较stage/code/node/order/function invariants
 - [ ] 3.2 实现按层 required audit fields 比较器，分别验证Semantic recall/mode、Planning hashes/candidates/validation/compiler invocation、Synthesis error code/reason/sql source/fallback、Safety verdict/approval/run trace；处置正确与Audit缺失分开计分，不把派生fallback reason冒充生产code
-- [ ] 3.3 实现原子run journal/lease/ledger：STARTED前冻结run/manifest/profile/config、全部eligible case/P05 variant IDs与分母，execution unit按PENDING→RUNNING→TERMINAL逐条原子落盘；增加process-start identity、heartbeat、run lock与崩溃/超时/SIGKILL fixture
-- [ ] 3.4 实现幂等finalizer与分母状态：正常finally或独立finalize命令将RUNNING补ADAPTER_ERROR/CASE_INTERRUPTED、PENDING补ADAPTER_ERROR/PROFILE_ABORTED_BEFORE_CASE并标synthetic，确保case/variant差集0；终态ABORTED+LOCKED_INCOMPLETE、Harness FAIL、Readiness NOT_ASSESSED，禁止活跃run抢占和同run续跑
+- [ ] 3.3 实现原子run journal/lease/ledger：STARTED前以case_id或case_id::variant_id构造key唯一registry并冻结分母，重复ID fail-fast；terminal observation以unit ID为幂等键create-only/CAS落盘，execution unit按PENDING→RUNNING→TERMINAL；增加process identity、heartbeat、lock与崩溃/超时/SIGKILL fixture
+- [ ] 3.4 实现幂等finalizer与严格一一对应校验：补齐RUNNING/PENDING后验证record总数=registry基数且每unit恰好1条，missing/duplicate/unknown/orphan均0；duplicate即使同hash也Harness FAIL+LOCKED_INVALID且禁止聚合，保留冲突证据；重复finalize不得新增/删除/覆盖record或改变结果hash
 - [ ] 3.5 实现聚合与JSON/Markdown报告：拆分case/variant coverage；COMPLETED计算正式产品指标，ABORTED仅报INCOMPLETE hits/locked denominator且accuracy=N/A，NOT_STARTED产品分母N/A；逐例证据、缺失集合断言和P1/P2 backlog不得自动改expected/产品
 
 ## 4. Reproducible Evaluation Profiles
 
-- [ ] 4.1 为CLI增加`--adversarial-profile offline|integrated|directional-real`、report与`--adversarial-finalize RUN_DIR`；offline禁用LLM/embedding/数据库，增加正常完成、普通异常、整体超时、模拟SIGKILL后finalize及幂等测试，不改变既有runner参数行为
+- [ ] 4.1 为CLI增加profile/report/finalize参数；offline增加正常完成、异常、超时、SIGKILL后finalize、重复finalize，以及duplicate/orphan/unknown/missing terminal注入测试，断言一一对应与LOCKED_INVALID时不聚合；不改变既有runner参数行为
 - [ ] 4.2 运行 offline 全20条manifest可加载测试及eligible确定性子集，要求 schema 20/20、eligible observation均OK、0 unclassified、非法计划/安全不变式门禁可复现；未执行的Spring/MySQL/LLM case标记PROFILE_INELIGIBLE并单列，不得冒充分母
 - [ ] 4.3 为integrated实现case前Spring/MySQL preflight并运行：目标20/20 OK，C01-C04独立R1，G01-G03真实门禁/审批；preflight失败输出NOT_STARTED/NOT_COMPUTED，STARTED后中断保持锁定分母；两种均Harness FAIL/Readiness NOT_ASSESSED且不用mock替代
 - [ ] 4.4 在 memory/embedding off 下仅对 S01-S05 与普通/实时 Planner 两例运行真实 LLM N=7，报告模型/配置/逐例原始结果并标注单轮方向性；发现产品失败只进backlog

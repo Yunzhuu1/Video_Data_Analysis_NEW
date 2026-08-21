@@ -114,11 +114,13 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 - **preflight通过并进入STARTED**：当场锁定该profile全部eligible case/variant分母；随后单case发生HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED时保留在case_coverage和Expected Disposition分母、numerator不命中，不得因中途环境故障缩分母。
 - **STARTED后整体中断**：保留已锁定分母和所有已完成observations；最终状态为ABORTED、`product_denominator_status=LOCKED_INCOMPLETE`。中断时RUNNING case补终态`ADAPTER_ERROR/CASE_INTERRUPTED`，尚未开始的PENDING case补`ADAPTER_ERROR/PROFILE_ABORTED_BEFORE_CASE`，均带`synthetic_finalization=true`且不填写disposition。它们保留在case/variant coverage与Expected Disposition固定分母、numerator不命中；Harness FAIL、Readiness NOT_ASSESSED。报告可展示`expected_disposition_conformance=hits/locked_N (INCOMPLETE)`，但正式`expected_disposition_accuracy=null/N/A`，不得把部分结果解释为产品准确率。
 
-STARTED 是一个持久化事务边界。runner 在切换前 SHALL 原子写入 run journal：run ID、manifest/hash、profile/config、全部eligible case IDs、P05 variant IDs、锁定分母、PID/process-start token、lease/heartbeat 和每个execution unit的`PENDING|RUNNING|TERMINAL`状态；case observation 使用临时文件+原子rename逐条落盘。普通异常/超时由`finally`终结；SIGKILL等无法执行finally时，由独立 `--adversarial-finalize <run-dir>` 或下一次报告读取在取得run lock且确认进程身份失效/lease过期后终结。finalizer必须把所有PENDING/RUNNING materialize为上述合成ADAPTER_ERROR，校验expected case/variant集合差集为0，再原子写ABORTED最终报告。
+STARTED 是一个持久化事务边界。runner 在切换前 SHALL 构造唯一 execution-unit registry：无variant case的`execution_unit_id=case_id`，有variant的`execution_unit_id=case_id::variant_id`（当前P05三个）；ID字段使用受限字符集，registry为key唯一的map而非可重复list。随后原子写入run journal：run ID、manifest/hash、profile/config、完整registry、锁定分母、PID/process-start token、lease/heartbeat和每个unit的`PENDING|RUNNING|TERMINAL`状态。terminal observation以execution_unit_id为幂等键，使用create-only临时文件+原子rename/CAS落盘；写入重试若发现同key terminal已存在只能校验同一record hash并返回原结果，不得追加第二条。
 
-ABORTED run 不允许在同一run ID上选择性resume或补跑，以免改变冻结环境/模型后拼接有利结果；重新评测必须创建新run ID。对仍持有lock且heartbeat有效的STARTED run只能输出`RUN_IN_PROGRESS`，不得抢占或生成最终指标。
+普通异常/超时由`finally`终结；SIGKILL等无法执行finally时，由独立`--adversarial-finalize <run-dir>`或下一次报告读取在取得run lock且确认进程身份失效/lease过期后终结。finalizer先把PENDING/RUNNING按CAS各materialize一次为合成ADAPTER_ERROR，再做严格一一对应校验：每个expected execution_unit_id恰好1条terminal record、terminal总数等于registry基数、missing/duplicate/unknown/orphan均为0。orphan指variant unit的parent case不存在或variant不在该case声明中；unknown指record unit不在registry。任何duplicate（即使payload/hash相同）、orphan或unknown都使`ledger_integrity=FAIL`、Harness FAIL、Readiness NOT_ASSESSED、profile ABORTED、`product_denominator_status=LOCKED_INVALID`，禁止聚合coverage/accuracy以免重复计数，并在报告列出全部冲突record位置/hash。finalizer不得删除冲突证据来“修复”运行。
 
-以下产品指标表在COMPLETED时使用`product_denominator_status=COMPUTED`；ABORTED时使用`LOCKED_INCOMPLETE`并只展示带INCOMPLETE标签的原始conformance计数；NOT_COMPUTED时整表值为N/A，只保留manifest eligible N与case execution coverage：
+finalizer幂等意味着再次调用时不产生任何新terminal record、不改变record/结果hash、不改变分母；它对已TERMINAL unit只读。ABORTED run 不允许在同一run ID上选择性resume或补跑，以免改变冻结环境/模型后拼接有利结果；重新评测必须创建新run ID。对仍持有lock且heartbeat有效的STARTED run只能输出`RUN_IN_PROGRESS`，不得抢占或生成最终指标。
+
+以下产品指标表在COMPLETED且ledger integrity PASS时使用`product_denominator_status=COMPUTED`；正常中断且一一对应补齐后的ABORTED使用`LOCKED_INCOMPLETE`并只展示带INCOMPLETE标签的原始conformance计数；ledger integrity失败使用`LOCKED_INVALID`且所有产品聚合N/A；NOT_COMPUTED时整表值为N/A，只保留manifest eligible N与case execution coverage：
 
 | 指标 | 分母 |
 |---|---|

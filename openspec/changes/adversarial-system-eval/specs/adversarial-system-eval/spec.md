@@ -89,7 +89,7 @@
 
 #### Scenario: STARTED后整体中断补齐全部执行单元
 - **WHEN** profile进入STARTED后runner崩溃、整体超时或被终止，导致部分case/variant尚无终态observation
-- **THEN** 最终状态收敛为ABORTED且product_denominator_status=LOCKED_INCOMPLETE；已完成observation保留，RUNNING补ADAPTER_ERROR/CASE_INTERRUPTED，PENDING补ADAPTER_ERROR/PROFILE_ABORTED_BEFORE_CASE，合成记录标注synthetic_finalization=true且无disposition；expected case和variant集合差集必须为0
+- **THEN** 最终状态收敛为ABORTED且product_denominator_status=LOCKED_INCOMPLETE；已完成observation保留，RUNNING/PENDING分别补CASE_INTERRUPTED/PROFILE_ABORTED_BEFORE_CASE；finalizer必须证明每个registry execution_unit_id恰好一条terminal record且missing/duplicate/unknown/orphan均为0，不能只检查集合差集
 
 #### Scenario: 中断报告不冒充产品准确率
 - **WHEN** ABORTED run完成finalization
@@ -102,6 +102,14 @@
 #### Scenario: Aborted run不可选择性续跑
 - **WHEN** 某run已经finalize为ABORTED
 - **THEN** 该run journal和observations不可继续追加或只补失败case；重新执行必须生成新run ID并重新冻结manifest/profile/config
+
+#### Scenario: Duplicate terminal直接导致Harness失败
+- **WHEN** 同一case_id或case_id::variant_id出现两条terminal records，即使两条payload/hash相同
+- **THEN** ledger_integrity=FAIL、profile=ABORTED、product_denominator_status=LOCKED_INVALID、Harness FAIL、Readiness NOT_ASSESSED，产品coverage/accuracy聚合为N/A；报告保留并列出全部duplicate records，不得去重后继续计分
+
+#### Scenario: Unknown和orphan unit禁止进入统计
+- **WHEN** terminal record的execution_unit_id不在冻结registry，或variant的parent case/variant声明不存在
+- **THEN** 分别记录unknown/orphan integrity error并使Harness失败；这些records不得进入任何numerator/denominator，也不得通过补齐missing unit掩盖
 
 ### Requirement: 评测发现与产品修复隔离
 本 change 的交付 SHALL 允许系统 readiness 非全绿，并将产品能力失败输出为带 case ID 和证据的 P1/P2 backlog；除 harness、fixture、fault adapter、comparator、报告和纯观测字段外，不得修改产品决策以追求20/20。
