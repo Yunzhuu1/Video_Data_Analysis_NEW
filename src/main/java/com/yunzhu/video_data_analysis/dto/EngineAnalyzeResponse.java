@@ -23,5 +23,21 @@ public record EngineAnalyzeResponse(
         Integer metricRecallEffectiveK,
         Integer metricRecallFullCatalogCount,
         Integer metricRecallPromptCatalogCount,
-        Integer semanticPromptChars
+        Integer semanticPromptChars,
+        String catalogVersion,
+        String lineageHash,
+        String metricCatalogHash,
+        String schemaHash,
+        List<Map<String, Object>> candidatePlans,
+        List<Map<String, Object>> rejectedPlans,
+        String selectedPlanId,
+        String planSelectionSource,
+        String plannerReasonCode,
+        String plannerSkillVersion,
+        Map<String, Object> planValidation,
+        Integer planningRetryCount,
+        List<String> lineageEdgeIds,
+        Boolean legacyPlannerFallback,
+        Integer plannerPromptChars,
+        Double plannerLatencyMs
 ) {}

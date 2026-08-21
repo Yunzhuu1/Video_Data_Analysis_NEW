@@ -7,6 +7,9 @@ from langgraph.types import Command, interrupt
 from app.clients.platform_client import PlatformClient
 from app.graph.nodes import (
     answer_node,
+    plan_enumerate_node,
+    plan_select_node,
+    plan_validate_node,
     router_node,
     schema_node,
     semantic_resolve_node,
@@ -86,6 +89,14 @@ def traced(node_name: str):
                     "dq_result": next_state.get("dq_result"),
                     "dq_feedback": next_state.get("dq_feedback"),
                     "final_report": next_state.get("final_report"),
+                    "catalog_version": next_state.get("catalog_version"),
+                    "candidate_plans": next_state.get("candidate_plans"),
+                    "rejected_plans": next_state.get("rejected_plans"),
+                    "selected_plan_id": next_state.get("selected_plan_id"),
+                    "plan_selection_source": next_state.get("plan_selection_source"),
+                    "plan_validation": next_state.get("plan_validation"),
+                    "planning_retry_count": next_state.get("planning_retry_count"),
+                    "lineage_edge_ids": next_state.get("lineage_edge_ids"),
                 },
             )
             return next_state
@@ -122,6 +133,10 @@ async def _synthesize(state: DataAgentState) -> DataAgentState:
     return await sql_synthesize_node(state, platform)
 
 
+async def _plan_enumerate(state: DataAgentState) -> DataAgentState:
+    return await plan_enumerate_node(state, platform)
+
+
 # ---------------------------------------------------------------------------
 # Human-in-the-loop approval node: pauses via interrupt() until an operator
 # approves/rejects. The resume value comes from Command(resume=...) and decides
@@ -155,7 +170,18 @@ async def approval_node(state: DataAgentState) -> DataAgentState:
 # Conditional edge routing (the graph's control flow).
 # ---------------------------------------------------------------------------
 def route_after_resolve(state: DataAgentState) -> str:
-    return "synthesize" if state.get("semantic_ok") else "generate"
+    return "plan" if state.get("semantic_ok") else "generate"
+
+
+def route_after_enumerate(state: DataAgentState) -> str:
+    return "select" if state.get("plan_selection_source") == "PLANNER_AGENT" else "validate"
+
+
+def route_after_plan_validate(state: DataAgentState) -> str:
+    verdict = (state.get("plan_validation") or {}).get("verdict")
+    if verdict == "REPLAN" and int(state.get("planning_retry_count", 0)) <= 1:
+        return "select"
+    return "synthesize"
 
 
 def route_after_synthesize(state: DataAgentState) -> str:
@@ -209,6 +235,9 @@ def build_graph(checkpointer):
     graph.add_node("ROUTER", traced("ROUTER")(router_node))
     graph.add_node("SCHEMA", traced("SCHEMA")(_schema))
     graph.add_node("SEMANTIC_RESOLVE", traced("SEMANTIC_RESOLVE")(_semantic_resolve))
+    graph.add_node("PLAN_ENUMERATE", traced("PLAN_ENUMERATE")(_plan_enumerate))
+    graph.add_node("PLAN_SELECT", traced("PLAN_SELECT")(plan_select_node))
+    graph.add_node("PLAN_VALIDATE", traced("PLAN_VALIDATE")(plan_validate_node))
     graph.add_node("SQL_SYNTHESIZE", traced("SQL_SYNTHESIZE")(_synthesize))
     graph.add_node("SQL_GENERATE", traced("SQL_GENERATE")(sql_generate_node))
     graph.add_node("SQL_HARD_GUARD", traced("SQL_HARD_GUARD")(_hard_guard))
@@ -225,7 +254,16 @@ def build_graph(checkpointer):
     graph.add_conditional_edges(
         "SEMANTIC_RESOLVE",
         route_after_resolve,
-        {"synthesize": "SQL_SYNTHESIZE", "generate": "SQL_GENERATE"},
+        {"plan": "PLAN_ENUMERATE", "generate": "SQL_GENERATE"},
+    )
+    graph.add_conditional_edges(
+        "PLAN_ENUMERATE", route_after_enumerate,
+        {"select": "PLAN_SELECT", "validate": "PLAN_VALIDATE"},
+    )
+    graph.add_edge("PLAN_SELECT", "PLAN_VALIDATE")
+    graph.add_conditional_edges(
+        "PLAN_VALIDATE", route_after_plan_validate,
+        {"select": "PLAN_SELECT", "synthesize": "SQL_SYNTHESIZE"},
     )
     graph.add_conditional_edges(
         "SQL_SYNTHESIZE",

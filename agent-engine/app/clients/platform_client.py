@@ -195,6 +195,20 @@ class PlatformClient:
             response.raise_for_status()
             return dict(response.json())
 
+    async def lineage_snapshot(self) -> dict:
+        """Fetch the immutable lineage+metric+schema snapshot for one run."""
+        if not settings.platform_calls_enabled:
+            from app.lineage.catalog import load_mock_snapshot
+
+            return load_mock_snapshot()
+        http = self._require_httpx()
+        async with http.AsyncClient(timeout=30) as client:
+            response = await client.get(
+                f"{self.base_url}/internal/lineage/snapshot", headers=self.headers,
+            )
+            response.raise_for_status()
+            return dict(response.json())
+
     async def start_node(self, run_id: str, node_name: str, input_payload: dict) -> int | None:
         if not settings.trace_callback_enabled:
             return None

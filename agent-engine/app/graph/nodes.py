@@ -5,6 +5,7 @@ from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
+from app.lineage.planning import PlanEnumerator, PlanValidator, route_selection
 from app.memory.aliases import get_aliases
 from app.memory.embeddings import get_embedding_provider
 from app.memory.retriever import (
@@ -16,7 +17,7 @@ from app.memory.store import MemoryStore, compute_resolver_hash
 from app.prompts.semantic import build_semantic_user_prompt
 from app.semantic.metric_recall import MetricCandidateRetriever, MetricRecallResult
 from app.settings import settings
-from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize
+from app.synthesis.sql_synthesizer import DIMENSIONS, SynthesisError, synthesize, synthesize_plan
 
 sql_generation_agent = SQLGenerationAgent()
 answer_agent = AnswerAgent()
@@ -26,6 +27,85 @@ semantic_resolver = SemanticResolver()
 memory: MemoryStore | None = None
 
 logger = logging.getLogger(__name__)
+
+
+async def plan_enumerate_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
+    mode = settings.lineage_planning_mode
+    state["planning_retry_count"] = int(state.get("planning_retry_count", 0))
+    if mode == "off" or not state.get("semantic_ok"):
+        state["plan_selection_source"] = "OFF"
+        state["legacy_planner_fallback"] = True
+        return state
+    try:
+        snapshot = await platform.lineage_snapshot()
+        result = PlanEnumerator(settings.lineage_max_hops, settings.lineage_max_candidates).enumerate(
+            state.get("resolved_intent") or {}, snapshot,
+        )
+    except Exception as exc:  # noqa: BLE001
+        state["warnings"] = [*state.get("warnings", []), f"lineage planning fallback: {exc}"]
+        state["plan_selection_source"] = "LEGACY_FALLBACK"
+        state["legacy_planner_fallback"] = True
+        return state
+    state["lineage_snapshot"] = snapshot
+    state["catalog_version"] = snapshot["catalogVersion"]
+    state["lineage_hash"] = snapshot["lineageHash"]
+    state["metric_catalog_hash"] = snapshot["metricCatalogHash"]
+    state["schema_hash"] = snapshot["schemaHash"]
+    state["candidate_plans"] = [plan.to_dict() for plan in result.candidates]
+    state["rejected_plans"] = [vars(item) for item in result.rejected]
+    source, selected = route_selection(result.candidates)
+    state["plan_selection_source"] = source
+    state["selected_plan_id"] = selected
+    state["legacy_planner_fallback"] = not bool(result.candidates)
+    return state
+
+
+async def plan_select_node(state: DataAgentState) -> DataAgentState:
+    from app.agents.query_planner import QueryPlannerAgent
+
+    candidates = state.get("candidate_plans") or []
+    feedback = state.get("plan_validation") if state.get("planning_retry_count") else None
+    try:
+        result = await QueryPlannerAgent().select(
+            state["question"], state.get("resolved_intent") or {}, candidates, feedback,
+        )
+        state["selected_plan_id"] = result["selected_plan_id"]
+        state["planner_reason_code"] = result["reason_code"]
+        state["planner_skill_version"] = result["skill_version"]
+        state["planner_prompt_chars"] = result["prompt_chars"]
+        state["planner_latency_ms"] = result["latency_ms"]
+    except Exception as exc:  # noqa: BLE001
+        state["selected_plan_id"] = None
+        state["warnings"] = [*state.get("warnings", []), f"planner selection failed: {exc}"]
+    return state
+
+
+async def plan_validate_node(state: DataAgentState) -> DataAgentState:
+    if not state.get("candidate_plans"):
+        state["plan_validation"] = {"verdict": "UNSUPPORTED", "code": "NO_CANDIDATE"}
+        state["legacy_planner_fallback"] = True
+        return state
+    from app.lineage.planning import CandidateQueryPlan, FieldRoute
+
+    candidates = []
+    for raw in state["candidate_plans"]:
+        routes = tuple(FieldRoute(**route) for route in raw["fieldRoutes"])
+        candidates.append(CandidateQueryPlan(**{**raw, "fieldRoutes": routes}))
+    result = PlanValidator(settings.lineage_max_hops, settings.lineage_max_candidates).validate(
+        state.get("selected_plan_id"), candidates, state.get("resolved_intent") or {},
+        state["lineage_snapshot"],
+    )
+    state["plan_validation"] = result
+    if result["verdict"] != "PASS":
+        state["planning_retry_count"] = int(state.get("planning_retry_count", 0)) + 1
+        if state["planning_retry_count"] > settings.lineage_max_retries:
+            state["legacy_planner_fallback"] = True
+    else:
+        selected = next(item for item in state["candidate_plans"]
+                        if item["planId"] == state["selected_plan_id"])
+        state["lineage_edge_ids"] = sorted({edge for route in selected["fieldRoutes"]
+                                             for edge in route.get("edgeIds", [])})
+    return state
 
 
 async def router_node(state: DataAgentState) -> DataAgentState:
@@ -254,13 +334,20 @@ async def _expand_relative_time(relative: dict, metric_defs: dict, intent: dict,
 async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
     """按 ResolvedIntent + 指标字典确定性合成 SQL。"""
     intent = state.get("resolved_intent") or {}
-    metric_defs = {}
-    for code in intent.get("metrics") or []:
-        try:
-            metric_defs[code] = await platform.metric_definition(code)
-        except Exception:  # noqa: BLE001 - degrade to raw SQL generation
-            state["semantic_ok"] = False
-            return state
+    active_plan = (
+        settings.lineage_planning_mode == "active"
+        and (state.get("plan_validation") or {}).get("verdict") == "PASS"
+    )
+    if active_plan:
+        metric_defs = {item["metricCode"]: item for item in state["lineage_snapshot"]["metricDefinitions"]}
+    else:
+        metric_defs = {}
+        for code in intent.get("metrics") or []:
+            try:
+                metric_defs[code] = await platform.metric_definition(code)
+            except Exception:  # noqa: BLE001 - degrade to raw SQL generation
+                state["semantic_ok"] = False
+                return state
 
     # relative 时间展开（合成前，P2-1 同源锚点；失败降级 + warning，不打断主链路）
     tr = intent.get("time_range") or {}
@@ -272,7 +359,12 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
             logger.warning("relative time expand failed: %s", exc)
 
     try:
-        sql = synthesize(intent, metric_defs)
+        if active_plan:
+            selected = next(item for item in state["candidate_plans"]
+                            if item["planId"] == state["selected_plan_id"])
+            sql = synthesize_plan(intent, state["lineage_snapshot"], selected)
+        else:
+            sql = synthesize(intent, metric_defs)
     except (SynthesisError, KeyError, TypeError, ValueError):
         state["semantic_ok"] = False
         return state
@@ -282,7 +374,10 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
         {
             "sql": sql,
             "purpose": f"Semantic synthesis for {intent.get('metrics')}",
-            "assumptions": [f"source={metric_defs.get(intent['metrics'][0], {}).get('sourceTable')}"],
+            "assumptions": [
+                f"source={metric_defs.get(intent['metrics'][0], {}).get('sourceTable')}",
+                f"plan={state.get('selected_plan_id') if active_plan else 'legacy'}",
+            ],
             "expected_columns": list(intent.get("dimensions") or []) + list(intent.get("metrics") or []),
             "success": False,
             "result_preview": None,

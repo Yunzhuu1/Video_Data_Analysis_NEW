@@ -886,6 +886,17 @@ async def run_graph_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]
         "metric_recall_full_catalog_count": state.get("metric_recall_full_catalog_count"),
         "metric_recall_prompt_catalog_count": state.get("metric_recall_prompt_catalog_count"),
         "semantic_prompt_chars": state.get("semantic_prompt_chars"),
+        "catalog_version": state.get("catalog_version"),
+        "candidate_plans": state.get("candidate_plans") or [],
+        "rejected_plans": state.get("rejected_plans") or [],
+        "selected_plan_id": state.get("selected_plan_id"),
+        "plan_selection_source": state.get("plan_selection_source"),
+        "plan_validation": state.get("plan_validation"),
+        "planning_retry_count": state.get("planning_retry_count", 0),
+        "lineage_edge_ids": state.get("lineage_edge_ids") or [],
+        "legacy_planner_fallback": bool(state.get("legacy_planner_fallback")),
+        "planner_prompt_chars": state.get("planner_prompt_chars", 0),
+        "planner_latency_ms": state.get("planner_latency_ms", 0),
         "sql": (state.get("sql_attempts") or [{}])[-1].get("sql"),
     }
 
@@ -970,6 +981,17 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "metric_recall_full_catalog_count": observed("metricRecallFullCatalogCount"),
         "metric_recall_prompt_catalog_count": observed("metricRecallPromptCatalogCount"),
         "semantic_prompt_chars": observed("semanticPromptChars"),
+        "catalog_version": observed("catalogVersion"),
+        "candidate_plans": observed("candidatePlans") or [],
+        "rejected_plans": observed("rejectedPlans") or [],
+        "selected_plan_id": observed("selectedPlanId"),
+        "plan_selection_source": observed("planSelectionSource"),
+        "plan_validation": observed("planValidation"),
+        "planning_retry_count": observed("planningRetryCount") or 0,
+        "lineage_edge_ids": observed("lineageEdgeIds") or [],
+        "legacy_planner_fallback": bool(observed("legacyPlannerFallback")),
+        "planner_prompt_chars": observed("plannerPromptChars") or 0,
+        "planner_latency_ms": observed("plannerLatencyMs") or 0,
     }
     latency_ms = int((time.perf_counter() - start) * 1000)
     passed, reason = evaluate_case(case, state)
@@ -998,6 +1020,17 @@ async def run_real_case(case: dict[str, Any], eval_date: str) -> dict[str, Any]:
         "metric_recall_full_catalog_count": state.get("metric_recall_full_catalog_count"),
         "metric_recall_prompt_catalog_count": state.get("metric_recall_prompt_catalog_count"),
         "semantic_prompt_chars": state.get("semantic_prompt_chars"),
+        "catalog_version": state.get("catalog_version"),
+        "candidate_plans": state.get("candidate_plans") or [],
+        "rejected_plans": state.get("rejected_plans") or [],
+        "selected_plan_id": state.get("selected_plan_id"),
+        "plan_selection_source": state.get("plan_selection_source"),
+        "plan_validation": state.get("plan_validation"),
+        "planning_retry_count": state.get("planning_retry_count", 0),
+        "lineage_edge_ids": state.get("lineage_edge_ids") or [],
+        "legacy_planner_fallback": bool(state.get("legacy_planner_fallback")),
+        "planner_prompt_chars": state.get("planner_prompt_chars", 0),
+        "planner_latency_ms": state.get("planner_latency_ms", 0),
         "sql": final_report.get("sql", ""),
     }
 
@@ -1205,6 +1238,9 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
         if r.get("semantic_prompt_chars") is not None
     )
     recall_fallbacks = [r for r in evaluated if r.get("metric_recall_fallback")]
+    planner_invoked = [r for r in evaluated if r.get("plan_selection_source") == "PLANNER_AGENT"]
+    planner_fallbacks = [r for r in evaluated if r.get("legacy_planner_fallback")]
+    selection_sources = sorted({str(r.get("plan_selection_source") or "NONE") for r in evaluated})
     return {
         "total": total,
         "evaluated": len(evaluated),
@@ -1229,6 +1265,17 @@ def aggregate(results: list[dict[str, Any]]) -> dict[str, Any]:
             for reason in sorted({str(r.get("metric_recall_reason") or "unknown")
                                   for r in recall_fallbacks})
         },
+        "planner_invocation_count": len(planner_invoked),
+        "planner_invocation_rate": _percent(len(planner_invoked), len(evaluated)),
+        "planner_legacy_fallback_count": len(planner_fallbacks),
+        "planner_legacy_fallback_rate": _percent(len(planner_fallbacks), len(evaluated)),
+        "plan_selection_sources": {
+            source: sum(1 for r in evaluated if str(r.get("plan_selection_source") or "NONE") == source)
+            for source in selection_sources
+        },
+        "planner_prompt_chars_total": sum(int(r.get("planner_prompt_chars") or 0) for r in evaluated),
+        "planner_latency_ms_total": sum(float(r.get("planner_latency_ms") or 0) for r in evaluated),
+        "planning_retry_total": sum(int(r.get("planning_retry_count") or 0) for r in evaluated),
         "semantic_prompt_chars_total": sum(prompt_chars),
         "semantic_prompt_chars_count": len(prompt_chars),
         "semantic_prompt_chars_avg": (sum(prompt_chars) / len(prompt_chars)) if prompt_chars else 0.0,
@@ -1348,6 +1395,10 @@ def render_report(results: list[dict[str, Any]], run_config: dict[str, str], eva
         f"| 记忆命中率（memory_hit） | {agg['memory_hit_rate']:.2%} | {agg['memory_hit']}/{agg['evaluated']} |",
         f"| 记忆注入率（memory_inject） | {agg['memory_inject_rate']:.2%} | {agg['memory_inject']}/{agg['evaluated']} |",
         f"| 指标召回回退率 | {agg['metric_recall_fallback_rate']:.2%} | {agg['metric_recall_fallback_count']}/{agg['evaluated']} |",
+        f"| Planner 调用率 | {agg['planner_invocation_rate']:.2%} | {agg['planner_invocation_count']}/{agg['evaluated']} |",
+        f"| 规划 legacy fallback | {agg['planner_legacy_fallback_rate']:.2%} | {agg['planner_legacy_fallback_count']}/{agg['evaluated']} |",
+        f"| 规划来源 | - | {agg['plan_selection_sources']} |",
+        f"| Planner 可归因成本 | - | prompt chars={agg['planner_prompt_chars_total']} / latency={agg['planner_latency_ms_total']:.0f}ms / retry={agg['planning_retry_total']} |",
         f"| 语义 User Prompt 字符数 | {agg['semantic_prompt_chars_avg']:.0f} avg | total={agg['semantic_prompt_chars_total']} / p50={agg['semantic_prompt_chars_p50']:.0f} / p95={agg['semantic_prompt_chars_p95']:.0f} / N={agg['semantic_prompt_chars_count']} |",
         f"| 结果正确率（R1，可断言口径） | {agg['result_rate']:.2%} | {agg['result_passed']}/{agg['result_judged']}（真实 MySQL 独立执行，seed 42 真值） |",
         f"| Token 总消耗 | {agg['tokens_total']} | 命中均值 {agg['tokens_hit_avg']:.0f} / 未命中均值 {agg['tokens_miss_avg']:.0f} |",
@@ -1467,6 +1518,10 @@ async def main() -> None:
                         help="仅运行离线指标召回门禁（不调用 LLM/embedding/数据库）")
     parser.add_argument("--metric-recall-report", type=Path,
                         default=DEFAULT_REPORT_DIR / "metric-recall-offline.json")
+    parser.add_argument("--lineage-eval", action="store_true", default=False,
+                        help="仅运行固定 ResolvedIntent 的离线血缘规划门禁")
+    parser.add_argument("--lineage-report", type=Path,
+                        default=DEFAULT_REPORT_DIR / "lineage-offline.json")
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     parser.add_argument("--synonym-cases", type=Path, default=None,
                         help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
@@ -1486,6 +1541,19 @@ async def main() -> None:
         a = json.loads(Path(args.compare[0]).read_text(encoding="utf-8"))
         b = json.loads(Path(args.compare[1]).read_text(encoding="utf-8"))
         print(compare_reports(a, b))
+        return
+
+    if args.lineage_eval:
+        from app.eval.lineage_eval import evaluate_lineage, load_lineage_cases
+
+        lineage_path = Path(__file__).with_name("lineage_cases.yaml")
+        report = evaluate_lineage(load_lineage_cases(lineage_path))
+        args.lineage_report.parent.mkdir(parents=True, exist_ok=True)
+        args.lineage_report.write_text(
+            json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8",
+        )
+        print(json.dumps({key: value for key, value in report.items() if key != "details"},
+                         ensure_ascii=False, indent=2))
         return
 
     run_config = apply_run_config(

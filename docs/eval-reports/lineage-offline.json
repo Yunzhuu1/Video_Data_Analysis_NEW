@@ -1,0 +1,127 @@
+{
+  "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+  "path_recall": {
+    "hits": 8,
+    "total": 8,
+    "rate": 1.0
+  },
+  "expected_rejection": {
+    "hits": 2,
+    "total": 2,
+    "rate": 1.0
+  },
+  "plan_selection_accuracy": {
+    "hits": 2,
+    "total": 2,
+    "rate": 1.0
+  },
+  "illegal_plan_rejection": {
+    "hits": 1,
+    "total": 1
+  },
+  "replan_success": {
+    "hits": 1,
+    "total": 1
+  },
+  "planner_invocation_count": 3,
+  "details": [
+    {
+      "id": "lp01",
+      "path_ok": true,
+      "candidate_count": 2,
+      "selection_source": "PLANNER_AGENT",
+      "selected_path": "total_likes_daily",
+      "rejected": []
+    },
+    {
+      "id": "lp02",
+      "path_ok": true,
+      "candidate_count": 2,
+      "selection_source": "PLANNER_AGENT",
+      "selected_path": "total_likes_fact",
+      "rejected": []
+    },
+    {
+      "id": "lp03",
+      "path_ok": true,
+      "candidate_count": 1,
+      "selection_source": "AUTO_SINGLE",
+      "selected_path": "total_plays_fact",
+      "rejected": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "creator"
+        }
+      ]
+    },
+    {
+      "id": "lp04",
+      "path_ok": true,
+      "candidate_count": 2,
+      "selection_source": "AUTO_POLICY",
+      "selected_path": "completion_rate_detail",
+      "rejected": []
+    },
+    {
+      "id": "lp05",
+      "path_ok": true,
+      "candidate_count": 1,
+      "selection_source": "AUTO_SINGLE",
+      "selected_path": "completion_rate_detail",
+      "rejected": []
+    },
+    {
+      "id": "lp06",
+      "path_ok": true,
+      "candidate_count": 1,
+      "selection_source": "AUTO_SINGLE",
+      "selected_path": "video_revenue_daily",
+      "rejected": []
+    },
+    {
+      "id": "lp07",
+      "path_ok": true,
+      "candidate_count": 2,
+      "selection_source": "PLANNER_AGENT",
+      "selected_path": "total_likes_daily",
+      "rejected": []
+    },
+    {
+      "id": "lp08",
+      "path_ok": true,
+      "candidate_count": 1,
+      "selection_source": "AUTO_SINGLE",
+      "selected_path": "total_plays_fact",
+      "rejected": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "creator"
+        }
+      ]
+    },
+    {
+      "id": "lp09",
+      "rejection_ok": true,
+      "rejected": [
+        {
+          "metricPathId": null,
+          "code": "NON_MVP_INTENT",
+          "reason": "unsupported intent"
+        }
+      ]
+    },
+    {
+      "id": "lp10",
+      "rejection_ok": true,
+      "rejected": [
+        {
+          "metricPathId": null,
+          "code": "NON_MVP_MULTI_METRIC",
+          "reason": "single metric only"
+        }
+      ]
+    }
+  ]
+}

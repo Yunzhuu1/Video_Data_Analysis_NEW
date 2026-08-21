@@ -42,6 +42,10 @@ if BaseSettings is not None:
         metric_recall_mode: str = "topk"  # topk | full（full 用于 A/B 基线与紧急回滚）
         metric_recall_top_k: int = 5
         metric_recall_lexical_threshold: float = 0.55
+        lineage_planning_mode: str = "active"  # off | shadow | active
+        lineage_max_candidates: int = 5
+        lineage_max_hops: int = 2
+        lineage_max_retries: int = 1
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -76,6 +80,10 @@ else:
             self.metric_recall_lexical_threshold = float(
                 os.getenv("METRIC_RECALL_LEXICAL_THRESHOLD", "0.55")
             )
+            self.lineage_planning_mode = os.getenv("LINEAGE_PLANNING_MODE", "active")
+            self.lineage_max_candidates = int(os.getenv("LINEAGE_MAX_CANDIDATES", "5"))
+            self.lineage_max_hops = int(os.getenv("LINEAGE_MAX_HOPS", "2"))
+            self.lineage_max_retries = int(os.getenv("LINEAGE_MAX_RETRIES", "1"))
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 

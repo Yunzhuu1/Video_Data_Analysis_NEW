@@ -121,6 +121,22 @@ public class AgentController {
         debug.put("metricRecallFullCatalogCount", response.metricRecallFullCatalogCount());
         debug.put("metricRecallPromptCatalogCount", response.metricRecallPromptCatalogCount());
         debug.put("semanticPromptChars", response.semanticPromptChars());
+        debug.put("catalogVersion", response.catalogVersion());
+        debug.put("lineageHash", response.lineageHash());
+        debug.put("metricCatalogHash", response.metricCatalogHash());
+        debug.put("schemaHash", response.schemaHash());
+        debug.put("candidatePlans", response.candidatePlans());
+        debug.put("rejectedPlans", response.rejectedPlans());
+        debug.put("selectedPlanId", response.selectedPlanId());
+        debug.put("planSelectionSource", response.planSelectionSource());
+        debug.put("plannerReasonCode", response.plannerReasonCode());
+        debug.put("plannerSkillVersion", response.plannerSkillVersion());
+        debug.put("planValidation", response.planValidation());
+        debug.put("planningRetryCount", response.planningRetryCount());
+        debug.put("lineageEdgeIds", response.lineageEdgeIds());
+        debug.put("legacyPlannerFallback", response.legacyPlannerFallback());
+        debug.put("plannerPromptChars", response.plannerPromptChars());
+        debug.put("plannerLatencyMs", response.plannerLatencyMs());
         return debug;
     }
 

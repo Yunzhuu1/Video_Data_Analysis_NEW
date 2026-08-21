@@ -28,6 +28,7 @@ SEMANTIC_SYSTEM_PROMPT = """你是一个指标语义解析器。基于给定的�
 
 规则：
 - metrics 只能使用指标字典中的 metricCode；dimensions 只能使用维度清单中的维度。
+- 指标字典每项列出的维度只是当前指标的原生能力提示，不是抽取白名单；用户明确说出的 category/content/creator 必须忠实保留，物理可达性由后续 Planner 判断。
 - **date 是时间维度，但只用于 time_range.granularity（day/week/month），禁止放入 dimensions；dimensions 仅允许业务维度 code（category/content/creator）。**
 - **'各分类/按分类/每类/各类' + 指标 → 分类进 dimensions（group by），不进 filters。**
 - **'X 类视频/美食的/游戏的' 限定单一分类 → 进 filters（category=X，op= ），不进 dimensions。**

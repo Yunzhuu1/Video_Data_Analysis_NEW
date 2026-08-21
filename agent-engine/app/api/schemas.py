@@ -39,6 +39,22 @@ class AnalyzeResponse(BaseModel):
         default=None, alias="metricRecallPromptCatalogCount"
     )
     semantic_prompt_chars: int | None = Field(default=None, alias="semanticPromptChars")
+    catalog_version: str | None = Field(default=None, alias="catalogVersion")
+    lineage_hash: str | None = Field(default=None, alias="lineageHash")
+    metric_catalog_hash: str | None = Field(default=None, alias="metricCatalogHash")
+    schema_hash: str | None = Field(default=None, alias="schemaHash")
+    candidate_plans: list[dict[str, Any]] | None = Field(default=None, alias="candidatePlans")
+    rejected_plans: list[dict[str, Any]] | None = Field(default=None, alias="rejectedPlans")
+    selected_plan_id: str | None = Field(default=None, alias="selectedPlanId")
+    plan_selection_source: str | None = Field(default=None, alias="planSelectionSource")
+    planner_reason_code: str | None = Field(default=None, alias="plannerReasonCode")
+    planner_skill_version: str | None = Field(default=None, alias="plannerSkillVersion")
+    plan_validation: dict[str, Any] | None = Field(default=None, alias="planValidation")
+    planning_retry_count: int | None = Field(default=None, alias="planningRetryCount")
+    lineage_edge_ids: list[str] | None = Field(default=None, alias="lineageEdgeIds")
+    legacy_planner_fallback: bool | None = Field(default=None, alias="legacyPlannerFallback")
+    planner_prompt_chars: int | None = Field(default=None, alias="plannerPromptChars")
+    planner_latency_ms: float | None = Field(default=None, alias="plannerLatencyMs")
 
     model_config = {"populate_by_name": True}
 

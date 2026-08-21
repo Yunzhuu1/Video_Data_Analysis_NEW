@@ -1,0 +1,40 @@
+{
+  "catalogSchemaVersion": 1,
+  "tables": [
+    {"tableName": "metric_daily", "grain": ["date", "category"]},
+    {"tableName": "user_behavior_fact", "grain": ["id"]},
+    {"tableName": "play_detail", "grain": ["id"]},
+    {"tableName": "video_revenue", "grain": ["id"]},
+    {"tableName": "content_dim", "grain": ["content_id"]},
+    {"tableName": "creator_dim", "grain": ["creator_id"]}
+  ],
+  "metricPaths": [
+    {"pathId": "total_plays_daily", "metricCode": "total_plays", "sourceTable": "metric_daily", "expressionRef": "primary", "eventFilterRef": null, "timeFieldRef": "date", "nativeDimensions": ["category"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "T1", "costTier": 1},
+    {"pathId": "total_plays_fact", "metricCode": "total_plays", "sourceTable": "user_behavior_fact", "expressionRef": "fact", "eventFilterRef": "fact", "timeFieldRef": "timestamp", "nativeDimensions": ["content", "creator"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "REALTIME", "costTier": 3},
+    {"pathId": "total_likes_daily", "metricCode": "total_likes", "sourceTable": "metric_daily", "expressionRef": "primary", "eventFilterRef": null, "timeFieldRef": "date", "nativeDimensions": ["category"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "T1", "costTier": 1},
+    {"pathId": "total_likes_fact", "metricCode": "total_likes", "sourceTable": "user_behavior_fact", "expressionRef": "fact", "eventFilterRef": "fact", "timeFieldRef": "timestamp", "nativeDimensions": ["content", "creator"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "REALTIME", "costTier": 3},
+    {"pathId": "completion_rate_detail", "metricCode": "completion_rate", "sourceTable": "play_detail", "expressionRef": "primary", "eventFilterRef": null, "timeFieldRef": "created_at", "nativeDimensions": ["content"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "REALTIME", "costTier": 2},
+    {"pathId": "video_revenue_daily", "metricCode": "video_revenue", "sourceTable": "video_revenue", "expressionRef": "primary", "eventFilterRef": null, "timeFieldRef": "stat_date", "nativeDimensions": ["content"], "supportedIntents": ["aggregate", "ranking", "trend"], "freshness": "T1", "costTier": 2}
+  ],
+  "dimensionBindings": [
+    {"bindingId": "md_date", "dimensionCode": "date", "tableName": "metric_daily", "keyColumn": "date", "labelColumn": "date"},
+    {"bindingId": "md_category", "dimensionCode": "category", "tableName": "metric_daily", "keyColumn": "category", "labelColumn": "category"},
+    {"bindingId": "ubf_date", "dimensionCode": "date", "tableName": "user_behavior_fact", "keyColumn": "timestamp", "labelColumn": "timestamp"},
+    {"bindingId": "ubf_content", "dimensionCode": "content", "tableName": "user_behavior_fact", "keyColumn": "content_id", "labelColumn": "content_id"},
+    {"bindingId": "ubf_creator", "dimensionCode": "creator", "tableName": "user_behavior_fact", "keyColumn": "creator_id", "labelColumn": "creator_id"},
+    {"bindingId": "pd_date", "dimensionCode": "date", "tableName": "play_detail", "keyColumn": "created_at", "labelColumn": "created_at"},
+    {"bindingId": "pd_content", "dimensionCode": "content", "tableName": "play_detail", "keyColumn": "content_id", "labelColumn": "content_id"},
+    {"bindingId": "vr_date", "dimensionCode": "date", "tableName": "video_revenue", "keyColumn": "stat_date", "labelColumn": "stat_date"},
+    {"bindingId": "vr_content", "dimensionCode": "content", "tableName": "video_revenue", "keyColumn": "content_id", "labelColumn": "content_id"},
+    {"bindingId": "content_content", "dimensionCode": "content", "tableName": "content_dim", "keyColumn": "content_id", "labelColumn": "title"},
+    {"bindingId": "content_category", "dimensionCode": "category", "tableName": "content_dim", "keyColumn": "category", "labelColumn": "category"},
+    {"bindingId": "content_creator", "dimensionCode": "creator", "tableName": "content_dim", "keyColumn": "creator_id", "labelColumn": "creator_id"},
+    {"bindingId": "creator_creator", "dimensionCode": "creator", "tableName": "creator_dim", "keyColumn": "creator_id", "labelColumn": "name"}
+  ],
+  "joinEdges": [
+    {"edgeId": "ubf_content", "fromTable": "user_behavior_fact", "fromColumns": ["content_id"], "toTable": "content_dim", "toColumns": ["content_id"], "cardinalityFromTo": "N:1"},
+    {"edgeId": "play_content", "fromTable": "play_detail", "fromColumns": ["content_id"], "toTable": "content_dim", "toColumns": ["content_id"], "cardinalityFromTo": "N:1"},
+    {"edgeId": "revenue_content", "fromTable": "video_revenue", "fromColumns": ["content_id"], "toTable": "content_dim", "toColumns": ["content_id"], "cardinalityFromTo": "N:1"},
+    {"edgeId": "content_creator", "fromTable": "content_dim", "fromColumns": ["creator_id"], "toTable": "creator_dim", "toColumns": ["creator_id"], "cardinalityFromTo": "N:1"}
+  ]
+}
