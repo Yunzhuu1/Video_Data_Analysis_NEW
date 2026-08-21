@@ -18,3 +18,17 @@ def test_prompt_keeps_metric_and_dimension_filters_distinct():
     prompt = build_semantic_user_prompt("完播率超过50%的创作者", catalog, [])
     assert "completion_rate" in prompt
     assert "完播率超过50%的创作者" in prompt
+
+
+def test_native_metric_dimensions_do_not_drop_explicit_creator():
+    catalog = [{
+        "metricCode": "completion_rate", "metricName": "完播率",
+        "businessDefinition": "平均完播率", "dimensions": ["content"],
+    }]
+    prompt = build_semantic_user_prompt(
+        "每位创作者的完播率", catalog,
+        [{"code": "creator", "name": "创作者", "description": "creator_id"}],
+    )
+    assert "原生能力提示，不是抽取白名单" in SEMANTIC_SYSTEM_PROMPT
+    assert "每位创作者的完播率" in prompt
+    assert "creator" in prompt

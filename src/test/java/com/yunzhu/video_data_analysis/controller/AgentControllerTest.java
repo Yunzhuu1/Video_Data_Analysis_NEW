@@ -53,7 +53,11 @@ class AgentControllerTest {
                 5,
                 15,
                 5,
-                1234
+                1234,
+                "catalog-v1", "lineage-h", "metric-h", "schema-h",
+                List.of(Map.of("planId", "p1")), List.of(), "p1", "AUTO_SINGLE",
+                null, null, Map.of("verdict", "PASS"), 0, List.of("play_content"),
+                false, 0, 0.0
         );
     }
 
@@ -90,6 +94,9 @@ class AgentControllerTest {
         assertThat(report.getDebug()).containsEntry("metricRecallFullCatalogCount", 15);
         assertThat(report.getDebug()).containsEntry("metricRecallPromptCatalogCount", 5);
         assertThat(report.getDebug()).containsEntry("semanticPromptChars", 1234);
+        assertThat(report.getDebug()).containsEntry("catalogVersion", "catalog-v1");
+        assertThat(report.getDebug()).containsEntry("selectedPlanId", "p1");
+        assertThat(report.getDebug()).containsEntry("planSelectionSource", "AUTO_SINGLE");
     }
 
     @Test
@@ -115,7 +122,9 @@ class AgentControllerTest {
                 5,
                 15,
                 5,
-                null
+                null,
+                null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null
         );
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(waiting);
 

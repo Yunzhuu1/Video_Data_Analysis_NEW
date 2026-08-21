@@ -57,6 +57,24 @@ class DataAgentState(TypedDict, total=False):
     metric_recall_prompt_catalog_count: int
     semantic_prompt_chars: int | None
 
+    lineage_snapshot: dict[str, Any]
+    catalog_version: str
+    lineage_hash: str
+    metric_catalog_hash: str
+    schema_hash: str
+    candidate_plans: list[dict[str, Any]]
+    rejected_plans: list[dict[str, Any]]
+    selected_plan_id: str | None
+    plan_selection_source: str
+    planner_reason_code: str | None
+    planner_skill_version: str | None
+    plan_validation: dict[str, Any]
+    planning_retry_count: int
+    lineage_edge_ids: list[str]
+    legacy_planner_fallback: bool
+    planner_prompt_chars: int
+    planner_latency_ms: float
+
     sql_attempts: list[dict[str, Any]]
     query_result: dict[str, Any]
     hard_guard_result: dict[str, Any]

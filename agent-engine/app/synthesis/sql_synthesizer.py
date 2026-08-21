@@ -25,6 +25,8 @@ _ALIAS = {
     "creator_revenue": "cr",
     "video_revenue": "vr",
     "user_retention": "ur",
+    "content_dim": "cd",
+    "creator_dim": "ctd",
 }
 
 DIMENSIONS = [
@@ -359,3 +361,110 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         direction = str(ordering.get("direction") or "desc").upper()
         sql += f" ORDER BY {agg_exprs[0][1]} {direction} LIMIT {_limit(ordering, 10)}"
     return sql.strip()
+
+
+def synthesize_plan(intent: ResolvedIntent, snapshot: dict[str, Any], plan: dict[str, Any]) -> str:
+    """只按 validated plan + run 冻结 snapshot 编译单指标 SQL；不做路径推导。"""
+    metrics = list(intent.get("metrics") or [])
+    if len(metrics) != 1:
+        raise SynthesisError("lineage plan compiler only supports one metric")
+    code = metrics[0]
+    definitions = {item["metricCode"]: item for item in snapshot["metricDefinitions"]}
+    paths = {item["pathId"]: item for item in snapshot["lineage"]["metricPaths"]}
+    bindings = {item["bindingId"]: item for item in snapshot["lineage"]["dimensionBindings"]}
+    edges = {item["edgeId"]: item for item in snapshot["lineage"]["joinEdges"]}
+    mdef = definitions.get(code)
+    path = paths.get(plan.get("metricPathId"))
+    if mdef is None or path is None or path["metricCode"] != code:
+        raise SynthesisError("plan metric/path mismatch")
+    source = path["sourceTable"]
+    alias = _ALIAS[source]
+    routes = plan.get("fieldRoutes") or []
+    route_by_usage: dict[tuple[str, str], dict[str, Any]] = {}
+    edge_ids: list[str] = []
+    for route in routes:
+        for usage in route.get("usages") or []:
+            route_by_usage[(route["semanticField"], usage)] = route
+        edge_ids.extend(route.get("edgeIds") or [])
+
+    joined: list[str] = []
+    current_tables = {source}
+    for edge_id in dict.fromkeys(edge_ids):
+        edge = edges.get(edge_id)
+        if edge is None or edge["fromTable"] not in current_tables:
+            raise SynthesisError("plan contains non-forward edge")
+        left = _ALIAS[edge["fromTable"]]
+        right = _ALIAS[edge["toTable"]]
+        on = " AND ".join(
+            f"{left}.{a} = {right}.{b}"
+            for a, b in zip(edge["fromColumns"], edge["toColumns"])
+        )
+        joined.append(f"JOIN {edge['toTable']} {right} ON {on}")
+        current_tables.add(edge["toTable"])
+
+    def field_expr(field: str, usage: str) -> str:
+        route = route_by_usage.get((field, usage))
+        if route is None:
+            raise SynthesisError(f"missing selected field route: {field}/{usage}")
+        if route["routeKind"] == "TIME_FIELD":
+            raw = f"{alias}.{path['timeFieldRef']}"
+            return f"DATE({raw})" if usage == "TIME_BUCKET" and path["timeFieldRef"] not in {"date", "stat_date"} else raw
+        binding = bindings.get(route.get("bindingId"))
+        if binding is None:
+            raise SynthesisError(f"unknown binding: {route.get('bindingId')}")
+        return f"{_ALIAS[binding['tableName']]}.{binding['labelColumn']}"
+
+    expression = mdef.get("factFormula") if path["expressionRef"] == "fact" else mdef.get("formula")
+    if not expression:
+        raise SynthesisError("missing metric expression")
+    dims = list(intent.get("dimensions") or [])
+    it = intent.get("intent", "aggregate")
+    gb = (["date"] + [d for d in dims if d != "date"]) if it == "trend" else dims
+    if source == "metric_daily" and set(gb) != {"date", "category"}:
+        expression = f"SUM({expression})"
+    select_cols = []
+    group_exprs = []
+    if it == "trend":
+        date_expr = field_expr("date", "TIME_BUCKET")
+        select_cols.append(f"{date_expr} AS date")
+        group_exprs.append(date_expr)
+    for dim in dims:
+        expr = field_expr(dim, "GROUP_BY")
+        select_cols.append(f"{expr} AS {dim}")
+        group_exprs.append(expr)
+    select_cols.append(f"{expression} AS {code}")
+    conditions = []
+    if path.get("eventFilterRef") == "fact" and mdef.get("factEventFilter"):
+        conditions.append(str(mdef["factEventFilter"]))
+    having = []
+    for flt in intent.get("filters") or []:
+        field = str(flt.get("field") or "")
+        if field == code:
+            having.append(_filter_cond(expression, flt))
+        else:
+            conditions.append(_filter_cond(field_expr(field, "FILTER"), flt))
+    tr = intent.get("time_range") or {}
+    if tr.get("type") == "absolute":
+        absolute = tr.get("absolute") or {}
+        if absolute.get("start") and absolute.get("end"):
+            time_expr = field_expr("date", "TIME_FILTER")
+            end = str(absolute["end"])
+            if len(end) <= 10:
+                end += " 23:59:59"
+            conditions.append(f"{time_expr} BETWEEN '{absolute['start']}' AND '{end}'")
+    sql = f"SELECT {', '.join(select_cols)} FROM {source} {alias}"
+    if joined:
+        sql += " " + " ".join(joined)
+    if conditions:
+        sql += " WHERE " + " AND ".join(conditions)
+    if group_exprs:
+        sql += " GROUP BY " + ", ".join(group_exprs)
+    if having:
+        sql += " HAVING " + " AND ".join(having)
+    ordering = intent.get("ordering") or {}
+    if it == "trend":
+        sql += " ORDER BY date"
+    elif it == "ranking":
+        direction = str(ordering.get("direction") or "desc").upper()
+        sql += f" ORDER BY {expression} {direction} LIMIT {_limit(ordering, 10)}"
+    return sql
