@@ -25,29 +25,31 @@ def _seed(namespace="eval-1"):
 
 @pytest.mark.asyncio
 async def test_seed_rejects_default_namespace():
-    await _make_store()
+    store = await _make_store()
     try:
         with pytest.raises(HTTPException) as e:
             await routes.memory_seed(_seed(namespace="default"), settings.internal_api_token)
         assert e.value.status_code == 400
     finally:
+        await store.close()
         nodes.memory = None
 
 
 @pytest.mark.asyncio
 async def test_seed_requires_token():
-    await _make_store()
+    store = await _make_store()
     try:
         with pytest.raises(HTTPException) as e:
             await routes.memory_seed(_seed(), None)
         assert e.value.status_code == 403
     finally:
+        await store.close()
         nodes.memory = None
 
 
 @pytest.mark.asyncio
 async def test_seed_clear_entries_roundtrip():
-    await _make_store()
+    store = await _make_store()
     try:
         r = await routes.memory_seed(_seed(), settings.internal_api_token)
         assert r["namespace"] == "eval-1"
@@ -60,6 +62,7 @@ async def test_seed_clear_entries_roundtrip():
         await routes.memory_clear(MemoryClearRequest(namespace="eval-1"), settings.internal_api_token)  # 幂等
         assert (await routes.memory_entries("eval-1", settings.internal_api_token))["count"] == 0
     finally:
+        await store.close()
         nodes.memory = None
 
 
@@ -75,4 +78,5 @@ async def test_namespace_isolation_in_store():
         assert e1.resolved_intent["intent"] == "trend"
         assert d1.resolved_intent["intent"] == "aggregate"
     finally:
+        await store.close()
         nodes.memory = None

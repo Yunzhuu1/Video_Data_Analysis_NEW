@@ -1,8 +1,10 @@
 """指标候选召回的离线门禁：不调用 LLM、embedding 或数据库。"""
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Any
 
+from app.memory.aliases import get_aliases
 from app.semantic.metric_recall import MetricCandidateRetriever
 
 
@@ -12,6 +14,7 @@ def evaluate_metric_recall(
     *,
     configured_k: int,
     lexical_threshold: float,
+    alias_loader: Callable[[], dict[str, str]] = get_aliases,
 ) -> dict[str, Any]:
     judged = [case for case in cases if (case.get("golden_spec") or {}).get("metrics")]
     details: list[dict[str, Any]] = []
@@ -27,6 +30,7 @@ def evaluate_metric_recall(
         top_k=configured_k,
         lexical_threshold=lexical_threshold,
         mode="topk",
+        alias_loader=alias_loader,
     )
     for case in judged:
         result = retriever.retrieve(str(case.get("question") or ""), catalog)
@@ -98,10 +102,17 @@ def scan_metric_recall(
     *,
     k_values: tuple[int, ...] = (5, 8, 15),
     thresholds: tuple[float, ...] = (0.55, 0.45, 0.35),
+    alias_loader: Callable[[], dict[str, str]] = get_aliases,
 ) -> list[dict[str, Any]]:
     """按设计顺序扫描参数；调用方选择首个 gate_passed 组合并如实保留全表。"""
     return [
-        evaluate_metric_recall(cases, catalog, configured_k=k, lexical_threshold=threshold)
+        evaluate_metric_recall(
+            cases,
+            catalog,
+            configured_k=k,
+            lexical_threshold=threshold,
+            alias_loader=alias_loader,
+        )
         for k in k_values
         for threshold in thresholds
     ]

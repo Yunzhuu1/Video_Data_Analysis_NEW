@@ -38,6 +38,13 @@ def test_longest_match_prevents_overlapping_short_metric():
     assert result.ranked_candidates[0].metric_code == "duration"
 
 
+def test_same_length_normalized_conflict_uses_metric_code_order():
+    catalog = _catalog(("z_metric", "Ａ量"), ("a_metric", "A量"))
+    result = MetricCandidateRetriever(top_k=1, alias_loader=dict).retrieve("A量", catalog)
+    assert result.pinned_count == 1
+    assert result.ranked_candidates[0].metric_code == "a_metric"
+
+
 def test_pinned_count_expands_effective_k_without_truncation():
     catalog = _catalog(("a", "甲"), ("b", "乙"), ("c", "丙"))
     result = MetricCandidateRetriever(top_k=2, alias_loader=dict).retrieve("甲乙丙", catalog)
@@ -91,3 +98,14 @@ def test_loader_error_falls_back_without_embedding_or_network():
     assert result.mode == "full_fallback"
     assert result.fallback_reason == "retriever_error"
     assert result.warnings == ("bad aliases",)
+
+
+def test_alias_referencing_unknown_metric_invalidates_recall_resource():
+    catalog = _catalog(("total_plays", "播放量"))
+    result = MetricCandidateRetriever(
+        alias_loader=lambda: {"点赞数": "total_like_typo"},
+    ).retrieve("点赞数", catalog)
+    assert result.mode == "full_fallback"
+    assert result.fallback_reason == "invalid_catalog"
+    assert result.prompt_catalog == catalog
+    assert "unknown metricCode" in result.warnings[0]
