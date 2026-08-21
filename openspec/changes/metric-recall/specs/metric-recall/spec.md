@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: 确定性指标候选召回
-系统 SHALL 在语义 LLM 调用前，根据完整指标 catalog 与经审核别名，以确定性的精确名称/最长别名匹配和字符 n-gram 词面分数生成稳定排序的指标候选。召回 SHALL 不依赖 embedding API；显式命中的多指标 SHALL 全部保留，即使命中数超过配置 Top-K 也不得截断。
+系统 SHALL 在语义 LLM 调用前，根据完整指标 catalog 与经审核别名，以确定性的精确名称/最长别名匹配和字符 n-gram 词面分数生成稳定排序的指标候选。规范化 SHALL 固定为 Unicode NFKC、lower、仅保留 `isalnum` code point（包括移除 metric code 的 `_`）；空表达 SHALL 丢弃，单字符表达 SHALL 只计算 unigram coverage，不得产生 bigram 零分母。召回 SHALL 不依赖 embedding API；显式命中的多指标 SHALL 全部保留，即使命中数超过配置 Top-K 也不得截断。
 
 #### Scenario: 单指标候选召回
 - **WHEN** 用户问题包含 catalog 指标名、metric code 或已审核别名
@@ -14,6 +14,14 @@
 #### Scenario: 召回结果稳定
 - **WHEN** 使用相同问题、catalog、别名版本、Top-K 与阈值重复召回
 - **THEN** 候选 code、顺序、分数和原因完全一致
+
+#### Scenario: 统一别名数据契约
+- **WHEN** memory、指标召回或评测读取指标别名
+- **THEN** 三者消费同一 `AliasBundle`；运行时使用 alias map，评测使用同源 alias records/covered_by，禁止评测自行解析另一份 YAML
+
+#### Scenario: n-gram 边界输入
+- **WHEN** 表达含下划线/标点、归一化后为空或仅含一个 Unicode code point
+- **THEN** 下划线/标点按固定规则移除，空表达被忽略，单字符表达只计算 unigram 且不发生除零
 
 #### Scenario: 无 embedding 运行
 - **WHEN** embedding key、模型或额度不可用
@@ -32,10 +40,10 @@
 
 #### Scenario: 显式 full 回滚
 - **WHEN** 配置 `METRIC_RECALL_MODE=full`
-- **THEN** 系统跳过 Top-K 裁剪并使用完整 catalog，恢复 change 前的语义目录输入行为
+- **THEN** 系统跳过 Top-K 裁剪并使用完整 catalog，返回 `mode=full`、`fallback=false`、空 fallback reason，恢复 change 前行为且不计入 fallback rate
 
 ### Requirement: 指标召回运行时观测
-系统 SHALL 在 state 和既有 debug 通道记录候选 code/分数/原因、召回模式、回退状态与原因、Top-K、完整/Prompt catalog 数量和语义 Prompt 字符数。默认业务响应 SHALL 不展示该调试信息。
+系统 SHALL 在 state 和既有 debug 通道记录回退前候选 code/分数/原因、召回模式（`topk|full|full_fallback`）、回退状态与原因、Top-K、完整/Prompt catalog 数量和语义 Prompt 字符数。`semanticPromptChars` SHALL 等于实际发送给 LLM 的最终 `build_semantic_user_prompt(...)` user message 的 Python `len()`，不含 system prompt；memory inject 时包含实际 examples；未调用语义 LLM时为 null 且不进入均值。默认业务响应 SHALL 不展示该调试信息。
 
 #### Scenario: Top-K 观测数据
 - **WHEN** `includeDebug=true` 且本次使用 Top-K 候选调用语义解析器
@@ -44,4 +52,3 @@
 #### Scenario: 回退观测数据
 - **WHEN** 本次使用完整 catalog 回退
 - **THEN** debug 返回 `metricRecallMode=full_fallback`、`metricRecallFallback=true` 和非空回退原因
-

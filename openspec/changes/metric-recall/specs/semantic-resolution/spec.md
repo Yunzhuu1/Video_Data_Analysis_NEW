@@ -19,3 +19,6 @@
 - **WHEN** 指标召回返回 `mode=full_fallback`
 - **THEN** `SemanticResolver` 收到完整 catalog，后续 ResolvedIntent 与 SQL 合成流程不变
 
+#### Scenario: 显式完整目录基线
+- **WHEN** 指标召回配置为 `mode=full`
+- **THEN** `SemanticResolver` 收到完整 catalog，且该次运行不标记为 fallback

@@ -24,7 +24,7 @@
 ## Impact
 
 - Python Agent Engine：新增指标召回模块，修改 `semantic_resolve_node`、state/debug 观测字段及语义 Prompt 调用入口。
-- 评测：复用 `cases.yaml` 的 `golden_spec.metrics`，新增独立召回校验与 A/B 报告；全量口径预计 N=61，既有 N=57 子集单独报告。
+- 评测：Recall@K 只复用 `cases.yaml` 中含 `golden_spec.metrics` 的 **49 条 judged cases（分母=49）**；端到端 A/B 使用全量 N=61，既有 N=57 子集单独报告，禁止混用分母。
 - 配置：新增 Top-K、词面阈值和全目录回退开关；默认值必须经离线数据标定后固化。
 - 数据/API：不改数据库表或业务响应；Agent 内部响应与 Spring `includeDebug=true` 通道增量透传召回观测字段。指标定义继续以 `metric_catalog.json` / 平台 catalog 为唯一来源。
 - 依赖：不新增在线模型或分词服务依赖。
