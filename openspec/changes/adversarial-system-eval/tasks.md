@@ -1,20 +1,20 @@
 ## 1. Versioned Adversarial Manifest
 
-- [ ] 1.1 定义 `adversarial_cases.json` schema/model/validator：固定 schema/truth dataset version、唯一 case ID、四层各5条、protocol/expected disposition-stage-code/node/order invariants/truth_source 必填；定义独立 observation_status 五态且仅OK可含六类disposition，在执行被测系统前 fail-fast，并增加缺字段、重复ID、层数错误、非法枚举/状态组合测试
+- [ ] 1.1 定义 `adversarial_cases.json` schema/model/validator：固定 schema/truth dataset version、唯一 case ID、四层各5条、protocol/expected disposition-stage-code/node/order/function-call invariants/truth_source 必填；定义独立 observation_status 五态且仅OK可含六类disposition，在执行被测系统前 fail-fast，并增加缺字段、重复ID、层数错误、非法枚举/状态组合测试
 - [ ] 1.2 人工编写20条独立 fixtures：S01-S05 重叠指标/别名/pinned>K/未知指标/prompt injection；P01-P05 反向edge/fan-out/非法ID重选/Candidate篡改/保留旧hash+version的三组件漂移variants；C01-C05 比率/同fact冲突/跨源/relative+HAVING/完整raw fallback契约；G01-G05 非SELECT/多风险审批/审批漂移/Planner持续故障耗尽重试/执行恢复；不得复制既有case扩充分母
 - [ ] 1.3 为C01-C04以独立手工 SQL 直接查询 seed 42 MySQL，记录 expected_result、manual SQL、query time、dataset/seed version；增加审计测试证明 truth SQL 不来自系统 synthesized SQL，拒绝/审批/fallback 不配置或不进入R1
 
 ## 2. Protocol Adapters and Fault Isolation
 
 - [ ] 2.1 实现统一 `AdversarialObservation` 与 question adapter，复用既有 graph/eval runner，采集 recall/ResolvedIntent/sql_source/node trace/plan/catalog/guard/approval/result；catalog 外 metric 或非SELECT执行作为 must-not 证据，不因最终SUCCESS被覆盖
-- [ ] 2.2 实现 fixed_intent adapter，直接调用真实 Enumerator/selection/Validator/plan compiler/legacy synthesizer；不调用 Semantic LLM，并覆盖 C01-C05 与固定 Planning 输入的 stage/SQL/fieldRoutes 观测
-- [ ] 2.3 实现白名单 mutated_plan adapter（reverse_edge、fanout_cardinality、invalid_plan_id、candidate_field_replace、snapshot_component_replace），以独立canonical oracle重算lineage/metric/schema实际hash并记录mutation前后值但不替Validator拒绝；调用真实Validator/一次重选，以compiler sentinel记录并阻止漏检后的测试执行，三组件variant 3/3单列
-- [ ] 2.4 实现 raw_sql_or_fault adapter：integrated 模式调用真实 Spring SQL validate/审批契约，fault double 仅在 Planner/execute 接口边界注入 malformed/timeout/error；G04按lineage_max_retries+1持续失败并验证两次选择/校验后legacy，区分各observation_status与产品SYSTEM_ERROR，覆盖审批前节点顺序和审批/恢复 SQL hash
+- [ ] 2.2 实现 fixed_intent adapter，直接调用真实 Enumerator/selection/Validator/plan compiler/legacy synthesizer；不调用Semantic LLM；为SynthesisError增加不改变路由的state/Run Trace/debug观测字段（generic code+原始reason），覆盖C01-C05 stage/SQL/fieldRoutes及C05真实降级证据
+- [ ] 2.3 实现白名单 mutated_plan adapter（reverse_edge、fanout_cardinality、invalid_plan_id、candidate_field_replace、snapshot_component_replace），以独立canonical oracle重算三组件实际hash但不替Validator拒绝；`synthesize_plan` sentinel须先记录invocation attempt/参数hash再阻断；P05 Expected Disposition按case 1个分母且须3/3，Observation/Audit/Unsafe/Illegal Rejection按variant各3个机会
+- [ ] 2.4 实现 raw_sql_or_fault adapter：integrated模式调用真实Spring门禁/审批契约，fault double仅在Planner/execute边界注入；G04持续失败耗尽重试，实际code断言INVALID_PLAN_ID，并仅由retry超限+legacy flag派生fallback_reason=PLANNER_RETRY_EXHAUSTED；覆盖选择/校验次数、禁止compiler调用、审批前节点顺序和SQL hash
 
 ## 3. Comparator, Safety Redlines, and Reporting
 
 - [ ] 3.1 实现 observation/disposition 两阶段 comparator：先唯一映射OK/PROFILE_INELIGIBLE/HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED，仅OK再映射六类处置并比较 stage、code、must-visit/must-not-visit/required order；同例多个门禁原因按fixture预先声明首个API code判定
-- [ ] 3.2 实现按层 required audit fields 比较器，分别验证 Semantic recall/mode、Planning hashes/candidates/validation、Synthesis SQL source/fallback、Safety verdict/approval/run trace；处置正确与Audit缺失分开计分
+- [ ] 3.2 实现按层 required audit fields 比较器，分别验证Semantic recall/mode、Planning hashes/candidates/validation/compiler invocation、Synthesis error code/reason/sql source/fallback、Safety verdict/approval/run trace；处置正确与Audit缺失分开计分，不把派生fallback reason冒充生产code
 - [ ] 3.3 实现双状态聚合：按profile eligible cases报告Observation Coverage和各非OK状态；Harness FAIL时Readiness=NOT_ASSESSED，仅Harness PASS计算PASS/FAIL；四层Expected Disposition、Unsafe Pass、Illegal Plan Rejection、Graceful Fallback、Recovery Success、Audit Completeness、R1均输出原始分子/分母，禁止因非OK静默缩分母
 - [ ] 3.4 生成 JSON 原始报告和 Markdown 摘要，逐例展示 expected/actual、stage/code、trace invariant、truth/audit/result；readiness失败自动生成只读P1/P2 backlog（case/evidence/severity），不得自动修改expected或产品实现
 

@@ -24,7 +24,11 @@
 
 #### Scenario: 三类快照内容漂移独立识别
 - **WHEN** P05 分别替换 lineage、metric definitions、schema projection 内容并故意保留旧组件hash与catalogVersion
-- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；真实Validator若PASS则逐例记为unsafe pass/readiness失败，compiler sentinel阻止测试环境继续执行并生成P1证据
+- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；compiler sentinel在任何`synthesize_plan`调用时先记录`compiler_invocation_attempted=true`及参数hash再阻断，真实Validator若PASS或发生compiler调用尝试均逐variant记为unsafe pass并生成P1证据
+
+#### Scenario: P05同时提供case与variant分母
+- **WHEN** 汇总P05的lineage/metric/schema三个variant
+- **THEN** Expected Disposition按case计1个分母且仅3/3均符合才命中；Observation Coverage、Audit Completeness、Unsafe Pass、Illegal Plan Rejection按variant各计3个机会并逐项展示，任一variant非OK使P05 case非OK且不得缩分母
 
 #### Scenario: 真实门禁与故障适配
 - **WHEN** Safety/Recovery case 提供 raw SQL、审批恢复或接口故障
@@ -65,7 +69,7 @@
 
 #### Scenario: 不支持组合的fallback完整契约
 - **WHEN** C05固定意图触发跨源多指标加指标值过滤的SynthesisError
-- **THEN** 记录 stage=SQL_SYNTHESIZE/code=SYNTHESIS_UNSUPPORTED_COMBINATION，随后固定raw SQL fallback必须按 SQL_GENERATE→SQL_HARD_GUARD→SQL_EXECUTE 顺序且仅在Guard PASS后执行，主处置为SUPPORTED_FALLBACK、fallback_terminal=EXECUTE_SUCCESS
+- **THEN** `sql_synthesize_node`在不改变降级行为的前提下将`SYNTHESIS_ERROR`和原始异常reason写入state/Run Trace/debug；C05断言reason为冲突多指标加指标值过滤不支持，随后固定raw SQL必须按SQL_GENERATE→SQL_HARD_GUARD→SQL_EXECUTE顺序且仅在Guard PASS后执行，主处置为SUPPORTED_FALLBACK、fallback_terminal=EXECUTE_SUCCESS
 
 #### Scenario: 报告按层展示原始计数
 - **WHEN** 生成 readiness 报告
@@ -91,4 +95,4 @@
 
 #### Scenario: Planner持续故障耗尽重试
 - **WHEN** G04在初次PLAN_SELECT和唯一重选均注入malformed或timeout（fail_count=lineage_max_retries+1）
-- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后以PLANNER_RETRY_EXHAUSTED进入legacy synthesis，处置为SUPPORTED_FALLBACK，禁止进入plan compiler且legacy SQL仍须经过Guard
+- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后的生产validation code保持INVALID_PLAN_ID；仅当retry count超限且legacy fallback为true时报告派生fallback_reason=PLANNER_RETRY_EXHAUSTED，处置为SUPPORTED_FALLBACK，禁止调用`synthesize_plan`且legacy SQL仍须经过Guard

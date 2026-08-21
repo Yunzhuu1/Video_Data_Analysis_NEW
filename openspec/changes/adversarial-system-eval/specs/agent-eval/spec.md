@@ -25,3 +25,11 @@
 #### Scenario: 处置错误与审计缺失分离
 - **WHEN** 某 case 的 disposition 符合 expected 但缺少 required audit field
 - **THEN** Expected Disposition 可通过但 Audit Completeness 失败，报告不得合并为一个模糊错误
+
+#### Scenario: 合成失败原因进入真实Graph观测
+- **WHEN** 确定性合成器抛出SynthesisError并按既有行为降级raw SQL
+- **THEN** graph state、Run Trace与includeDebug观测均包含generic synthesis_error_code和原始synthesis_error_reason；新增字段不得改变semantic_ok、路由、SQL生成或门禁行为
+
+#### Scenario: 函数调用不冒充图节点
+- **WHEN** 对抗fixture需要验证SQL_SYNTHESIZE节点内部的plan compiler是否被调用
+- **THEN** observation以compiler_invocation_attempted和参数hash记录函数调用尝试，不得虚构PLAN_COMPILER节点或因sentinel阻断而报告为从未尝试

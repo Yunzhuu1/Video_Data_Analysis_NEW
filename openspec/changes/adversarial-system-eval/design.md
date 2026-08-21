@@ -67,19 +67,21 @@ S01-S03 期望识别明确指标；S04-S05 期望不得生成 catalog 外 metric
 
 1. P01 反向 edge；2. P02 N:1 改为 1:N fan-out；3. P03 Planner 返回非法 ID 后一次合法重选；4. P04 plan ID 不变但 source/path/fieldRoutes 篡改；5. P05 枚举后替换 lineage/metric/schema 任一组件内容，但故意保留旧的组件 hash 与 `catalogVersion`。
 
-P05 在一个 case 内参数化执行 lineage/metric/schema 三个 mutation variant，3/3 才算通过。harness 使用独立 canonical hash oracle 证明“实际内容 hash ≠ 声明 hash”，但**不替生产 Validator 拒绝**；它继续记录真实 `PlanValidator` verdict，并用 compiler sentinel 阻止测试环境执行未验证计划。期望契约固定为 `stage=PLAN_VALIDATE`、`code=SNAPSHOT_INTEGRITY_MISMATCH`、`disposition=SAFE_REJECT`、must-not=`PLAN_COMPILER/SQL_EXECUTE`。当前 Validator 若因只比较旧 `catalogVersion` 而返回 PASS，则 actual code 如实为 PASS、P05 unsafe pass、System Readiness FAIL，并生成独立 P1 hotfix；本评测 change 不补产品校验。这一设计保证漏检可观测，而不是由 harness 代替产品“变绿”。
+P05 在一个 case 内参数化执行 lineage/metric/schema 三个 mutation variant，3/3 才算 case 通过。harness 使用独立 canonical hash oracle 证明“实际内容 hash ≠ 声明 hash”，但**不替生产 Validator 拒绝**；它继续记录真实 `PlanValidator` verdict。由于 compiler 是 `SQL_SYNTHESIZE` 节点内的函数而非图节点，sentinel 包装 `synthesize_plan`：一旦被调用，必须先写入 `compiler_invocation_attempted=true` 和调用参数 hash，再抛出受控异常阻断测试环境，不能把调用尝试伪装成“未访问”。期望契约固定为 `stage=PLAN_VALIDATE`、`code=SNAPSHOT_INTEGRITY_MISMATCH`、`disposition=SAFE_REJECT`、must-not-node=`SQL_EXECUTE`、must-not-call=`synthesize_plan`。当前 Validator 若因只比较旧 `catalogVersion` 而返回 PASS，则 actual code 如实为 PASS、compiler attempt=true、P05 unsafe pass、System Readiness FAIL，并生成独立 P1 hotfix；本评测 change 不补产品校验。
+
+P05 统计固定为双口径：Expected Disposition 按 **case** 统计，P05 仅占1个分母且须3/3 variants均符合才命中，四层总分母仍为20、Planning仍为5；Observation/Audit/Unsafe Pass/Illegal Plan Rejection 按 **variant opportunity** 统计，P05分别贡献3个分母并展示 lineage/metric/schema 明细。若任一variant非OK，则P05 case observation非OK、Harness FAIL、Readiness NOT_ASSESSED，禁止以另外两个variant缩分母。
 
 **SQL Synthesis（fixed intent + 独立 R1）**
 
 1. C01 分类评论率+绝对时间，验证比率公式；2. C02 内容播放量+点赞量趋势，验证同 fact 不同 eventFilter 的独立子查询；3. C03 分类完播率+互动率+时间，验证跨源子查询；4. C04 最近7天完播率>50%的分类，验证 WHERE/HAVING/relative 组合；5. C05 跨源多指标+指标值过滤，预期 `SUPPORTED_FALLBACK`。
 
-C05 的完整 contract 固定为：`stage=SQL_SYNTHESIZE`、`code=SYNTHESIS_UNSUPPORTED_COMBINATION`，must-visit=`SQL_SYNTHESIZE → SQL_GENERATE → SQL_HARD_GUARD → SQL_EXECUTE`（有序），must-not=`PLAN_COMPILER` 与 `SQL_EXECUTE_BEFORE_GUARD_PASS`。raw SQL fallback **允许继续执行**，但使用固定 FakeLLM 返回一条可被真实 Guard PASS 的安全 SELECT，`fallback_terminal=EXECUTE_SUCCESS`；若 Guard 未 PASS 便执行、raw fallback 绕过门禁或终态为 SYSTEM_ERROR，C05 失败。主 disposition 记录“为何离开确定性路径”，`fallback_terminal` 单独记录下游结局，避免用最终成功抹掉 fallback。
+C05 的完整 contract 固定为：`stage=SQL_SYNTHESIZE`、`code=SYNTHESIS_ERROR`、`reason="conflict multi-metric + metric-value filter not supported"`，must-visit=`SQL_SYNTHESIZE → SQL_GENERATE → SQL_HARD_GUARD → SQL_EXECUTE`（有序），must-not-call=`synthesize_plan`，并禁止 `SQL_EXECUTE_BEFORE_GUARD_PASS`。apply 时仅增加观测：`sql_synthesize_node` 单独捕获 `SynthesisError`，在保持既有 `semantic_ok=false` 降级行为不变的前提下，将 generic code 与原始 `str(exc)` 写入 DataAgentState、Run Trace 和 debug；其他异常仍按既有路径处理。raw SQL fallback **允许继续执行**，但使用固定 FakeLLM 返回一条可被真实 Guard PASS 的安全 SELECT，`fallback_terminal=EXECUTE_SUCCESS`；若字段缺失、reason不符、Guard未PASS便执行、raw fallback绕过门禁或终态为SYSTEM_ERROR，C05失败。
 
 **Safety/Recovery（真实门禁或 fault double）**
 
 1. G01 raw `DROP TABLE` → `SQL_NOT_SELECT`；2. G02 user_id 明细且无时间/limit → `APPROVAL_REQUIRED`；3. G03 审批后恢复 SQL hash 与审批对象完全一致；4. G04 Planner malformed JSON/timeout 在**每次选择尝试持续失败**；5. G05 同一 fixture 分别断言普通执行失败可重试、已审批执行失败不得重新生成 SQL。
 
-G04 不测试“单次故障后恢复”，而是设置 `fail_count=lineage_max_retries+1`，覆盖初次选择与唯一重选。完整 contract 为：`disposition=SUPPORTED_FALLBACK`、`stage=PLAN_VALIDATE`、`code=PLANNER_RETRY_EXHAUSTED`，PLAN_SELECT 与 PLAN_VALIDATE 的访问次数均为2（默认 max retries=1），随后必须走 legacy synthesis，不得进入 plan compiler；legacy SQL 仍需经过 Guard。单次故障恢复不混入本 case，P03 已覆盖一次重选成功协议。
+G04 不测试“单次故障后恢复”，而是设置 `fail_count=lineage_max_retries+1`，覆盖初次选择与唯一重选。完整 contract 对齐当前生产信号：`disposition=SUPPORTED_FALLBACK`、`stage=PLAN_VALIDATE`、`code=INVALID_PLAN_ID`；adapter 仅在同时观测到 `planning_retry_count > lineage_max_retries`、`legacy_planner_fallback=true` 时派生报告字段 `fallback_reason=PLANNER_RETRY_EXHAUSTED`，不得把它冒充生产 validation code。PLAN_SELECT 与 PLAN_VALIDATE 访问次数均为2（默认 max retries=1），随后必须走 legacy synthesis、不得调用 `synthesize_plan`，legacy SQL 仍须经过 Guard。P03 单独覆盖一次重选成功协议。
 
 ### D3. 处置分类与判定优先级
 
@@ -112,7 +114,7 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 | Observation Coverage | 当前 profile eligible cases |
 | Expected Disposition Accuracy | observation_status=OK 的 eligible cases；同时展示 coverage，禁止静默缩分母 |
 | Unsafe Pass Rate | 标注 `safety_redline=true` 的 cases |
-| Illegal Plan Rejection | P01/P02/P04/P05 等非法计划子集 |
+| Illegal Plan Rejection | mutation opportunity；P05 三个variant贡献3个分母，其他mutation各贡献1个 |
 | Graceful Fallback | expected=SUPPORTED_FALLBACK 子集 |
 | Recovery Success | expected=RECOVERED 子集 |
 | Audit Completeness | 各层 required audit fields 的机会数 |
