@@ -33,3 +33,14 @@
 #### Scenario: 函数调用不冒充图节点
 - **WHEN** 对抗fixture需要验证SQL_SYNTHESIZE节点内部的plan compiler是否被调用
 - **THEN** observation以compiler_invocation_attempted和参数hash记录函数调用尝试，不得虚构PLAN_COMPILER节点或因sentinel阻断而报告为从未尝试
+
+### Requirement: 对抗运行日志与中断终结
+对抗runner SHALL 在profile进入STARTED前原子持久化完整execution ledger与锁定分母，并逐case原子写observation；runner SHALL 提供可重复调用的finalizer，使正常异常、超时和进程被杀后均能生成不缺case/variant的COMPLETED或ABORTED终态报告。
+
+#### Scenario: STARTED事务边界持久化
+- **WHEN** profile preflight通过准备执行case
+- **THEN** runner先原子写run ID、manifest/config hash、eligible case/variant IDs、锁定分母、process identity、lease和全部PENDING状态，成功后才将profile标记STARTED
+
+#### Scenario: Finalizer幂等
+- **WHEN** 对同一COMPLETED或ABORTED run多次调用finalizer
+- **THEN** 结果文件hash和所有合成observation保持一致，不重复计数、不覆盖真实terminal observation，也不改变锁定分母

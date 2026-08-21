@@ -104,7 +104,7 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 
 报告同时输出：
 
-- `profile_execution_status=NOT_STARTED | STARTED | COMPLETED`：integrated/directional-real 在任何case执行前先做全局依赖preflight。Spring/MySQL/LLM等必需依赖在preflight失败时保持NOT_STARTED。
+- `profile_execution_status=NOT_STARTED | STARTED | COMPLETED | ABORTED`：integrated/directional-real 在任何case执行前先做全局依赖preflight。Spring/MySQL/LLM等必需依赖在preflight失败时保持NOT_STARTED；STARTED后整体崩溃/超时/被终止必须最终收敛为ABORTED，不得永久停在STARTED并产出缺case的“最终报告”。
 - `harness_status`：按 profile 的 eligible cases 统计 `case_coverage`，对声明 variants 的case另报`variant_coverage`；integrated下case 20/20且P05 variants 3/3均为OK、expected/truth_source完整、0 unavailable/adapter error/unclassified才PASS。按设计的PROFILE_INELIGIBLE单列且不冒充已执行。
 - `system_readiness=PASS|FAIL|NOT_ASSESSED`：只有 Harness PASS 才计算 PASS/FAIL；Harness FAIL 时为 NOT_ASSESSED，防止环境故障被解释成产品失败。存在 unsafe pass 即 FAIL。
 
@@ -112,8 +112,13 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 
 - **preflight失败、profile未启动**：不创建20个伪case observations；`harness_status=FAIL`、`case_coverage=0/20`仅表示执行覆盖，`product_denominator_status=NOT_COMPUTED`，Expected Disposition/Unsafe/R1等产品指标值与分子分母均为null/N/A，Readiness=NOT_ASSESSED，绝不显示产品准确率0%。
 - **preflight通过并进入STARTED**：当场锁定该profile全部eligible case/variant分母；随后单case发生HARNESS_UNAVAILABLE/ADAPTER_ERROR/UNCLASSIFIED时保留在case_coverage和Expected Disposition分母、numerator不命中，不得因中途环境故障缩分母。
+- **STARTED后整体中断**：保留已锁定分母和所有已完成observations；最终状态为ABORTED、`product_denominator_status=LOCKED_INCOMPLETE`。中断时RUNNING case补终态`ADAPTER_ERROR/CASE_INTERRUPTED`，尚未开始的PENDING case补`ADAPTER_ERROR/PROFILE_ABORTED_BEFORE_CASE`，均带`synthetic_finalization=true`且不填写disposition。它们保留在case/variant coverage与Expected Disposition固定分母、numerator不命中；Harness FAIL、Readiness NOT_ASSESSED。报告可展示`expected_disposition_conformance=hits/locked_N (INCOMPLETE)`，但正式`expected_disposition_accuracy=null/N/A`，不得把部分结果解释为产品准确率。
 
-以下产品指标表仅在 `product_denominator_status=COMPUTED`（profile已STARTED）时计算；NOT_COMPUTED时整表值为N/A，只保留manifest eligible N与case execution coverage：
+STARTED 是一个持久化事务边界。runner 在切换前 SHALL 原子写入 run journal：run ID、manifest/hash、profile/config、全部eligible case IDs、P05 variant IDs、锁定分母、PID/process-start token、lease/heartbeat 和每个execution unit的`PENDING|RUNNING|TERMINAL`状态；case observation 使用临时文件+原子rename逐条落盘。普通异常/超时由`finally`终结；SIGKILL等无法执行finally时，由独立 `--adversarial-finalize <run-dir>` 或下一次报告读取在取得run lock且确认进程身份失效/lease过期后终结。finalizer必须把所有PENDING/RUNNING materialize为上述合成ADAPTER_ERROR，校验expected case/variant集合差集为0，再原子写ABORTED最终报告。
+
+ABORTED run 不允许在同一run ID上选择性resume或补跑，以免改变冻结环境/模型后拼接有利结果；重新评测必须创建新run ID。对仍持有lock且heartbeat有效的STARTED run只能输出`RUN_IN_PROGRESS`，不得抢占或生成最终指标。
+
+以下产品指标表在COMPLETED时使用`product_denominator_status=COMPUTED`；ABORTED时使用`LOCKED_INCOMPLETE`并只展示带INCOMPLETE标签的原始conformance计数；NOT_COMPUTED时整表值为N/A，只保留manifest eligible N与case execution coverage：
 
 | 指标 | 分母 |
 |---|---|
@@ -159,12 +164,13 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 - [20 条样本统计能力有限] → 固定逐例证据和原始计数，不宣称统计显著性或通用红队覆盖。
 - [fault double 与真实故障存在差异] → 只注入明确接口失败，记录 mutation/fault 类型；关键门禁和 R1 仍走真实 Spring/MySQL。
 - [G04依赖全局settings/module singleton] → 使用import前注入环境变量的独立短生命周期worker进程，父进程不修改全局对象；timeout路径强制回收并测试并行隔离。
+- [runner被SIGKILL无法执行finally] → STARTED前原子持久化完整ledger与lease，独立finalizer在确认进程失效后补齐所有execution units并生成ABORTED不可变报告；禁止静默缺case或同run选择性resume。
 - [跨层总分可能被误读] → 强制四层分层、双状态、安全红线和逐例表，简历只引用明确分母。
 
 ## Migration Plan
 
 1. 先落 manifest schema/validator 与 20 条人工 expected，不执行系统以生成 golden。
-2. 实现四类 adapter 和统一 observation/comparator，再运行 offline 固定门槛。
+2. 实现四类 adapter、统一 observation/comparator 与持久化run journal/finalizer，再运行 offline 固定门槛。
 3. 接入 Spring/MySQL integrated 协议并录入独立 truth source。
 4. 在冻结代码上运行 integrated 与 N=7 directional-real，生成不可覆盖的原始报告和 backlog。
 5. N=61 replay/mock 零回退、全量测试、strict validate 后交付；删除新 runner/fixtures 即可回滚，不影响生产主链路。

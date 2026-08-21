@@ -87,6 +87,22 @@
 - **WHEN** preflight成功、profile进入STARTED后某依赖中断
 - **THEN** 全部eligible case/variant分母保持锁定，受影响case标记对应非OK observation并只减少numerator，不得将profile退回NOT_COMPUTED
 
+#### Scenario: STARTED后整体中断补齐全部执行单元
+- **WHEN** profile进入STARTED后runner崩溃、整体超时或被终止，导致部分case/variant尚无终态observation
+- **THEN** 最终状态收敛为ABORTED且product_denominator_status=LOCKED_INCOMPLETE；已完成observation保留，RUNNING补ADAPTER_ERROR/CASE_INTERRUPTED，PENDING补ADAPTER_ERROR/PROFILE_ABORTED_BEFORE_CASE，合成记录标注synthetic_finalization=true且无disposition；expected case和variant集合差集必须为0
+
+#### Scenario: 中断报告不冒充产品准确率
+- **WHEN** ABORTED run完成finalization
+- **THEN** 所有未完成execution units继续占据已锁定case/variant和Expected Disposition分母并使numerator不命中；Harness FAIL、Readiness NOT_ASSESSED，可展示带INCOMPLETE标签的hits/locked denominator，但正式Expected Disposition Accuracy为N/A
+
+#### Scenario: SIGKILL后由持久化journal终结
+- **WHEN** runner因SIGKILL等原因未执行finally且journal仍为STARTED
+- **THEN** finalize命令仅在取得run lock并确认process-start token失效或lease过期后将PENDING/RUNNING补齐、写ABORTED最终报告；heartbeat有效时只返回RUN_IN_PROGRESS，不得抢占活跃run
+
+#### Scenario: Aborted run不可选择性续跑
+- **WHEN** 某run已经finalize为ABORTED
+- **THEN** 该run journal和observations不可继续追加或只补失败case；重新执行必须生成新run ID并重新冻结manifest/profile/config
+
 ### Requirement: 评测发现与产品修复隔离
 本 change 的交付 SHALL 允许系统 readiness 非全绿，并将产品能力失败输出为带 case ID 和证据的 P1/P2 backlog；除 harness、fixture、fault adapter、comparator、报告和纯观测字段外，不得修改产品决策以追求20/20。
 
