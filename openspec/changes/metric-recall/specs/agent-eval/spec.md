@@ -1,7 +1,7 @@
 ## ADDED Requirements
 
 ### Requirement: 指标候选召回评测
-评测 SHALL 仅使用 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 独立测量指标候选召回（Recall 分母=49），其余 12 条不得进入 Recall 分母；该评测不调用 LLM、embedding 或数据库。strict Recall@K SHALL 检查每例回退前 ranked Top-K，full fallback 不得因最终看到完整目录而自动成功；effective recall SHALL 检查实际 Prompt catalog。报告 SHALL 另列多指标完整召回率和 fallback 率，并展示原始分子/分母与逐例失败明细；显式 `mode=full` 不计入 fallback rate。
+评测 SHALL 仅使用 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 独立测量指标候选召回（Recall 分母=49），其余 12 条不得进入 Recall 分母；该评测不调用 LLM、embedding 或数据库。strict Recall@K SHALL 对每例检查回退前 `ranked_candidates[:effective_k]`，其中 `effective_k=max(configured_top_k,pinned_count)`；full fallback 不得因最终看到完整目录而自动成功。effective recall SHALL 检查实际 Prompt catalog。报告 SHALL 另列 pinned 扩容用例、多指标完整召回率和 fallback 率，并展示原始分子/分母与逐例失败明细；显式 `mode=full` 不计入 fallback rate。
 
 #### Scenario: golden metrics 召回门禁
 - **WHEN** 对所有具有 `golden_spec.metrics` 的用例运行离线指标召回评测
@@ -11,9 +11,13 @@
 - **WHEN** golden 用例包含两个或以上指标
 - **THEN** 报告单列“全部 golden metrics 均被召回”的用例数/总数，不以命中任意一个指标代替完整召回
 
+#### Scenario: pinned 超过配置 K 的 strict Recall
+- **WHEN** 某 judged case 显式命中的 pinned 指标数大于 configured K
+- **THEN** strict Recall 使用 `effective_k=pinned_count` 检查全部 pinned 候选，报告该次扩容，禁止按 configured K 截断后误报失败
+
 #### Scenario: 回退口径分离
 - **WHEN** 某用例因低信号或异常使用完整 catalog
-- **THEN** effective recall 按最终完整 Prompt catalog 判定；strict Recall@K 仍按回退前 ranked Top-K 判定，不能因回退自动成功；报告按原因展示 fallback 原始计数
+- **THEN** effective recall 按最终完整 Prompt catalog 判定；strict Recall@K 仍按回退前 `ranked_candidates[:effective_k]` 判定，不能因回退自动成功；报告按原因展示 fallback 原始计数
 
 #### Scenario: 无 golden 用例不进入召回分母
 - **WHEN** 全量 N=61 中存在 12 条未配置 `golden_spec.metrics` 的用例

@@ -5,9 +5,9 @@
 
 ## 2. 确定性候选召回
 
-- [ ] 2.1 实现 `MetricCandidateRetriever` 与结果/候选模型：NFKC/lower/仅保留 isalnum code point（`_` 移除、空表达丢弃）、精确名称/metricCode/最长别名 pinned、集合 n-gram 覆盖分（单字符只算 unigram）、稳定排序、pinned 超 K 不截断
+- [ ] 2.1 实现 `MetricCandidateRetriever` 与结果/候选模型：NFKC/lower/仅保留 isalnum code point（`_` 移除、空表达丢弃）、精确名称/metricCode/最长别名 pinned、集合 n-gram 覆盖分（单字符只算 unigram）、稳定排序；固定 `effective_k=max(top_k,pinned_count)`，pinned 超 K 不截断并记录两项计数
 - [ ] 2.2 实现低信号/无效 catalog/异常的 `full_fallback` 与显式配置的 `full`，固定 mode=`topk|full|full_fallback`；仅 full_fallback 设置 fallback=true/计入 fallback rate，保留回退前 ranked_candidates 与实际 prompt catalog、reason、数量和 warning
-- [ ] 2.3 增加召回器单测，覆盖单指标、多指标、重叠别名最长优先、pinned>K、稳定排序、中文长上下文、低信号回退、异常回退和 embedding 未配置零调用
+- [ ] 2.3 增加召回器单测，覆盖单指标、多指标、重叠别名最长优先、pinned_count>K 时 effective_k 扩容且全部保留、稳定排序、中文长上下文、低信号回退、异常回退和 embedding 未配置零调用
 
 ## 3. 语义链路接入
 
@@ -17,12 +17,12 @@
 
 ## 4. Debug 契约与透传
 
-- [ ] 4.1 扩展 `DataAgentState`、Agent `AnalyzeResponse`、Spring `EngineAnalyzeResponse` 与 `includeDebug=true` 映射，透传 metricCandidates/mode/fallback/reason/K/catalog counts/semanticPromptChars
+- [ ] 4.1 扩展 `DataAgentState`、Agent `AnalyzeResponse`、Spring `EngineAnalyzeResponse` 与 `includeDebug=true` 映射，透传 metricCandidates/mode/fallback/reason/configuredK/pinnedCount/effectiveK/catalog counts/semanticPromptChars
 - [ ] 4.2 增加 Python API 与 Java Controller/DTO 契约测试，验证 debug 开启可见、默认业务响应不受影响、分数和顺序可复现
 
 ## 5. 离线门禁与 A/B 评测
 
-- [ ] 5.1 为 eval runner 增加独立 metric-recall 评测及 `--metric-recall full|topk` A/B 配置；strict Recall@K 固定以 49 条的回退前 ranked Top-K 为分母，effective recall 按实际 prompt catalog，另报多指标完整召回/fallback 原因和逐例候选
+- [ ] 5.1 为 eval runner 增加独立 metric-recall 评测及 `--metric-recall full|topk` A/B 配置；strict Recall@K 固定以 49 条的回退前 `ranked_candidates[:max(K,pinned_count)]` 为分母并单列 pinned 扩容，effective recall 按实际 prompt catalog，另报多指标完整召回/fallback 原因和逐例候选
 - [ ] 5.2 仅在 N=61 中含 `golden_spec.metrics` 的 49 条 judged cases 上扫描 K/阈值并固化配置（Recall 分母=49）：effective recall=100%，所有 topk 用例 golden metrics 零遗漏；其余 12 条不进入 Recall 分母
 - [ ] 5.3 运行全量 Python 测试与相关 Java 测试，确认别名迁移、记忆校验、语义解析、API 契约和既有 SQL 合成无回退
 - [ ] 5.4 在 embedding 关闭条件下运行 `--llm real --platform mock --memory off` 的 full/topk N=61 A/B，单列既有 N=57 子集，报告 L1-L4/ERROR/sql_source/fallback 和 Prompt chars；真实单轮结果标注方向性并逐例审计差异

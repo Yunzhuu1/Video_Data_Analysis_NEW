@@ -44,6 +44,7 @@
 ```text
 ranked_candidates: [{metric_code, score, reasons, matched_expressions}]  # 回退前 Top-K/pinned 排名
 prompt_catalog_codes: [metric_code]  # 实际给 LLM；full/full_fallback 时为完整目录
+pinned_count / effective_k
 mode: topk | full | full_fallback
 fallback: bool
 fallback_reason: null | no_reliable_signal | invalid_catalog | retriever_error
@@ -55,7 +56,7 @@ top_k / lexical_threshold / full_catalog_count / prompt_catalog_count
 1. 规范化问题与表达：先做 Unicode NFKC，再 `lower()`，随后仅保留 `str.isalnum()` 为真的 Unicode code point；因此空白、标点和 metric code 中的 `_` 被移除（`total_plays` → `totalplays`），中文按 Python Unicode code point 处理。归一化后为空的表达直接丢弃，空问题不计算词面分；
 2. 对 metricCode、metricName 和 alias 做子串匹配；表达重叠时按“更长表达优先”，同长度按 metric code 稳定排序；所有显式命中的 metric code 都设为 pinned；
 3. 对每个指标计算其所有表达中的最高词面分。n-gram 使用归一化后 Unicode code point 的**集合**（不是多重集），`coverage_n(e,q) = |ngrams_n(e) ∩ ngrams_n(q)| / |ngrams_n(e)|`。当 `len(e) >= 2` 时，分数固定为 `0.35 * coverage_1 + 0.65 * coverage_2`；单 code point 表达没有 bigram，权重重归一后固定为 `coverage_1`，避免 0 分母；空表达已在步骤 1 丢弃，分数为 0。该口径不受问题附加时间/维度词长度稀释；
-4. pinned 指标全部保留，再按 `(-score, metric_code)` 填充到 K。若 pinned 数量超过 K，返回全部 pinned，不截断真实多指标表达；
+4. 计算 `effective_k = max(configured_top_k, pinned_count)`；pinned 指标全部保留，再按 `(-score, metric_code)` 填充到 `effective_k`。若 pinned 数量超过配置 K，返回全部 pinned，不截断真实多指标表达；结果必须记录 `pinned_count` 与 `effective_k`；
 5. 没有 pinned 且最高词面分低于阈值时，不做强猜，回退完整 catalog。
 
 默认候选 K 从 5 开始，词面阈值从 0.55 开始；apply 阶段仅对 N=61 中含 `golden_spec.metrics` 的 **49 条 judged cases（Recall 分母=49）**离线扫描标定并写死最终值。若 K=5 不能达到 judged golden metrics Recall@K=100%，增大 K 或对失败类型增加经审核 alias，不能以降低召回门槛掩盖漏召回。报告必须记录最终 K、阈值、表达数据版本和原始计数；其余 12 条无 golden case 不进入 Recall 分母。
@@ -90,7 +91,7 @@ normal: prompt_catalog 调 SemanticResolver
 
 回退用例仍可正常由 LLM 解析，但单独计入 `metric_recall_fallback_rate`。不能把 full fallback 计作 Top-K 命中来夸大裁剪覆盖；离线指标同时报告：
 
-- `strict_recall@K`：固定分母 49，检查每例**回退前 `ranked_candidates[:K]`**是否包含全部 golden metrics；full fallback 不因看到完整目录自动成功，显式 full 基线不参与该离线运行；
+- `strict_recall@K`：固定分母 49；每例先取 `effective_k=max(configured_top_k,pinned_count)`，再检查**回退前 `ranked_candidates[:effective_k]`**是否包含全部 golden metrics。报告同时展示 configured K、发生 pinned 扩容的用例数及逐例 effective_k；full fallback 不因看到完整目录自动成功，显式 full 基线不参与该离线运行；
 - `effective_recall`：包含 full fallback 后是否可见全部 golden metrics；
 - fallback 原始计数和原因分布。
 
@@ -98,7 +99,7 @@ normal: prompt_catalog 调 SemanticResolver
 
 ### D5：观测字段走既有 debug 通道
 
-`DataAgentState` 增加 `metric_candidates`、`metric_recall_mode`、`metric_recall_fallback`、`metric_recall_reason`、`metric_recall_top_k`、`semantic_prompt_chars`。其中 `metric_candidates` 是回退前排名，另记录实际 Prompt catalog 数量；`semantic_prompt_chars` **严格定义为实际发送给 LLM 的最终 user message 的 Python `len()`**：即 `len(build_semantic_user_prompt(question, prompt_catalog, dimensions, examples))`，不含 `SEMANTIC_SYSTEM_PROMPT`；normal 路径 `examples=None`，memory inject 路径包含实际注入的 examples。实现 SHALL 只构造一次该 user prompt，测量后把同一个字符串交给 LLM，避免“测量串”和“发送串”漂移。memory hit 等未调用语义 LLM 的路径记为 `null` 并从 Prompt 均值分母排除，不能记 0。full/topk A/B 必须使用同一 memory 协议；本轮固定 `--memory off`，因此两组均不含 examples。
+`DataAgentState` 增加 `metric_candidates`、`metric_recall_mode`、`metric_recall_fallback`、`metric_recall_reason`、`metric_recall_top_k`、`metric_recall_pinned_count`、`metric_recall_effective_k`、`semantic_prompt_chars`。其中 `metric_candidates` 是回退前排名，另记录实际 Prompt catalog 数量；`semantic_prompt_chars` **严格定义为实际发送给 LLM 的最终 user message 的 Python `len()`**：即 `len(build_semantic_user_prompt(question, prompt_catalog, dimensions, examples))`，不含 `SEMANTIC_SYSTEM_PROMPT`；normal 路径 `examples=None`，memory inject 路径包含实际注入的 examples。实现 SHALL 只构造一次该 user prompt，测量后把同一个字符串交给 LLM，避免“测量串”和“发送串”漂移。memory hit 等未调用语义 LLM 的路径记为 `null` 并从 Prompt 均值分母排除，不能记 0。full/topk A/B 必须使用同一 memory 协议；本轮固定 `--memory off`，因此两组均不含 examples。
 
 Agent `/analyze` 响应和 Spring `includeDebug=true` 增量透传上述 camelCase 字段；默认业务响应不展示这些数据。
 
