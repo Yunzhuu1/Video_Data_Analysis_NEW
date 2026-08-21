@@ -71,6 +71,10 @@
 - **WHEN** 调用 `/internal/metrics/total_plays`
 - **THEN** 返回公式、可选维度、时间粒度与 `source_table`
 
+#### Scenario: 新指标可查询
+- **WHEN** 指标字典扩展至 15 个（含比率派生/跨表收益/去重计数）
+- **THEN** 新指标在 metric_catalog 定义口径（formula/source_table/factFormula/factEventFilter），合成器/记忆按字典动态适配，新指标经别名表可被用户问法映射
+
 ### Requirement: 长尾问题降级 raw SQL
 当 `SEMANTIC_RESOLVE` 无法解析（低置信/无候选/覆盖不到）时，系统 SHALL 降级到 `SQL_GENERATE`（原始 LLM SQL）+ 硬校验 + 重试，并标记 `source=fallback`。
 
@@ -84,6 +88,10 @@
 #### Scenario: 空库可初始化
 - **WHEN** 在空 MySQL 实例上执行 `schema.sql` 后再运行 `DataInitializer`
 - **THEN** 所有表存在且种子数据注入成功，无"幽灵表"报错
+
+#### Scenario: 数据模型规模化
+- **WHEN** 数据模型扩展（新增 `creator_revenue`/`video_revenue`/`user_retention`/`content_quality` 表、指标 7→15）
+- **THEN** 新表 DDL 入 schema.sql、DataInitializer 以 seed 42 确定性灌入含真实业务模式（长尾/稀疏/异常）的数据、TableSchemaRegistry 注册新表（表类型 FACT/DIM），门禁 AST 校验可识别
 
 ### Requirement: 意图层风险信号
 `SEMANTIC_RESOLVE` SHALL 把 `ResolvedIntent` 的 `intent` 透传给 SQL 门禁，使拦截可结合意图判定，不依赖 LLM 生成 SQL 的形态。

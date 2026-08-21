@@ -251,6 +251,10 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 - **WHEN** 运行 --memory off 全量回归
 - **THEN** 同源表多指标用例（如 n01 播放量+点赞量）sql_source=semantic 且 L1 正确；跨源表多指标用例（如 n02 完播率+互动率）保持 fallback 并在报告标注已知边界
 
+#### Scenario: 评测数据规模扩展
+- **WHEN** 数据模型规模化（新表/新指标）落地
+- **THEN** golden cases 从 N=45 扩展至 ~70，覆盖新指标（比率/收益/去重）、新表跨表关系、真实分布查询；新用例含 golden_spec 与 R1 expected_result（独立手工 SQL 取 seed 42 真值）
+
 ### Requirement: 量化指标测量
 评测 SHALL 支持量化指标的测量与报告：token 计量（LLM 调用 usage）、同义表达问题集的注入收益/冷热启动实验、以及可写进简历的指标报告（含历史轨迹与对比基线）。同义集实验的 band 分层 SHALL 取自**与线上同一实现**的检索器（混合检索），报告 SHALL 注明**检索器实现/阈值/embedding 模型**三变量配置，并按**难度分层**（easy/hard）输出注入收益。
 

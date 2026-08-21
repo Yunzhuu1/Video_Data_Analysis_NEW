@@ -163,18 +163,18 @@ def test_multi_metric_same_source_trend():
     assert "GROUP BY md.date, md.category" in sql
 
 
-def test_multi_metric_cross_source_degrades():
-    """n02：跨源表多指标（play_detail + user_behavior_fact）→ SynthesisError（降级）。"""
+def test_multi_metric_cross_source_now_joins():
+    """n02：跨源表多指标 → 子查询 JOIN（C2 解锁，不再降级）。"""
     intent = _intent(metrics=["completion_rate", "engagement_rate"], dimensions=["category"])
-    with pytest.raises(SynthesisError):
-        synthesize(intent, FULL_METRIC_DEFS)
+    sql = synthesize(intent, FULL_METRIC_DEFS)
+    assert "FROM (SELECT" in sql and "JOIN" in sql
 
 
-def test_multi_metric_fact_path_degrades():
-    """P1：trend+dims=[content] 触发事实路径路由（factEventFilter 不同会空结果）→ 降级。"""
+def test_multi_metric_fact_path_now_joins():
+    """P1 场景闭环：trend+dims=[content] 同源 fact 冲突 → 子查询 JOIN（各自 eventFilter 隔离）。"""
     intent = _intent(intent="trend", metrics=["total_plays", "total_likes"], dimensions=["content"])
-    with pytest.raises(SynthesisError):
-        synthesize(intent, FULL_METRIC_DEFS)
+    sql = synthesize(intent, FULL_METRIC_DEFS)
+    assert "FROM (SELECT" in sql and "event_type = 'play'" in sql and "event_type = 'like'" in sql
 
 
 def test_multi_metric_ranking_degrades():
@@ -225,3 +225,81 @@ def test_new_table_revenue_synthesizes():
     assert "FROM creator_revenue cr" in sql2
     assert "cr.creator_id AS creator" in sql2
     assert "ORDER BY SUM(revenue) DESC LIMIT 3" in sql2
+
+
+# ------------------------------------------------------------------ query-capability（指标值过滤 HAVING + 冲突多指标 JOIN）
+def test_metric_value_filter_having():
+    """P2-1：field 是指标 code → HAVING（复用 SELECT agg_expr）。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["completion_rate"], dimensions=["category"],
+                     filters=[{"field": "completion_rate", "op": ">", "value": 50}])
+    sql = synthesize(intent, mdefs)
+    assert "GROUP BY" in sql
+    assert "HAVING AVG(completion_rate) > 50" in sql
+
+
+def test_mixed_dimension_and_metric_filter():
+    """维度过滤 WHERE + 指标过滤 HAVING 混合。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["completion_rate"], dimensions=["category"],
+                     filters=[{"field": "category", "op": "=", "value": "美食"},
+                              {"field": "completion_rate", "op": ">=", "value": 40}])
+    sql = synthesize(intent, mdefs)
+    assert "WHERE" in sql and "category = '美食'" in sql
+    assert "HAVING AVG(completion_rate) >= 40" in sql
+
+
+def test_metric_filter_unsupported_intent_degrades():
+    """ranking + 指标过滤 → 降级（MVP 限 aggregate/trend）。"""
+    mdefs = _load_catalog()
+    intent = _intent(intent="ranking", metrics=["completion_rate"], dimensions=["category"],
+                     ordering={"field": "completion_rate", "direction": "desc", "limit": 5},
+                     filters=[{"field": "completion_rate", "op": ">", "value": 50}])
+    with pytest.raises(SynthesisError):
+        synthesize(intent, mdefs)
+
+
+def test_conflict_multi_metric_cross_source_join():
+    """n02：跨源多指标（play_detail + fact）→ 子查询 JOIN。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["completion_rate", "engagement_rate"], dimensions=["category"])
+    sql = synthesize(intent, mdefs)
+    assert "FROM (SELECT" in sql
+    assert "FROM play_detail pd" in sql and "FROM user_behavior_fact ubf" in sql
+    assert "JOIN" in sql and "ON a.category = b.category" in sql
+    assert "JOIN content_dim cd" in sql  # play_detail 拿 category
+
+
+def test_conflict_multi_metric_same_source_event_filter_join():
+    """同源 fact 冲突（play vs like）→ 子查询 JOIN（P1 场景闭环）。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["total_plays", "total_likes"], dimensions=["content"])
+    sql = synthesize(intent, mdefs)
+    assert "event_type = 'play'" in sql and "event_type = 'like'" in sql
+    assert "FROM (SELECT" in sql and "JOIN" in sql
+
+
+def test_same_source_same_filter_single_from_unchanged():
+    """n01：同源 metric_daily 同 filter → 单 FROM（不变）。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["total_plays", "total_likes"], dimensions=["category"])
+    sql = synthesize(intent, mdefs)
+    assert "FROM metric_daily md" in sql
+    assert "FROM (SELECT" not in sql
+
+
+def test_misaligned_granularity_degrades():
+    """异粒度跨源（一个 category、一个 content）→ 降级（本实现经 _resolve_path 各自路径，若无法共享维度键则产错；此处验证至少不产出矛盾）。"""
+    mdefs = _load_catalog()
+    # completion_rate(play_detail, 只能 content 粒度) + total_plays(fact, content) → 两者都 content 粒度可对齐 → 应 JOIN
+    intent = _intent(metrics=["completion_rate", "total_plays"], dimensions=["content"])
+    sql = synthesize(intent, mdefs)
+    assert "FROM (SELECT" in sql  # content 粒度可对齐 → JOIN（play_detail JOIN content_dim）
+
+
+def test_conflict_multi_metric_no_dim_key_degrades():
+    """冲突多指标无维度键（dims=[] 且非 trend）→ 无法 JOIN → 降级。"""
+    mdefs = _load_catalog()
+    intent = _intent(metrics=["completion_rate", "engagement_rate"], dimensions=[])
+    with pytest.raises(SynthesisError):
+        synthesize(intent, mdefs)

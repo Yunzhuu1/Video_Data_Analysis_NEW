@@ -59,6 +59,7 @@ FIELD_ALIASES = {
 }
 
 UNIT_DAYS = {"day": 1, "week": 7, "month": 30}
+FILTER_OPS = frozenset({"=", "in", "between", ">", ">=", "<", "<="})
 
 
 def normalize_metric(value: Any) -> str:
@@ -86,9 +87,19 @@ def normalize_filter_value(value: Any) -> Any:
 
 def normalize_filter(flt: dict[str, Any]) -> tuple[str, str, Any]:
     field = normalize_field(flt.get("field") or "")
-    op = str(flt.get("op") or "=").lower()
+    op = normalize_filter_op(flt.get("op"))
     value = normalize_filter_value(flt.get("value"))
     return (field, op, value)
+
+
+def normalize_filter_op(value: Any) -> str:
+    """Normalize filter operators, including metric comparisons used by HAVING.
+
+    Unknown operators are preserved so a malformed LLM output mismatches the
+    golden spec instead of being silently treated as equality.
+    """
+    op = str(value or "=").strip().lower()
+    return op if op in FILTER_OPS else op
 
 
 def _parse_date(value: str) -> date:

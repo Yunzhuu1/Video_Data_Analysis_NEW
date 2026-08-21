@@ -8,13 +8,22 @@ class TimeRange(TypedDict, total=False):
     granularity: str | None
 
 
+FilterOp = Literal["=", "in", "between", ">", ">=", "<", "<="]
+
+
+class ResolvedFilter(TypedDict, total=False):
+    field: str
+    op: FilterOp
+    value: Any
+
+
 class ResolvedIntent(TypedDict, total=False):
     """LLM 语义解析的契约，与 agent-eval-harness 的 golden_spec 同构。"""
     intent: Literal["aggregate", "trend", "ranking", "detail"]
     metrics: list[str]
     dimensions: list[str]
     time_range: TimeRange
-    filters: list[dict[str, Any]]
+    filters: list[ResolvedFilter]  # field 为指标 code 时 op 比较（HAVING）
     ordering: dict[str, Any] | None
     confidence: float
     coverage: str

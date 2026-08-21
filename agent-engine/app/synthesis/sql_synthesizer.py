@@ -53,6 +53,8 @@ def _field_expr(source: str, field: str) -> tuple[str, list[str]]:
             return f"DATE({alias}.created_at)", []
         if field == "content":
             return f"{alias}.content_id", []
+        if field == "category":
+            return "cd.category", [f"JOIN content_dim cd ON {alias}.content_id = cd.content_id"]
         return f"{alias}.{field}", []
     if source == "creator_revenue":
         if field == "date":
@@ -134,6 +136,89 @@ def _resolve_path(mdef: dict[str, Any], intent: str, dims: list[str]) -> dict[st
     }
 
 
+def _synthesize_join_multi(intent: dict[str, Any], metric_defs: dict[str, dict[str, Any]],
+                             paths: dict[str, dict[str, Any]]) -> str:
+    """冲突多指标子查询 JOIN（P2-1 统一解：来源冲突或 eventFilter 冲突）。
+
+    - 每个指标独立子查询：SELECT <维度键expr> AS dim, <agg> AS code FROM source WHERE 各自 event_filter + 共享过滤/时间 GROUP BY 维度键
+    - 外层：SELECT a.dim, a.c1, b.c2 FROM (sub1) a JOIN (sub2) b ON a.dim = b.dim
+    - 维度键 expr 各子查询可用各自表表达式（cd.category vs md.category），JOIN 靠外层别名对齐（P3 语义一致即可）
+    """
+    it = intent.get("intent", "aggregate")
+    dims = list(intent.get("dimensions") or [])
+    filters = list(intent.get("filters") or [])
+    tr = intent.get("time_range") or {"type": "none", "granularity": None}
+    ordering = intent.get("ordering") or {}
+    metrics = list(intent.get("metrics") or [])
+
+    gb: list[str] = []
+    if it == "trend":
+        gb = ["date"] + [d for d in dims if d != "date"]
+    elif it in ("aggregate", "ranking"):
+        gb = list(dims)
+
+    subs: list[str] = []
+    aliases: list[str] = []
+    for i, code in enumerate(metrics):
+        path = paths[code]
+        source = path["source"]
+        alias = _ALIAS.get(source, source)
+        alias_letter = chr(ord("a") + i)
+        # 维度键表达式（该表）
+        dim_exprs: list[str] = []
+        field_exprs: dict[str, str] = {}
+        joins: list[str] = []
+        for f in sorted(set(gb) | ({"date"} if it == "trend" else set())):
+            e, j = _field_expr(source, f)
+            field_exprs[f] = e
+            dim_exprs.append(f"{e} AS {f}")
+            joins.extend(j)
+        # WHERE：该指标 event_filter + 共享过滤 + 时间
+        conds: list[str] = []
+        if path.get("event_filter"):
+            conds.append(path["event_filter"])
+        for flt in filters:
+            f = str(flt.get("field") or "")
+            if f in metric_defs:
+                continue  # 指标过滤 MVP 不做（组合降级已在入口拦截）
+            fexpr, j = _field_expr(source, f)
+            joins.extend(j)
+            conds.append(_filter_cond(fexpr, flt))
+        if tr.get("type") == "absolute":
+            absolute = tr.get("absolute") or {}
+            start = absolute.get("start")
+            end = absolute.get("end")
+            if start and end:
+                tcol = metric_defs[code].get("timeField") or "date"
+                time_expr, j = _field_expr(source, tcol)
+                joins.extend(j)
+                end_sql = str(end) + (" 23:59:59" if len(str(end)) <= 10 else "")
+                conds.append(f"{time_expr} BETWEEN '{start}' AND '{end_sql}'")
+        where = (" WHERE " + " AND ".join(conds)) if conds else ""
+        join_sql = (" " + " ".join(dict.fromkeys(joins))) if joins else ""
+        group_sql = (" GROUP BY " + ", ".join(field_exprs[f] for f in gb)) if gb else ""
+        agg_expr = paths[code]["expr"]
+        subs.append(f"SELECT {', '.join(dim_exprs)}, {agg_expr} AS {code} FROM {source} {alias}{join_sql}{where}{group_sql}")
+        aliases.append(alias_letter)
+
+    # 外层
+    outer_dims = ", ".join(f"{aliases[0]}.{f}" for f in sorted(set(gb) | ({"date"} if it == "trend" else set())))
+    outer_metrics = ", ".join(f"{aliases[i]}.{code}" for i, code in enumerate(metrics))
+    joins_sql = " JOIN ".join(
+        f"({subs[i]}) {aliases[i]} ON {aliases[0]}.{sorted(set(gb) | ({"date"} if it == "trend" else set()))[0]} = {aliases[i]}.{sorted(set(gb) | ({"date"} if it == "trend" else set()))[0]}"
+        for i in range(1, len(subs))
+    )
+    sql = f"SELECT {outer_dims}, {outer_metrics} FROM ({subs[0]}) {aliases[0]}"
+    if joins_sql:
+        sql += " JOIN " + joins_sql
+    if it == "trend":
+        sql += f" ORDER BY {aliases[0]}.date"
+    elif it == "ranking":
+        direction = str(ordering.get("direction") or "desc").upper()
+        sql += f" ORDER BY {aliases[0]}.{metrics[0]} {direction} LIMIT {_limit(ordering, 10)}"
+    return sql.strip()
+
+
 def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -> str:
     """Deterministically synthesize SELECT SQL from a resolved intent.
 
@@ -162,11 +247,25 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
 
     multi = len(metrics) > 1
     if multi:
-        # 约束校验（显式失败优于错误 SQL）：intent 限 aggregate/trend；全 metric_daily 列路径
         if it not in ("aggregate", "trend"):
             raise SynthesisError(f"multi-metric synthesis not supported for intent={it}")
+        sources = {paths[c]["source"] for c in metrics}
+        event_filters = {str(paths[c].get("event_filter") or "") for c in metrics}
+        conflict = len(sources) > 1 or len(event_filters) > 1
+        if conflict:
+            # 组合降级（P2-2）：冲突多指标 + 指标值过滤 MVP 不做
+            for flt in intent.get("filters") or []:
+                if str(flt.get("field") or "") in metric_defs:
+                    raise SynthesisError("conflict multi-metric + metric-value filter not supported")
+            # JOIN 需要维度键：无 dims 且非 trend → 无法对齐（降级）
+            key_set = set(dims) | ({"date"} if it == "trend" else set())
+            if not key_set:
+                raise SynthesisError("conflict multi-metric requires dimension keys for JOIN")
+            # 统一解（P2-1）：跨源 或 eventFilter 冲突 → 子查询 JOIN
+            return _synthesize_join_multi(intent, metric_defs, paths)
+        # 同源同 filter：单 FROM 多列（metric_daily 验证过）
         if any(paths[c]["source"] != "metric_daily" for c in metrics):
-            raise SynthesisError("multi-metric synthesis only supports metric_daily path")
+            raise SynthesisError("same-source multi-metric only supports metric_daily path")
 
     first = paths[metrics[0]]
     source = first["source"]
@@ -196,11 +295,24 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
         field_exprs[f] = e
         joins.extend(j)
 
+    # 指标值过滤（P2-1）：field 是指标 code → HAVING（聚合后过滤）；维度 → WHERE
+    agg_map = {code: expr for code, expr in agg_exprs}
+    having_conds: list[str] = []
+    where_filters: list[dict[str, Any]] = []
+    for flt in filters:
+        f = str(flt.get("field") or "")
+        if f in agg_map:
+            if it not in ("aggregate", "trend"):
+                raise SynthesisError(f"metric-value filter not supported for intent={it}")
+            having_conds.append(f"{agg_map[f]} {str(flt.get('op') or '=')} {_format_value(flt.get('value'))}")
+        else:
+            where_filters.append(flt)
+
     # WHERE
     conds: list[str] = []
     if event_filter:
         conds.append(event_filter)
-    for flt in filters:
+    for flt in where_filters:
         fexpr, j = _field_expr(source, str(flt.get("field") or ""))
         joins.extend(j)
         conds.append(_filter_cond(fexpr, flt))
@@ -231,9 +343,12 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
     for code, expr in agg_exprs:
         select_cols.append(f"{expr} AS {code}")
 
+    having = (" HAVING " + " AND ".join(having_conds)) if having_conds else ""
     sql = f"SELECT {', '.join(select_cols)} FROM {source} {alias}{join_sql}{where}"
     if gb:
         sql += " GROUP BY " + ", ".join(field_exprs[f] for f in gb)
+    if having:
+        sql += having
     if it == "trend":
         sql += f" ORDER BY {field_exprs['date']}"
     elif it == "ranking":

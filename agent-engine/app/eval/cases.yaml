@@ -655,6 +655,10 @@
       "category": "multi_metric",
       "difficulty": "normal",
       "question": "各分类的完播率和互动率",
+      "expected_sql_contains": [
+        "FROM (",
+        "JOIN"
+      ],
       "golden_spec": {
         "intent": "aggregate",
         "metrics": [
@@ -1639,6 +1643,122 @@
           "data_seed": "42",
           "anchor": "2023-10-31",
           "sql": "独立手工 SQL"
+        }
+      }
+    },
+    {
+      "id": "n38_metric_filter_gt",
+      "type": "text2sql",
+      "category": "metric_filter",
+      "difficulty": "normal",
+      "question": "总播放量超过3000的分类",
+      "expected_sql_contains": [
+        "HAVING",
+        "SUM(total_plays) > 3000"
+      ],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [{"field": "total_plays", "op": ">", "value": 3000}],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {"美食": 3828},
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-21",
+          "data_seed": "42",
+          "sql": "SELECT category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY category HAVING SUM(total_plays) > 3000"
+        }
+      }
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "type": "text2sql",
+      "category": "metric_filter",
+      "difficulty": "normal",
+      "question": "总播放量不低于3000的分类",
+      "expected_sql_contains": [
+        "HAVING",
+        "SUM(total_plays) >= 3000"
+      ],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [{"field": "total_plays", "op": ">=", "value": 3000}],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {"美食": 3828},
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-21",
+          "data_seed": "42",
+          "sql": "SELECT category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY category HAVING SUM(total_plays) >= 3000"
+        }
+      }
+    },
+    {
+      "id": "n40_metric_filter_lt",
+      "type": "text2sql",
+      "category": "metric_filter",
+      "difficulty": "normal",
+      "question": "总播放量低于3000的分类",
+      "expected_sql_contains": [
+        "HAVING",
+        "SUM(total_plays) < 3000"
+      ],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [{"field": "total_plays", "op": "<", "value": 3000}],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {"游戏": 2662, "美妆": 2669},
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-21",
+          "data_seed": "42",
+          "sql": "SELECT category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY category HAVING SUM(total_plays) < 3000"
+        }
+      }
+    },
+    {
+      "id": "n41_metric_filter_lte",
+      "type": "text2sql",
+      "category": "metric_filter",
+      "difficulty": "normal",
+      "question": "总播放量不超过2669的分类",
+      "expected_sql_contains": [
+        "HAVING",
+        "SUM(total_plays) <= 2669"
+      ],
+      "golden_spec": {
+        "intent": "aggregate",
+        "metrics": ["total_plays"],
+        "dimensions": ["category"],
+        "time_range": {"type": "none", "granularity": null},
+        "filters": [{"field": "total_plays", "op": "<=", "value": 2669}],
+        "ordering": null
+      },
+      "expected_result": {
+        "type": "exact_per_key",
+        "values": {"游戏": 2662, "美妆": 2669},
+        "tolerance": 0.01,
+        "truth_source": {
+          "fetched_at": "2026-08-21",
+          "data_seed": "42",
+          "sql": "SELECT category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY category HAVING SUM(total_plays) <= 2669"
         }
       }
     }
