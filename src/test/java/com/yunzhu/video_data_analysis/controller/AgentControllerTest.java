@@ -43,7 +43,17 @@ class AgentControllerTest {
                 2,
                 "semantic",
                 false,
-                null
+                null,
+                List.of(Map.of("metricCode", "total_plays", "score", 1.0)),
+                "topk",
+                false,
+                null,
+                5,
+                1,
+                5,
+                15,
+                5,
+                1234
         );
     }
 
@@ -72,6 +82,14 @@ class AgentControllerTest {
         assertThat(report.getDebug()).containsEntry("sqlRetryCount", 2);
         assertThat(report.getDebug()).containsEntry("sqlSource", "semantic");
         assertThat(report.getDebug()).containsEntry("memoryHit", false);
+        assertThat(report.getDebug()).containsEntry("metricRecallMode", "topk");
+        assertThat(report.getDebug()).containsEntry("metricRecallFallback", false);
+        assertThat(report.getDebug()).containsEntry("metricRecallConfiguredK", 5);
+        assertThat(report.getDebug()).containsEntry("metricRecallPinnedCount", 1);
+        assertThat(report.getDebug()).containsEntry("metricRecallEffectiveK", 5);
+        assertThat(report.getDebug()).containsEntry("metricRecallFullCatalogCount", 15);
+        assertThat(report.getDebug()).containsEntry("metricRecallPromptCatalogCount", 5);
+        assertThat(report.getDebug()).containsEntry("semanticPromptChars", 1234);
     }
 
     @Test
@@ -87,7 +105,17 @@ class AgentControllerTest {
                 0,
                 "semantic",
                 true,
-                "hit"
+                "hit",
+                List.of(Map.of("metricCode", "total_plays", "score", 1.0)),
+                "topk",
+                false,
+                null,
+                5,
+                1,
+                5,
+                15,
+                5,
+                null
         );
         when(langGraphClient.analyze(any(EngineAnalyzeRequest.class))).thenReturn(waiting);
 

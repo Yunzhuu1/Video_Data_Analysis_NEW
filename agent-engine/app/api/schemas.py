@@ -25,6 +25,20 @@ class AnalyzeResponse(BaseModel):
     sql_source: str | None = Field(default=None, alias="sqlSource")
     memory_hit: bool | None = Field(default=None, alias="memoryHit")
     memory_band: str | None = Field(default=None, alias="memoryBand")
+    metric_candidates: list[dict[str, Any]] | None = Field(default=None, alias="metricCandidates")
+    metric_recall_mode: str | None = Field(default=None, alias="metricRecallMode")
+    metric_recall_fallback: bool | None = Field(default=None, alias="metricRecallFallback")
+    metric_recall_reason: str | None = Field(default=None, alias="metricRecallReason")
+    metric_recall_configured_k: int | None = Field(default=None, alias="metricRecallConfiguredK")
+    metric_recall_pinned_count: int | None = Field(default=None, alias="metricRecallPinnedCount")
+    metric_recall_effective_k: int | None = Field(default=None, alias="metricRecallEffectiveK")
+    metric_recall_full_catalog_count: int | None = Field(
+        default=None, alias="metricRecallFullCatalogCount"
+    )
+    metric_recall_prompt_catalog_count: int | None = Field(
+        default=None, alias="metricRecallPromptCatalogCount"
+    )
+    semantic_prompt_chars: int | None = Field(default=None, alias="semanticPromptChars")
 
     model_config = {"populate_by_name": True}
 

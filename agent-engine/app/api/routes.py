@@ -103,6 +103,16 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
         sqlSource=state.get("sql_source"),
         memoryHit=state.get("memory_hit"),
         memoryBand=state.get("memory_band"),
+        metricCandidates=state.get("metric_candidates"),
+        metricRecallMode=state.get("metric_recall_mode"),
+        metricRecallFallback=state.get("metric_recall_fallback"),
+        metricRecallReason=state.get("metric_recall_reason"),
+        metricRecallConfiguredK=state.get("metric_recall_top_k"),
+        metricRecallPinnedCount=state.get("metric_recall_pinned_count"),
+        metricRecallEffectiveK=state.get("metric_recall_effective_k"),
+        metricRecallFullCatalogCount=state.get("metric_recall_full_catalog_count"),
+        metricRecallPromptCatalogCount=state.get("metric_recall_prompt_catalog_count"),
+        semanticPromptChars=state.get("semantic_prompt_chars"),
     )
 
 
@@ -124,4 +134,14 @@ async def approve_run(run_id: str, request: ApprovalRequest) -> AnalyzeResponse:
         sqlSource=state.get("sql_source"),
         memoryHit=state.get("memory_hit"),
         memoryBand=state.get("memory_band"),
+        metricCandidates=state.get("metric_candidates"),
+        metricRecallMode=state.get("metric_recall_mode"),
+        metricRecallFallback=state.get("metric_recall_fallback"),
+        metricRecallReason=state.get("metric_recall_reason"),
+        metricRecallConfiguredK=state.get("metric_recall_top_k"),
+        metricRecallPinnedCount=state.get("metric_recall_pinned_count"),
+        metricRecallEffectiveK=state.get("metric_recall_effective_k"),
+        metricRecallFullCatalogCount=state.get("metric_recall_full_catalog_count"),
+        metricRecallPromptCatalogCount=state.get("metric_recall_prompt_catalog_count"),
+        semanticPromptChars=state.get("semantic_prompt_chars"),
     )

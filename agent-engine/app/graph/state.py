@@ -46,6 +46,17 @@ class DataAgentState(TypedDict, total=False):
     memory_band: Literal["hit", "inject", "hit_rejected"]
     memory_namespace: str
 
+    metric_candidates: list[dict[str, Any]]
+    metric_recall_mode: Literal["topk", "full", "full_fallback"]
+    metric_recall_fallback: bool
+    metric_recall_reason: str | None
+    metric_recall_top_k: int
+    metric_recall_pinned_count: int
+    metric_recall_effective_k: int
+    metric_recall_full_catalog_count: int
+    metric_recall_prompt_catalog_count: int
+    semantic_prompt_chars: int | None
+
     sql_attempts: list[dict[str, Any]]
     query_result: dict[str, Any]
     hard_guard_result: dict[str, Any]

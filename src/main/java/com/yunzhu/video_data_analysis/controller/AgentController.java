@@ -111,6 +111,16 @@ public class AgentController {
         debug.put("sqlSource", response.sqlSource());
         debug.put("memoryHit", response.memoryHit());
         debug.put("memoryBand", response.memoryBand());
+        debug.put("metricCandidates", response.metricCandidates());
+        debug.put("metricRecallMode", response.metricRecallMode());
+        debug.put("metricRecallFallback", response.metricRecallFallback());
+        debug.put("metricRecallReason", response.metricRecallReason());
+        debug.put("metricRecallConfiguredK", response.metricRecallConfiguredK());
+        debug.put("metricRecallPinnedCount", response.metricRecallPinnedCount());
+        debug.put("metricRecallEffectiveK", response.metricRecallEffectiveK());
+        debug.put("metricRecallFullCatalogCount", response.metricRecallFullCatalogCount());
+        debug.put("metricRecallPromptCatalogCount", response.metricRecallPromptCatalogCount());
+        debug.put("semanticPromptChars", response.semanticPromptChars());
         return debug;
     }
 

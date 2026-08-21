@@ -249,7 +249,11 @@ CI SHALL 运行 `pytest` + mock eval（回放模式）作为回归门禁，任�
 
 #### Scenario: 多指标用例语义路径验证
 - **WHEN** 运行 --memory off 全量回归
-- **THEN** 同源表多指标用例（如 n01 播放量+点赞量）sql_source=semantic 且 L1 正确；跨源表多指标用例（如 n02 完播率+互动率）保持 fallback 并在报告标注已知边界
+- **THEN** 同源表多指标用例（如 n01 播放量+点赞量）与同粒度冲突多指标用例（如 n02 完播率+互动率）均 sql_source=semantic 且 L1 正确；n02 通过各指标独立聚合子查询 JOIN 合成
+
+#### Scenario: 数值过滤用例
+- **WHEN** 合成器支持指标值过滤（HAVING）
+- **THEN** 评测数据集含数值过滤用例（如“总播放量超过3000的分类”，覆盖 >、>=、<、<=），R1 真值由独立手工 SQL 获取；n02 跨源多指标用例预期为 semantic
 
 #### Scenario: 评测数据规模扩展
 - **WHEN** 数据模型规模化（新表/新指标）落地

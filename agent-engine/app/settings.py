@@ -39,6 +39,9 @@ if BaseSettings is not None:
         memory_fusion_weight: float = 0.7   # 混合检索融合权重 w（D4 公式）
         memory_vector_dim: int = 2048       # doubao-embedding-vision 实测维度
         memory_alias_fingerprint: bool = False  # 指标 ID 表达指纹（可选增强，标定后启用）
+        metric_recall_mode: str = "topk"  # topk | full（full 用于 A/B 基线与紧急回滚）
+        metric_recall_top_k: int = 5
+        metric_recall_lexical_threshold: float = 0.55
         eval_llm_cassette: str = "cassettes/default.json"
 
         model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
@@ -68,6 +71,11 @@ else:
             self.memory_fusion_weight = float(os.getenv("MEMORY_FUSION_WEIGHT", "0.7"))
             self.memory_vector_dim = int(os.getenv("MEMORY_VECTOR_DIM", "2048"))
             self.memory_alias_fingerprint = _env_bool("MEMORY_ALIAS_FINGERPRINT", False)
+            self.metric_recall_mode = os.getenv("METRIC_RECALL_MODE", "topk")
+            self.metric_recall_top_k = int(os.getenv("METRIC_RECALL_TOP_K", "5"))
+            self.metric_recall_lexical_threshold = float(
+                os.getenv("METRIC_RECALL_LEXICAL_THRESHOLD", "0.55")
+            )
             self.eval_llm_cassette = os.getenv("EVAL_LLM_CASSETTE", "cassettes/default.json")
 
 
