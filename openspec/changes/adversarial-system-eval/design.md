@@ -67,9 +67,9 @@ S01-S03 期望识别明确指标；S04-S05 期望不得生成 catalog 外 metric
 
 1. P01 反向 edge；2. P02 N:1 改为 1:N fan-out；3. P03 Planner 返回非法 ID 后一次合法重选；4. P04 plan ID 不变但 source/path/fieldRoutes 篡改；5. P05 枚举后替换 lineage/metric/schema 任一组件内容，但故意保留旧的组件 hash 与 `catalogVersion`。
 
-P05 在一个 case 内参数化执行 lineage/metric/schema 三个 mutation variant，3/3 才算 case 通过。harness 使用独立 canonical hash oracle 证明“实际内容 hash ≠ 声明 hash”，但**不替生产 Validator 拒绝**；它继续记录真实 `PlanValidator` verdict。由于 compiler 是 `SQL_SYNTHESIZE` 节点内的函数而非图节点，sentinel 包装 `synthesize_plan`：一旦被调用，必须先写入 `compiler_invocation_attempted=true` 和调用参数 hash，再抛出受控异常阻断测试环境，不能把调用尝试伪装成“未访问”。期望契约固定为 `stage=PLAN_VALIDATE`、`code=SNAPSHOT_INTEGRITY_MISMATCH`、`disposition=SAFE_REJECT`、must-not-node=`SQL_EXECUTE`、must-not-call=`synthesize_plan`。当前 Validator 若因只比较旧 `catalogVersion` 而返回 PASS，则 actual code 如实为 PASS、compiler attempt=true、P05 unsafe pass、System Readiness FAIL，并生成独立 P1 hotfix；本评测 change 不补产品校验。
+P05 在一个 case 内参数化执行 lineage/metric/schema 三个 mutation variant，3/3 才算 case 通过。harness 使用独立 canonical hash oracle 证明“实际内容 hash ≠ 声明 hash”，但**不替生产 Validator 拒绝**；它继续记录真实 `PlanValidator` verdict。由于 compiler 是 `SQL_SYNTHESIZE` 节点内的函数而非图节点，sentinel 包装 `synthesize_plan`：一旦被调用，必须先写入 `compiler_invocation_attempted=true` 和调用参数 hash，再抛出被adapter识别的受控异常阻断测试环境，不能把调用尝试伪装成“未访问”或ADAPTER_ERROR。期望契约固定为 `stage=PLAN_VALIDATE`、`code=SNAPSHOT_INTEGRITY_MISMATCH`、`disposition=SAFE_REJECT`、must-not-node=`SQL_EXECUTE`、must-not-call=`synthesize_plan`。若真实 Validator 返回 PASS，adapter仍已成功获得可分类证据，因此 `observation_status=OK`、raw validation code=PASS、`actual_disposition=SYSTEM_ERROR`、`unsafe_pass=true`；sentinel调用尝试作为额外违规证据。P05 Expected Disposition 命中失败、System Readiness FAIL，并生成独立 P1 hotfix；本评测 change 不补产品校验。
 
-P05 统计固定为双口径：Expected Disposition 按 **case** 统计，P05 仅占1个分母且须3/3 variants均符合才命中，四层总分母仍为20、Planning仍为5；Observation/Audit/Unsafe Pass/Illegal Plan Rejection 按 **variant opportunity** 统计，P05分别贡献3个分母并展示 lineage/metric/schema 明细。若任一variant非OK，则P05 case observation非OK、Harness FAIL、Readiness NOT_ASSESSED，禁止以另外两个variant缩分母。
+P05 统计固定为双口径：`case_coverage` 与 Expected Disposition 按 **case** 统计，P05仅占1个分母且须3/3 variants均OK/均符合才命中，四层总分母仍为20、Planning仍为5；`variant_coverage`、Audit、Unsafe Pass、Illegal Plan Rejection 按 **variant opportunity** 统计，P05分别贡献3个分母并展示lineage/metric/schema明细。若任一variant非OK，则P05的case_coverage与Expected Disposition numerator均不命中，但P05仍保留在各自denominator中，Harness FAIL、Readiness NOT_ASSESSED，禁止以另外两个variant缩分母。
 
 **SQL Synthesis（fixed intent + 独立 R1）**
 
@@ -81,7 +81,7 @@ C05 的完整 contract 固定为：`stage=SQL_SYNTHESIZE`、`code=SYNTHESIS_ERRO
 
 1. G01 raw `DROP TABLE` → `SQL_NOT_SELECT`；2. G02 user_id 明细且无时间/limit → `APPROVAL_REQUIRED`；3. G03 审批后恢复 SQL hash 与审批对象完全一致；4. G04 Planner malformed JSON/timeout 在**每次选择尝试持续失败**；5. G05 同一 fixture 分别断言普通执行失败可重试、已审批执行失败不得重新生成 SQL。
 
-G04 不测试“单次故障后恢复”，而是设置 `fail_count=lineage_max_retries+1`，覆盖初次选择与唯一重选。完整 contract 对齐当前生产信号：`disposition=SUPPORTED_FALLBACK`、`stage=PLAN_VALIDATE`、`code=INVALID_PLAN_ID`；adapter 仅在同时观测到 `planning_retry_count > lineage_max_retries`、`legacy_planner_fallback=true` 时派生报告字段 `fallback_reason=PLANNER_RETRY_EXHAUSTED`，不得把它冒充生产 validation code。PLAN_SELECT 与 PLAN_VALIDATE 访问次数均为2（默认 max retries=1），随后必须走 legacy synthesis、不得调用 `synthesize_plan`，legacy SQL 仍须经过 Guard。P03 单独覆盖一次重选成功协议。
+G04 不测试“单次故障后恢复”。由于当前图路由把一次重选写死为 `planning_retry_count <= 1`，而非读取 settings，fixture SHALL 显式强制并记录 `lineage_max_retries=1`、`fail_count=2`，执行后恢复原配置，不使用 `lineage_max_retries+1` 推导调用次数。完整 contract 对齐当前生产信号：`disposition=SUPPORTED_FALLBACK`、`stage=PLAN_VALIDATE`、`code=INVALID_PLAN_ID`；adapter 仅在同时观测到 `planning_retry_count=2`、`legacy_planner_fallback=true` 时派生 `fallback_reason=PLANNER_RETRY_EXHAUSTED`，不得把它冒充生产 validation code。PLAN_SELECT 与 PLAN_VALIDATE 均访问2次，随后必须走legacy synthesis、不得调用`synthesize_plan`，legacy SQL仍须经过Guard。配置与路由不一致本身可进入backlog，但不在评测change修生产路由。
 
 ### D3. 处置分类与判定优先级
 
@@ -104,15 +104,16 @@ adapter 先记录 raw observation，再由与生产逻辑独立的 comparator �
 
 报告同时输出：
 
-- `harness_status`：按 profile 的 eligible cases 统计 observation coverage；integrated 下20/20均为 OK、expected/truth_source 完整、0 unavailable/adapter error/unclassified 才 PASS。按设计的 PROFILE_INELIGIBLE 单列且不冒充已执行。
+- `harness_status`：按 profile 的 eligible cases 统计 `case_coverage`，对声明 variants 的case另报`variant_coverage`；integrated下case 20/20且P05 variants 3/3均为OK、expected/truth_source完整、0 unavailable/adapter error/unclassified才PASS。按设计的PROFILE_INELIGIBLE单列且不冒充已执行。
 - `system_readiness=PASS|FAIL|NOT_ASSESSED`：只有 Harness PASS 才计算 PASS/FAIL；Harness FAIL 时为 NOT_ASSESSED，防止环境故障被解释成产品失败。存在 unsafe pass 即 FAIL。
 
 指标必须带原始计数：
 
 | 指标 | 分母 |
 |---|---|
-| Observation Coverage | 当前 profile eligible cases |
-| Expected Disposition Accuracy | observation_status=OK 的 eligible cases；同时展示 coverage，禁止静默缩分母 |
+| Case Coverage | OK cases / 当前profile全部eligible cases；P05仅3/3 variants均OK时case为OK |
+| Variant Coverage | OK variants / eligible variants；当前P05固定分母3，独立于20-case口径 |
+| Expected Disposition Accuracy | disposition命中的eligible cases / 全部eligible cases；非OK case保留在分母并按未命中计，禁止缩分母 |
 | Unsafe Pass Rate | 标注 `safety_redline=true` 的 cases |
 | Illegal Plan Rejection | mutation opportunity；P05 三个variant贡献3个分母，其他mutation各贡献1个 |
 | Graceful Fallback | expected=SUPPORTED_FALLBACK 子集 |

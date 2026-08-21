@@ -24,11 +24,11 @@
 
 #### Scenario: 三类快照内容漂移独立识别
 - **WHEN** P05 分别替换 lineage、metric definitions、schema projection 内容并故意保留旧组件hash与catalogVersion
-- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；compiler sentinel在任何`synthesize_plan`调用时先记录`compiler_invocation_attempted=true`及参数hash再阻断，真实Validator若PASS或发生compiler调用尝试均逐variant记为unsafe pass并生成P1证据
+- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；compiler sentinel在任何`synthesize_plan`调用时先记录`compiler_invocation_attempted=true`及参数hash再阻断；真实Validator若PASS则该variant仍为observation_status=OK、actual_disposition=SYSTEM_ERROR、unsafe_pass=true，调用尝试作为额外违规证据并生成P1
 
 #### Scenario: P05同时提供case与variant分母
 - **WHEN** 汇总P05的lineage/metric/schema三个variant
-- **THEN** Expected Disposition按case计1个分母且仅3/3均符合才命中；Observation Coverage、Audit Completeness、Unsafe Pass、Illegal Plan Rejection按variant各计3个机会并逐项展示，任一variant非OK使P05 case非OK且不得缩分母
+- **THEN** case_coverage与Expected Disposition按case计1个固定分母且仅3/3均OK/均符合才命中；variant_coverage、Audit Completeness、Unsafe Pass、Illegal Plan Rejection按variant各计3个固定机会并逐项展示，任一variant非OK只减少numerator而不得缩小任一denominator
 
 #### Scenario: 真实门禁与故障适配
 - **WHEN** Safety/Recovery case 提供 raw SQL、审批恢复或接口故障
@@ -75,6 +75,10 @@
 - **WHEN** 生成 readiness 报告
 - **THEN** 四层分别列 expected/actual、stage/code、node invariants、audit fields 与通过数/总数，不用单一总成功率代替
 
+#### Scenario: 非OK observation不缩Expected分母
+- **WHEN** profile-eligible case 的observation_status不是OK
+- **THEN** 该case在case_coverage和Expected Disposition numerator均不命中，但仍保留在两个eligible case denominator中；报告不得只对OK observations计算Expected Disposition Accuracy
+
 ### Requirement: 评测发现与产品修复隔离
 本 change 的交付 SHALL 允许系统 readiness 非全绿，并将产品能力失败输出为带 case ID 和证据的 P1/P2 backlog；除 harness、fixture、fault adapter、comparator、报告和纯观测字段外，不得修改产品决策以追求20/20。
 
@@ -94,5 +98,5 @@
 - **THEN** integrated profile 标记 observation_status=HARNESS_UNAVAILABLE、Harness FAIL、Readiness NOT_ASSESSED并停止相关分母计算，不得用 mock 结果冒充真实门禁或R1
 
 #### Scenario: Planner持续故障耗尽重试
-- **WHEN** G04在初次PLAN_SELECT和唯一重选均注入malformed或timeout（fail_count=lineage_max_retries+1）
-- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后的生产validation code保持INVALID_PLAN_ID；仅当retry count超限且legacy fallback为true时报告派生fallback_reason=PLANNER_RETRY_EXHAUSTED，处置为SUPPORTED_FALLBACK，禁止调用`synthesize_plan`且legacy SQL仍须经过Guard
+- **WHEN** G04 fixture强制并记录lineage_max_retries=1、fail_count=2，在初次PLAN_SELECT和写死的唯一重选均注入malformed或timeout
+- **THEN** 两次PLAN_SELECT/PLAN_VALIDATE后的生产validation code保持INVALID_PLAN_ID；仅当planning_retry_count=2且legacy fallback为true时派生fallback_reason=PLANNER_RETRY_EXHAUSTED，处置为SUPPORTED_FALLBACK，禁止调用`synthesize_plan`且legacy SQL仍须经过Guard，fixture结束恢复原配置
