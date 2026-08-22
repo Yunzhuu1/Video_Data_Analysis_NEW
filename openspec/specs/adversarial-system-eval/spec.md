@@ -15,7 +15,7 @@ TBD - created by archiving change adversarial-system-eval. Update Purpose after 
 - **THEN** 对抗 manifest 仍以新的组合攻击、状态篡改或故障注入为独立 fixture，不把原用例复制后计入20条分母
 
 ### Requirement: 多入口真实模块执行
-对抗 runner SHALL 按 `question | fixed_intent | mutated_plan | raw_sql_or_fault` protocol 调用对应真实生产模块，并保存统一 observation；每个 observation SHALL 先声明 `OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED` 状态，只有 `OK` 才可进入六类系统 disposition。mutation/fault SHALL 使用可审计白名单，不得通过任意回调绕过生产 Validator、Compiler、门禁或图路由。
+对抗 runner SHALL 按 `question | fixed_intent | mutated_plan | raw_sql_or_fault` protocol 调用对应真实生产模块，并保存统一 observation；每个 observation SHALL 先声明 `OK | PROFILE_INELIGIBLE | HARNESS_UNAVAILABLE | ADAPTER_ERROR | UNCLASSIFIED` 状态，只有 `OK` 才可进入六类系统 disposition。mutation/fault SHALL 使用可审计白名单，不得通过任意回调绕过生产 Validator、Compiler、门禁或图路由。P05 三类 snapshot 内容漂移 SHALL 由真实生产完整性校验全部拒绝，harness oracle 只提供独立证据而不得替产品拒绝。
 
 #### Scenario: 固定意图隔离模型方差
 - **WHEN** Planning 或 Synthesis case 提供人工 ResolvedIntent
@@ -25,9 +25,9 @@ TBD - created by archiving change adversarial-system-eval. Update Purpose after 
 - **WHEN** case 注入反向 edge、fan-out、非法 plan ID、Candidate 字段篡改或 snapshot 漂移
 - **THEN** runner 使用真实 Validator/重选逻辑处置，未验证计划不得访问 plan compiler 或 SQL execute
 
-#### Scenario: 三类快照内容漂移独立识别
+#### Scenario: 三类快照内容漂移全部安全拒绝
 - **WHEN** P05 分别替换 lineage、metric definitions、schema projection 内容并故意保留旧组件hash与catalogVersion
-- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致但不替生产Validator拒绝；compiler sentinel在任何`synthesize_plan`调用时先记录`compiler_invocation_attempted=true`及参数hash再阻断；真实Validator若PASS则该variant仍为observation_status=OK、actual_disposition=SYSTEM_ERROR、unsafe_pass=true，调用尝试作为额外违规证据并生成P1
+- **THEN** harness canonical oracle 证明三个variant的实际内容hash与声明hash不一致，且真实 Validator 3/3 返回 `REJECT/SNAPSHOT_INTEGRITY_MISMATCH`、actual_disposition=SAFE_REJECT、compiler_invocation_attempted=false、unsafe_pass=false；harness 不得代替生产 Validator 拒绝或移动 expected
 
 #### Scenario: P05同时提供case与variant分母
 - **WHEN** 汇总P05的lineage/metric/schema三个variant
