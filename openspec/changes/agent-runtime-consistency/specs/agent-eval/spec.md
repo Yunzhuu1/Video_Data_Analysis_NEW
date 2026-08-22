@@ -5,7 +5,11 @@
 
 #### Scenario: Catalog 修复前后归因
 - **WHEN** 在旧 7 指标数据库上完成 reconciliation 后重跑真实 Spring + Agent + MySQL N=61
-- **THEN** 报告同时给出 API/Agent catalog code 覆盖、catalog-caused failures 原始计数、L1-L4 与 R1；硬门槛为受管 15 code 全覆盖、catalog-caused failures 13→0、既有 R1 21/21 不回退，不要求随机 LLM 单轮 L1 必须 49/49
+- **THEN** 报告按固定清单逐例对账 12 个结构性 catalog-unreachable case（n26_comment_rate、n27_like_rate、n28_share_rate、n29_avg_completion、n30_creator_revenue、n31_video_revenue、n32_active_creator、n33_dau、n34_creator_revenue_trend、n35_comment_rate_trend、n36_dau_trend、n37_video_revenue_rank_trend），同时给出 API/Agent catalog code 覆盖、`invalid_catalog` fallback、L1-L4 与 R1；硬门槛为受管 15 code 全覆盖、12/12 由 missing 变为可达、invalid_catalog 59→0、既有 R1 21/21 不回退，不要求随机 LLM 单轮 L1 必须 49/49
+
+#### Scenario: 非确定性第十三例不误归因
+- **WHEN** 修复前 `n19_longtail` L1 失败但其 golden `engagement_rate` 已存在于旧 7 指标目录
+- **THEN** 将其单列为带 invalid_catalog 背景的 LLM/语义差异，不计入 12 条结构性不可达分母；after 结果如实报告，不用它扩大或缩小 catalog 修复分母
 
 #### Scenario: 真实运行时 smoke
 - **WHEN** 运行 runtime consistency 集成协议
@@ -18,4 +22,3 @@
 #### Scenario: 高成本真实评测后置
 - **WHEN** Python/Java 全量与确定性 contract/integrated smoke 尚未通过
 - **THEN** 不启动 N=61 真实 LLM、integrated adversarial 或 real-session 高成本评测；全部确定性门槛通过后才运行并标注单轮方向性
-

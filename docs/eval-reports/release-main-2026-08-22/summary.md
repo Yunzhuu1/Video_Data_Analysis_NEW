@@ -65,7 +65,28 @@ L1 从 mock platform 的 49/49 降到 36/49，不是 SQL 执行问题，而是�
 - `DataInitializer.insertMetricDef()` 只在首次全量初始化调用，旧数据库启动时只增量补业务表，没有补新增指标；
 - 新增 8 个指标因此无法进入真实平台的 Semantic/Recall 上下文。
 
-R1 21/21 表明已经正确解析并进入可断言范围的 SQL 结果全部正确，但不能抵消目录缺失导致的 13 条 L1 错误。
+R1 21/21 表明已经正确解析并进入可断言范围的 SQL 结果全部正确，但不能抵消目录漂移造成的结构性不可达。
+
+### 4.1 Catalog 归因清单（修复前固定分母）
+
+真实链路的 13 条 L1 失败中，只有以下 **12 条**能确定归因于 golden 指标不在真实 7 指标目录；它们在 mock 15 指标目录中均 L1 正确，after 必须按 case ID 逐例对账：
+
+| Case | Golden metric | Real actual metric |
+|---|---|---|
+| n26_comment_rate | comment_rate | total_comments |
+| n27_like_rate | like_rate | total_likes + total_plays |
+| n28_share_rate | share_rate | total_shares |
+| n29_avg_completion | avg_completion_ratio | completion_rate |
+| n30_creator_revenue | creator_revenue | empty |
+| n31_video_revenue | video_revenue | total_plays |
+| n32_active_creator | active_creator_count | empty |
+| n33_dau | daily_active_users | empty |
+| n34_creator_revenue_trend | creator_revenue | unresolved |
+| n35_comment_rate_trend | comment_rate | unresolved |
+| n36_dau_trend | daily_active_users | empty |
+| n37_video_revenue_rank_trend | video_revenue | total_plays |
+
+第 13 条 `n19_longtail` 的 golden 是 `engagement_rate`，该指标本来就在旧 7 指标中；尽管此次请求也记录了 `metric_recall_reason=invalid_catalog`，其 L1 失败仍不能排除 LLM 单轮方差，因此不计入确定性 catalog-caused 分母。独立运行时证据是 59/61 请求发生 `invalid_catalog` fallback；修复目标应拆为“12/12 结构性 missing→reachable”与“invalid_catalog 59→0”，而不是笼统宣称 13 条都由 catalog 导致。
 
 ## 5. 对抗评测
 

@@ -12,7 +12,7 @@
 - [ ] 2.1 实现唯一 memory path resolver/bootstrap：lance→`memory_lance_path`、sqlite→`memory_db_path`，FastAPI lifespan 使用配置路径；评测显式 path/backend 保持隔离且优先
 - [ ] 2.2 实现 memory `READY|DISABLED|DEGRADED` 状态和稳定 reason code，初始化失败保持主链路可用但禁用读写；禁止只打印异常后 `/health` 仍无差别显示 UP
 - [ ] 2.3 补齐 store 生命周期：新 store 初始化成功后原子替换，重初始化/服务 shutdown 幂等 close，失败不破坏仍可用旧 store；控制 API 非 READY 返回 503
-- [ ] 2.4 扩展 Python health/debug schema（不暴露路径、原始异常、凭据），增加 sqlite/lance 路径选择、文件/目录冲突、embedding 不可用、初始化异常、替换失败与 close-once 测试
+- [ ] 2.4 扩展 Python health/debug schema（不暴露路径、原始异常、凭据），增加 sqlite/lance 路径选择、文件/目录冲突、embedding 不可用、初始化异常、替换失败与 close-once 测试；增加完整 graph 断言：DEGRADED + nodes.memory=None 时检索/注入/写入零调用 store、主链路正常、memoryHit 不误报、sqlSource 语义不变、health 保留 reasonCode
 
 ## 3. Run Trace 读侧契约
 
@@ -29,5 +29,5 @@
 
 - [ ] 5.1 运行 Java/Python 全量、ruff、OpenSpec strict 与 diff 检查；先满足 catalog/memory/trace/time 全部确定性 contract，失败时不得移动 golden/expected 或手工补库
 - [ ] 5.2 在真实 Spring + Agent + MySQL + embedding 环境执行 runtime smoke：15 code、catalog/hash readiness、lineage snapshot、新增/比率/去重/相对时间代表查询、Run Detail、Lance READY 与中间服务器重启后同 namespace 命中
-- [ ] 5.3 仅在 5.1/5.2 通过后定向重跑 N=61 real-real memory-off、integrated adversarial、real-session N=8；报告 catalog-caused failures 13→0、R1 相对 21/21 不回退和原始 L1-L4，不把随机 L1 或小样本记忆结果宣称为显著提升
+- [ ] 5.3 仅在 5.1/5.2 通过后定向重跑 N=61 real-real memory-off、integrated adversarial、real-session N=8；按 D7 固定清单输出 12 个结构性不可达 case 的 before/after（missing→reachable）逐例表、invalid_catalog fallback 59→0、R1 相对 21/21 不回退和原始 L1-L4；n19 单列为非确定性差异，不把随机 L1 或小样本记忆结果宣称为显著提升
 - [ ] 5.4 将 after 证据与 `release-main-2026-08-22` 修复前基线并列归档，更新 `docs/开发日志.md` 与 `docs/面试素材库.md`，记录确定性结论、方向性结果、剩余 backlog 与面试可讲的跨层排障/一致性设计

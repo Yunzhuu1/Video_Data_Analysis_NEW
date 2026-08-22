@@ -52,6 +52,8 @@ load classpath metric_catalog.json
 
 数据库中不属于资源的 code 记为 `extraCodes` 并告警，但不删除、不停用，也不纳入“managed projection 一致”失败条件；运行时完整 metric hash 仍按 `/internal/metrics` 全部 ACTIVE 指标计算，避免把 extra 隐藏。当前 seed 42 验收要求无 extra，activeCount=managedCount=15。
 
+`LineageCatalogService.snapshot()` 始终反映运行时全量 ACTIVE 目录（managed + extra），因此 snapshot 的 `metrics/metricCatalogHash/catalogVersion` 也覆盖 extra；reconciliation 的强一致性只约束资源声明的 managed 子集，两种口径必须在状态与报告中分别命名，不能把 managed hash 冒充 runtime hash。
+
 ### D3：Catalog projection/hash 只实现一次语义
 
 从 `LineageCatalogService.normalizeMetrics()` 抽取共享的 `MetricCatalogProjection`：固定字段为 `metricCode/formula/dimensions/sourceTable/timeField/factFormula/factEventFilter`，按 metricCode 排序，dimensions 排序；使用既有 `CanonicalJson` 受限规范计算 SHA-256。Synchronizer、lineage snapshot 和测试 fixture 必须复用该 projection，不各写一套 hash。
@@ -87,6 +89,8 @@ enabled + provider/path/store init fails    → DEGRADED(reasonCode)
 
 `DEGRADED` 不阻断 `/analyze`，`nodes.memory=None`，但 `/health` 必须返回 `memory.enabled/backend/status/reasonCode`；reason 只使用稳定枚举（如 `EMBEDDING_UNAVAILABLE`、`INVALID_STORE_PATH`、`STORE_INIT_FAILED`），原始异常只写服务日志。启动成功、重初始化或 shutdown 时对 store 执行一次 close；新 store 完成初始化后再原子替换旧引用，失败不得破坏仍可用的旧 store。测试/调试 seed API 在非 READY 时继续返回 503。
 
+图级契约固定为：`nodes.memory is None` 或状态非 READY 时，`SEMANTIC_RESOLVE` 的检索/注入与成功后写入钩子均显式短路，store 方法零调用；`memory_hit=false`（不得为 true）、`memory_band` 为空或稳定的 disabled/degraded 语义，`sql_source` 仍只反映 semantic/fallback，不得把 memory 不可用误报为命中或导致图异常。该路径须以完整 graph test 覆盖，而不只测试 health。
+
 ### D5：Run Detail 使用 RowMapper 和统一 Java Time 适配
 
 `getRunDetail()` 不再使用 `queryForMap()` 后强转，而与列表/节点查询一样使用显式 RowMapper。共享适配器接受 `null`、`LocalDateTime`、`Timestamp`（必要时兼容 `java.sql.Date`），转换成 DTO 的 `LocalDateTime`；未知类型抛包含 JDBC 类型名的明确异常。读取行为不改表结构、不改写已有 trace。
@@ -101,13 +105,32 @@ enabled + provider/path/store init fails    → DEGRADED(reasonCode)
 
 ### D7：评测以“可归因错误归零”为硬门槛，不绑定随机 L1 全绿
 
-修复前证据固定为 `docs/eval-reports/release-main-2026-08-22/`。实现后分三层：
+修复前证据固定为 `docs/eval-reports/release-main-2026-08-22/`。其中可确定归因于“golden 指标不在真实 7 指标目录”的结构性不可达用例为以下 12 条，after 报告必须按 case ID 逐例对账：
+
+| Case | Golden metric | 修复前实际目录状态 |
+|---|---|---|
+| n26_comment_rate | comment_rate | missing |
+| n27_like_rate | like_rate | missing |
+| n28_share_rate | share_rate | missing |
+| n29_avg_completion | avg_completion_ratio | missing |
+| n30_creator_revenue | creator_revenue | missing |
+| n31_video_revenue | video_revenue | missing |
+| n32_active_creator | active_creator_count | missing |
+| n33_dau | daily_active_users | missing |
+| n34_creator_revenue_trend | creator_revenue | missing |
+| n35_comment_rate_trend | comment_rate | missing |
+| n36_dau_trend | daily_active_users | missing |
+| n37_video_revenue_rank_trend | video_revenue | missing |
+
+`n19_longtail` 虽是本轮第 13 条 L1 失败且运行记录带 `invalid_catalog`，但其 golden `engagement_rate` 已存在于旧 7 指标中，无法排除 LLM 单轮方差，故不得计入确定性 catalog-caused 分母。另有 59/61 请求发生 `metric_recall_reason=invalid_catalog`，这是独立的运行时目录健康指标，修复目标为 0。
+
+实现后分三层：
 
 1. deterministic/contract：旧 7 指标 fixture → 15 managed 指标、两次同步幂等、projection/hash 一致、事实表 checksum 不变；memory path/status/lifecycle；Run Detail；anchor date/datetime。
 2. integrated smoke：Spring + Agent + MySQL 下 `/internal/metrics` 15、lineage snapshot 成功、代表性新增/比率/去重/相对时间查询成功、Run Detail 可审计、真实服务 Lance READY 且中间重启后命中。
 3. directional real：`--llm real --platform real --memory off` N=61、integrated adversarial、real-session N=8。报告原始计数、模型/时间/commit；LLM 指标只作单轮方向性。
 
-硬门槛：catalog-caused failures 13→0；资源 15 个 code 全部出现在 API 与 Agent catalog；R1 可断言子集相对 21/21 不回退；事实数据真值不变；Run Detail 200；相对时间不再出现 datetime parse warning；memory 强验证明确区分服务器重启与 store reopen。整体 L1 不写死 49/49，避免用随机模型结果决定确定性修复是否正确。
+硬门槛：上述 12 个 case 的 golden metric 从结构性 missing 变为 API/Agent catalog 可达，逐例 `catalog_unreachable=false`；`invalid_catalog` fallback 59→0；资源 15 个 code 全部出现在 API 与 Agent catalog；R1 可断言子集相对 21/21 不回退；事实数据真值不变；Run Detail 200；相对时间不再出现 datetime parse warning；memory 强验证明确区分服务器重启与 store reopen。12 条的真实 L1 仍单独报告，不能因 LLM 再次选错就把目录修复判为未生效，也不能因偶然答对就跳过 catalog 可达性检查。
 
 ## Risks / Trade-offs
 

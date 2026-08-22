@@ -26,6 +26,10 @@ Python Agent SHALL 按 backend 选择唯一持久化路径（lance 使用 `memor
 - **WHEN** 配置路径形态非法、embedding 不可用或 store 初始化失败
 - **THEN** 主服务仍可处理 `/analyze`，记忆状态为 DEGRADED 并带稳定 reason code，记忆读写控制 API 返回 503，原始异常仅写日志
 
+#### Scenario: DEGRADED 时图级钩子短路
+- **WHEN** memory 状态为 DEGRADED 且 `nodes.memory=None`，请求执行完整 ChatBI 主图
+- **THEN** 记忆检索/注入/写入钩子零调用 store，主链路按 semantic 或 fallback 正常完成，`memoryHit` 不得为 true、`sqlSource` 不得被误标为 memory，health 保留 DEGRADED reason code
+
 #### Scenario: 记忆生命周期幂等关闭
 - **WHEN** store 重初始化或 Agent 服务 shutdown
 - **THEN** 已初始化 store 被至多一次安全 close；新 store 初始化成功后才替换旧引用，初始化失败不破坏仍可用的旧 store
@@ -40,4 +44,3 @@ Java Run Trace 查询 SHALL 使用显式 RowMapper 与统一时间适配器读�
 #### Scenario: 查询未完成运行详情
 - **WHEN** run 的 `finished_at` 为 null 且已有部分 node trace
 - **THEN** API 返回 200，`finishedAt=null` 并保留已有节点记录
-
