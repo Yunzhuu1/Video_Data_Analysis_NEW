@@ -1,0 +1,64 @@
+{
+  "audit": {
+    "candidate_plans": null,
+    "catalog_outside_metrics": [],
+    "catalog_version": null,
+    "metric_candidates": [],
+    "metric_recall_effective_k": 5,
+    "metric_recall_mode": "full_fallback",
+    "metric_recall_pinned_count": 0,
+    "plan_selection_source": "LEGACY_FALLBACK",
+    "plan_validation": {
+      "code": "NO_CANDIDATE",
+      "verdict": "UNSUPPORTED"
+    },
+    "resolved_intent": {
+      "confidence": 0.95,
+      "coverage": "full",
+      "dimensions": [],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [
+        "total_plays",
+        "total_play_duration"
+      ],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": null,
+        "type": "none"
+      }
+    },
+    "run_id": "run_2cb76f72-0733-45ad-bb96-89e9c5c4dd9f",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      "SELECT SUM(total_plays) AS total_plays, SUM(total_play_duration) AS total_play_duration FROM metric_daily md"
+    ],
+    "sql_source": "semantic"
+  },
+  "case_id": "adv_s01",
+  "code": "PASS",
+  "disposition": "EXECUTE_SUCCESS",
+  "execution_unit_id": "adv_s01",
+  "layer": "semantic",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "PLAN_ENUMERATE",
+    "PLAN_VALIDATE",
+    "SQL_SYNTHESIZE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE",
+    "SQL_SOFT_DQ",
+    "ANSWER"
+  ],
+  "observation_status": "OK",
+  "protocol": "question",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SEMANTIC_RESOLVE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

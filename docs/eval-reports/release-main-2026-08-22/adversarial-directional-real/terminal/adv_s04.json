@@ -1,0 +1,56 @@
+{
+  "audit": {
+    "candidate_plans": null,
+    "catalog_outside_metrics": [],
+    "catalog_version": null,
+    "metric_candidates": [],
+    "metric_recall_effective_k": 5,
+    "metric_recall_mode": "full_fallback",
+    "metric_recall_pinned_count": 0,
+    "plan_selection_source": null,
+    "plan_validation": null,
+    "resolved_intent": {
+      "confidence": 0.3,
+      "coverage": "partial",
+      "dimensions": [],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": {
+          "amount": 1,
+          "unit": "month"
+        },
+        "type": "relative"
+      }
+    },
+    "run_id": "run_4a5101d6-7ea3-40a1-8ccd-f7d6749ad0c7",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      ""
+    ],
+    "sql_source": "fallback"
+  },
+  "case_id": "adv_s04",
+  "code": "APPROVAL_NEEDED",
+  "disposition": "APPROVAL_REQUIRED",
+  "execution_unit_id": "adv_s04",
+  "layer": "semantic",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "SQL_GENERATE",
+    "SQL_HARD_GUARD"
+  ],
+  "observation_status": "OK",
+  "protocol": "question",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SQL_HARD_GUARD",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

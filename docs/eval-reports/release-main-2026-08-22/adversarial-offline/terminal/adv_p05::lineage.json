@@ -1,0 +1,34 @@
+{
+  "audit": {
+    "compiler_invocation_attempted": false,
+    "declared_hash": "284d02ccfe1b1c676fb99c207eeac61443c738dc1d3ad45051b38c180edc605a",
+    "oracle_actual_hash": "a373518e6886558ddd8256f530c9cfbf7694d222f33ada2099833ae96cde4595",
+    "oracle_mismatch": true,
+    "plan_validation": {
+      "code": "SNAPSHOT_INTEGRITY_MISMATCH",
+      "mismatchedComponents": [
+        "lineage",
+        "catalog"
+      ],
+      "reason": "snapshot integrity mismatch: lineage,catalog",
+      "snapshotFingerprint": "75f9d5072c16132307a68734ccbba922f5aac5e3b4da0f8234bb25cfe9d83d33",
+      "suggestion": null,
+      "verdict": "REJECT"
+    }
+  },
+  "case_id": "adv_p05",
+  "code": "SNAPSHOT_INTEGRITY_MISMATCH",
+  "disposition": "SAFE_REJECT",
+  "execution_unit_id": "adv_p05::lineage",
+  "layer": "planning",
+  "node_trace": [
+    "PLAN_VALIDATE"
+  ],
+  "observation_status": "OK",
+  "protocol": "mutated_plan",
+  "reason": "snapshot integrity mismatch: lineage,catalog",
+  "result_rows": null,
+  "stage": "PLAN_VALIDATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

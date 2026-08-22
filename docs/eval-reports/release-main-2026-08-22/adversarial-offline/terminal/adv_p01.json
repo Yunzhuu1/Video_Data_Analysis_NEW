@@ -1,0 +1,24 @@
+{
+  "audit": {
+    "candidate_count": 0,
+    "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+    "rejections": [
+      "REVERSE_JOIN_NOT_ALLOWED"
+    ]
+  },
+  "case_id": "adv_p01",
+  "code": "REVERSE_JOIN_NOT_ALLOWED",
+  "disposition": "SAFE_REJECT",
+  "execution_unit_id": "adv_p01",
+  "layer": "planning",
+  "node_trace": [
+    "PLAN_ENUMERATE"
+  ],
+  "observation_status": "OK",
+  "protocol": "fixed_intent",
+  "reason": null,
+  "result_rows": null,
+  "stage": "PLAN_ENUMERATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

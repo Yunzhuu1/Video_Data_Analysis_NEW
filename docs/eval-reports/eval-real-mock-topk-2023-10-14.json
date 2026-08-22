@@ -13,8 +13,8 @@
     "total": 61,
     "evaluated": 61,
     "error_count": 0,
-    "passed": 61,
-    "end_to_end": 1.0,
+    "passed": 60,
+    "end_to_end": 0.9836065573770492,
     "auto_fix": 1.0,
     "auto_fix_total": 2,
     "risk_interception": 1.0,
@@ -31,14 +31,28 @@
     "metric_recall_fallback_reasons": {
       "no_reliable_signal": 3
     },
+    "planner_invocation_count": 24,
+    "planner_invocation_rate": 0.39344262295081966,
+    "planner_legacy_fallback_count": 16,
+    "planner_legacy_fallback_rate": 0.26229508196721313,
+    "plan_selection_sources": {
+      "AUTO_POLICY": 1,
+      "AUTO_SINGLE": 14,
+      "LEGACY_FALLBACK": 16,
+      "NONE": 6,
+      "PLANNER_AGENT": 24
+    },
+    "planner_prompt_chars_total": 36601,
+    "planner_latency_ms_total": 73056.283,
+    "planning_retry_total": 0,
     "semantic_prompt_chars_total": 29306,
     "semantic_prompt_chars_count": 59,
     "semantic_prompt_chars_avg": 496.7118644067797,
     "semantic_prompt_chars_p50": 459,
     "semantic_prompt_chars_p95": 568.4999999999969,
-    "tokens_total": 195992,
+    "tokens_total": 228741,
     "tokens_hit_avg": 0.0,
-    "tokens_miss_avg": 3212.9836065573772,
+    "tokens_miss_avg": 3749.8524590163934,
     "result_judged": 29,
     "result_passed": 29,
     "result_rate": 1.0,
@@ -48,29 +62,29 @@
     "direct_hit_avg_token_delta": 0.0,
     "direct_hit_avg_latency_delta": 0.0,
     "judged": 49,
-    "core_accuracy": 0.9795918367346939,
-    "core_hits": 48,
-    "strict_accuracy": 0.6530612244897959,
-    "strict_hits": 32,
-    "avg_field_match": 0.9251700680272109,
+    "core_accuracy": 1.0,
+    "core_hits": 49,
+    "strict_accuracy": 0.6122448979591837,
+    "strict_hits": 30,
+    "avg_field_match": 0.9149659863945578,
     "per_field": {
       "intent": 0.9591836734693877,
-      "metrics": 0.9795918367346939,
-      "dimensions": 0.9795918367346939,
+      "metrics": 1.0,
+      "dimensions": 1.0,
       "time_range": 0.673469387755102,
       "filters": 1.0,
-      "ordering": 0.9591836734693877
+      "ordering": 0.8571428571428571
     },
-    "latency_p50": 12171,
-    "latency_p95": 25953.0
+    "latency_p50": 14645,
+    "latency_p95": 30846.0
   },
   "subsets": {
     "all": {
       "total": 61,
       "evaluated": 61,
       "error_count": 0,
-      "passed": 61,
-      "end_to_end": 1.0,
+      "passed": 60,
+      "end_to_end": 0.9836065573770492,
       "auto_fix": 1.0,
       "auto_fix_total": 2,
       "risk_interception": 1.0,
@@ -87,14 +101,28 @@
       "metric_recall_fallback_reasons": {
         "no_reliable_signal": 3
       },
+      "planner_invocation_count": 24,
+      "planner_invocation_rate": 0.39344262295081966,
+      "planner_legacy_fallback_count": 16,
+      "planner_legacy_fallback_rate": 0.26229508196721313,
+      "plan_selection_sources": {
+        "AUTO_POLICY": 1,
+        "AUTO_SINGLE": 14,
+        "LEGACY_FALLBACK": 16,
+        "NONE": 6,
+        "PLANNER_AGENT": 24
+      },
+      "planner_prompt_chars_total": 36601,
+      "planner_latency_ms_total": 73056.283,
+      "planning_retry_total": 0,
       "semantic_prompt_chars_total": 29306,
       "semantic_prompt_chars_count": 59,
       "semantic_prompt_chars_avg": 496.7118644067797,
       "semantic_prompt_chars_p50": 459,
       "semantic_prompt_chars_p95": 568.4999999999969,
-      "tokens_total": 195992,
+      "tokens_total": 228741,
       "tokens_hit_avg": 0.0,
-      "tokens_miss_avg": 3212.9836065573772,
+      "tokens_miss_avg": 3749.8524590163934,
       "result_judged": 29,
       "result_passed": 29,
       "result_rate": 1.0,
@@ -104,28 +132,28 @@
       "direct_hit_avg_token_delta": 0.0,
       "direct_hit_avg_latency_delta": 0.0,
       "judged": 49,
-      "core_accuracy": 0.9795918367346939,
-      "core_hits": 48,
-      "strict_accuracy": 0.6530612244897959,
-      "strict_hits": 32,
-      "avg_field_match": 0.9251700680272109,
+      "core_accuracy": 1.0,
+      "core_hits": 49,
+      "strict_accuracy": 0.6122448979591837,
+      "strict_hits": 30,
+      "avg_field_match": 0.9149659863945578,
       "per_field": {
         "intent": 0.9591836734693877,
-        "metrics": 0.9795918367346939,
-        "dimensions": 0.9795918367346939,
+        "metrics": 1.0,
+        "dimensions": 1.0,
         "time_range": 0.673469387755102,
         "filters": 1.0,
-        "ordering": 0.9591836734693877
+        "ordering": 0.8571428571428571
       },
-      "latency_p50": 12171,
-      "latency_p95": 25953.0
+      "latency_p50": 14645,
+      "latency_p95": 30846.0
     },
     "existing_57": {
       "total": 57,
       "evaluated": 57,
       "error_count": 0,
-      "passed": 57,
-      "end_to_end": 1.0,
+      "passed": 56,
+      "end_to_end": 0.9824561403508771,
       "auto_fix": 1.0,
       "auto_fix_total": 2,
       "risk_interception": 1.0,
@@ -142,14 +170,28 @@
       "metric_recall_fallback_reasons": {
         "no_reliable_signal": 3
       },
+      "planner_invocation_count": 20,
+      "planner_invocation_rate": 0.3508771929824561,
+      "planner_legacy_fallback_count": 16,
+      "planner_legacy_fallback_rate": 0.2807017543859649,
+      "plan_selection_sources": {
+        "AUTO_POLICY": 1,
+        "AUTO_SINGLE": 14,
+        "LEGACY_FALLBACK": 16,
+        "NONE": 6,
+        "PLANNER_AGENT": 20
+      },
+      "planner_prompt_chars_total": 29906,
+      "planner_latency_ms_total": 62186.389,
+      "planning_retry_total": 0,
       "semantic_prompt_chars_total": 27476,
       "semantic_prompt_chars_count": 55,
       "semantic_prompt_chars_avg": 499.56363636363636,
       "semantic_prompt_chars_p50": 461,
       "semantic_prompt_chars_p95": 677.4999999999984,
-      "tokens_total": 182849,
+      "tokens_total": 210922,
       "tokens_hit_avg": 0.0,
-      "tokens_miss_avg": 3207.877192982456,
+      "tokens_miss_avg": 3700.3859649122805,
       "result_judged": 25,
       "result_passed": 25,
       "result_rate": 1.0,
@@ -159,21 +201,21 @@
       "direct_hit_avg_token_delta": 0.0,
       "direct_hit_avg_latency_delta": 0.0,
       "judged": 45,
-      "core_accuracy": 0.9777777777777777,
-      "core_hits": 44,
-      "strict_accuracy": 0.6222222222222222,
-      "strict_hits": 28,
-      "avg_field_match": 0.9185185185185185,
+      "core_accuracy": 1.0,
+      "core_hits": 45,
+      "strict_accuracy": 0.5777777777777777,
+      "strict_hits": 26,
+      "avg_field_match": 0.9074074074074074,
       "per_field": {
         "intent": 0.9555555555555556,
-        "metrics": 0.9777777777777777,
-        "dimensions": 0.9777777777777777,
+        "metrics": 1.0,
+        "dimensions": 1.0,
         "time_range": 0.6444444444444445,
         "filters": 1.0,
-        "ordering": 0.9555555555555556
+        "ordering": 0.8444444444444444
       },
-      "latency_p50": 12064,
-      "latency_p95": 26575.999999999985
+      "latency_p50": 14641,
+      "latency_p95": 32537.199999999964
     },
     "added_4": {
       "total": 4,
@@ -195,14 +237,24 @@
       "metric_recall_fallback_count": 0,
       "metric_recall_fallback_rate": 0.0,
       "metric_recall_fallback_reasons": {},
+      "planner_invocation_count": 4,
+      "planner_invocation_rate": 1.0,
+      "planner_legacy_fallback_count": 0,
+      "planner_legacy_fallback_rate": 0.0,
+      "plan_selection_sources": {
+        "PLANNER_AGENT": 4
+      },
+      "planner_prompt_chars_total": 6695,
+      "planner_latency_ms_total": 10869.894,
+      "planning_retry_total": 0,
       "semantic_prompt_chars_total": 1830,
       "semantic_prompt_chars_count": 4,
       "semantic_prompt_chars_avg": 457.5,
       "semantic_prompt_chars_p50": 457.5,
       "semantic_prompt_chars_p95": 458.0,
-      "tokens_total": 13143,
+      "tokens_total": 17819,
       "tokens_hit_avg": 0.0,
-      "tokens_miss_avg": 3285.75,
+      "tokens_miss_avg": 4454.75,
       "result_judged": 4,
       "result_passed": 4,
       "result_rate": 1.0,
@@ -225,8 +277,8 @@
         "filters": 1.0,
         "ordering": 1.0
       },
-      "latency_p50": 13428.5,
-      "latency_p95": 18752.799999999996
+      "latency_p50": 18794.0,
+      "latency_p95": 21079.0
     }
   },
   "cases": [
@@ -235,7 +287,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9635,
+      "latency_ms": 12959,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -263,8 +315,6 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": "day"
         },
         "filters": [],
@@ -333,8 +383,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 454,
-      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2719,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "ca6fee4a696227ff",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "32cd3f510539c456",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "ca6fee4a696227ff",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1572,
+      "planner_latency_ms": 2366.31,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY date",
+      "tokens": 3641,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -347,7 +488,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 14733,
+      "latency_ms": 10312,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -445,8 +586,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 453,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "bfff99de408ac801",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "83eddbdc139bd72f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "bfff99de408ac801",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1326,
+      "planner_latency_ms": 2457.249,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
-      "tokens": 3336,
+      "tokens": 3199,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -459,7 +671,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19063,
+      "latency_ms": 13450,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -557,8 +769,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 447,
-      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 4245,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "fd086d3c9b5f2d03",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "796efdbc3579f2e0",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "fd086d3c9b5f2d03",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1347,
+      "planner_latency_ms": 2995.012,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY date",
+      "tokens": 3731,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -571,7 +854,7 @@
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 5108,
+      "latency_ms": 10750,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -597,11 +880,13 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -665,8 +950,41 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 481,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "b3149d903490e697",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "b3149d903490e697",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd",
-      "tokens": 2136,
+      "tokens": 2760,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -679,7 +997,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16470,
+      "latency_ms": 13793,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -717,7 +1035,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -781,8 +1099,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 450,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "b23f5f6b4624c789",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "0ac51f5e532a1499",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "b23f5f6b4624c789",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1358,
+      "planner_latency_ms": 2885.363,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
-      "tokens": 3584,
+      "tokens": 3616,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -795,7 +1184,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8972,
+      "latency_ms": 11714,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -833,7 +1222,7 @@
           "direction": "desc",
           "limit": 10
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -897,8 +1286,68 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 449,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "1e58e334b80d473f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "content"
+        }
+      ],
+      "selected_plan_id": "1e58e334b80d473f",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
-      "tokens": 2671,
+      "tokens": 2877,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -909,9 +1358,9 @@
     {
       "id": "c07_compare_food_game_trend",
       "type": "text2sql",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 12064,
+      "passed": false,
+      "reason": "final report missing required fields",
+      "latency_ms": 14585,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1018,8 +1467,101 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 458,
-      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 3104,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "e895ad32ebef25cf",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "6af6658870e9f8d7",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "e895ad32ebef25cf",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1676,
+      "planner_latency_ms": 7051.738,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY date",
+      "tokens": 3975,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -1032,7 +1574,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 15166,
+      "latency_ms": 22729,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1131,8 +1673,77 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 459,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "885ffc06ce2505e1",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "b53b3b79f3bfd80a",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "885ffc06ce2505e1",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1342,
+      "planner_latency_ms": 3984.473,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
-      "tokens": 3527,
+      "tokens": 4784,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -1145,7 +1756,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10018,
+      "latency_ms": 13593,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1179,7 +1790,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -1243,8 +1854,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 447,
-      "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2824,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "a52766b6aaadbaef",
+          "metricPathId": "total_likes_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_likes_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "1d2bf2cf61d56cde",
+          "metricPathId": "total_likes_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_likes_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "a52766b6aaadbaef",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1601,
+      "planner_latency_ms": 3127.538,
+      "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes FROM metric_daily md GROUP BY md.date, md.category ORDER BY date",
+      "tokens": 3695,
       "result_check": null
     },
     {
@@ -1252,7 +1954,7 @@
       "type": "metric",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10593,
+      "latency_ms": 23559,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1278,6 +1980,8 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -1346,8 +2050,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 477,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf",
-      "tokens": 2887,
+      "tokens": 4222,
       "result_check": null
     },
     {
@@ -1355,7 +2073,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13144,
+      "latency_ms": 14641,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1389,7 +2107,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -1453,8 +2171,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 441,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT md.category AS category, SUM(total_shares) AS total_shares FROM metric_daily md GROUP BY md.category",
-      "tokens": 3148,
+      "tokens": 3125,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -1467,7 +2199,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 5933,
+      "latency_ms": 9254,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1505,7 +2237,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -1569,8 +2301,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 448,
-      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' GROUP BY md.date ORDER BY md.date",
-      "tokens": 2281,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "23e6d91d780b9a67",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "5228eb2e8c16b050",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "23e6d91d780b9a67",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1632,
+      "planner_latency_ms": 2663.696,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' GROUP BY md.date ORDER BY date",
+      "tokens": 3160,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -1583,7 +2406,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11231,
+      "latency_ms": 25842,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1617,7 +2440,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -1681,8 +2504,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 444,
-      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 3026,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "fd086d3c9b5f2d03",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "796efdbc3579f2e0",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "fd086d3c9b5f2d03",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1345,
+      "planner_latency_ms": 2761.331,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY date",
+      "tokens": 5035,
       "result_check": {
         "kind": "trend_pattern",
         "passed": true,
@@ -1695,7 +2589,7 @@
       "type": "answer_quality",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8832,
+      "latency_ms": 16787,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -1725,7 +2619,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -1789,8 +2683,81 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 457,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "9fb5d0a166de3d62",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "ede1ddfdf0eaa491",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "9fb5d0a166de3d62",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1398,
+      "planner_latency_ms": 2537.718,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
-      "tokens": 2727,
+      "tokens": 3870,
       "result_check": null
     },
     {
@@ -1798,7 +2765,190 @@
       "type": "hard_guard",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12749,
+      "latency_ms": 23871,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 454,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "ca6fee4a696227ff",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "32cd3f510539c456",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "ca6fee4a696227ff",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1571,
+      "planner_latency_ms": 2458.34,
+      "sql": "SELECT md.date AS date, md.category AS category, md.total_plays AS total_plays FROM metric_daily md ORDER BY md.date",
+      "tokens": 4855,
+      "result_check": null
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18776,
       "status": "SUCCESS",
       "retry_count": 1,
       "sql_source": "fallback",
@@ -1883,22 +3033,113 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 454,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "ca6fee4a696227ff",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "32cd3f510539c456",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "ca6fee4a696227ff",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1604,
+      "planner_latency_ms": 2095.1,
       "sql": "SELECT date, category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY date, category ORDER BY date, category",
-      "tokens": 3520,
+      "tokens": 4512,
       "result_check": null
     },
     {
-      "id": "c16_dq_retry",
+      "id": "c17_dq_warning",
       "type": "dq",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 15952,
+      "latency_ms": 16675,
       "status": "SUCCESS",
-      "retry_count": 1,
-      "sql_source": "fallback",
+      "retry_count": 0,
+      "sql_source": "semantic",
       "spec_score": null,
       "resolved_intent": {
-        "intent": "trend",
+        "intent": "aggregate",
         "metrics": [
           "total_plays"
         ],
@@ -1909,102 +3150,6 @@
           "type": "none",
           "relative": null,
           "absolute": null,
-          "granularity": "day"
-        },
-        "filters": [],
-        "ordering": {
-          "field": null,
-          "direction": null,
-          "limit": null
-        },
-        "confidence": 0.9,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "metric_candidates": [
-        {
-          "metricCode": "total_plays",
-          "score": 1.0,
-          "reasons": [
-            "exact:metric_name",
-            "lexical"
-          ],
-          "matchedExpressions": [
-            "播放量"
-          ],
-          "pinned": true
-        },
-        {
-          "metricCode": "total_play_duration",
-          "score": 0.391667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "total_shares",
-          "score": 0.233333,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "completion_rate",
-          "score": 0.175,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "share_rate",
-          "score": 0.116667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        }
-      ],
-      "metric_recall_mode": "topk",
-      "metric_recall_fallback": false,
-      "metric_recall_reason": null,
-      "metric_recall_configured_k": 5,
-      "metric_recall_pinned_count": 1,
-      "metric_recall_effective_k": 5,
-      "metric_recall_full_catalog_count": 15,
-      "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 454,
-      "sql": "SELECT date, category, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY date, category ORDER BY date, category",
-      "tokens": 3845,
-      "result_check": null
-    },
-    {
-      "id": "c17_dq_warning",
-      "type": "dq",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 8973,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": null,
-      "resolved_intent": {
-        "intent": "trend",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
           "granularity": null
         },
         "filters": [
@@ -2018,7 +3163,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.97,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -2082,8 +3227,81 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 456,
-      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY md.date",
-      "tokens": 2602,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "9fb5d0a166de3d62",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "ede1ddfdf0eaa491",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "9fb5d0a166de3d62",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1398,
+      "planner_latency_ms": 3098.737,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
+      "tokens": 3870,
       "result_check": null
     },
     {
@@ -2091,7 +3309,7 @@
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 31381,
+      "latency_ms": 28646,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -2167,8 +3385,19 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 474,
-      "sql": "SELECT * FROM playback_detail LIMIT 1000",
-      "tokens": 5253,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT * FROM play_detail LIMIT 100",
+      "tokens": 3888,
       "result_check": null
     },
     {
@@ -2176,7 +3405,7 @@
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16480,
+      "latency_ms": 40693,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -2193,7 +3422,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.2,
+        "confidence": 0.3,
         "coverage": "partial"
       },
       "memory_hit": false,
@@ -2248,8 +3477,19 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 15,
       "semantic_prompt_chars": 1063,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT * FROM user_behavior LIMIT 100;",
-      "tokens": 3604,
+      "tokens": 5298,
       "result_check": null
     },
     {
@@ -2257,7 +3497,7 @@
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 29068,
+      "latency_ms": 59298,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "fallback",
@@ -2270,6 +3510,8 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -2335,8 +3577,19 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 450,
-      "sql": "SELECT date, SUM(value) AS total_plays FROM metric_daily WHERE metric_name = 'play_count' GROUP BY date ORDER BY date DESC LIMIT 30",
-      "tokens": 5321,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT `date` AS `date`, SUM(`play_count`) AS `total_plays` FROM `metric_daily` GROUP BY `date` ORDER BY `date`;",
+      "tokens": 6634,
       "result_check": null
     },
     {
@@ -2344,7 +3597,7 @@
       "type": "open",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11186,
+      "latency_ms": 27680,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2357,8 +3610,6 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": "day"
         },
         "filters": [
@@ -2433,8 +3684,66 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 481,
-      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY DATE(pd.created_at)",
-      "tokens": 2983,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "b8d868cc5b1eb2d4",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "play_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "completion_rate_detail",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "b8d868cc5b1eb2d4",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [
+        "play_content"
+      ],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY date",
+      "tokens": 4300,
       "result_check": null
     },
     {
@@ -2442,23 +3751,30 @@
       "type": "risk",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 25953,
+      "latency_ms": 39302,
       "status": "WAITING_APPROVAL",
       "retry_count": 0,
       "sql_source": "fallback",
       "spec_score": null,
       "resolved_intent": {
         "intent": "detail",
-        "metrics": [],
+        "metrics": [
+          "total_plays",
+          "total_likes",
+          "total_comments",
+          "total_shares"
+        ],
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.2,
-        "coverage": "low"
+        "confidence": 0.4,
+        "coverage": "partial"
       },
       "memory_hit": false,
       "memory_band": null,
@@ -2510,8 +3826,19 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 15,
       "semantic_prompt_chars": 1061,
-      "sql": "SELECT * FROM user_behavior LIMIT 100;",
-      "tokens": 4814,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT user_id, behavior_type, behavior_time, behavior_detail FROM user_behavior LIMIT 100;",
+      "tokens": 5400,
       "result_check": null
     },
     {
@@ -2519,7 +3846,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9615,
+      "latency_ms": 15031,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2534,11 +3861,13 @@
         ],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -2602,8 +3931,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 453,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "bfff99de408ac801",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "83eddbdc139bd72f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "bfff99de408ac801",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1327,
+      "planner_latency_ms": 3139.21,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
-      "tokens": 2731,
+      "tokens": 3696,
       "result_check": null
     },
     {
@@ -2637,7 +4037,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12789,
+      "latency_ms": 14438,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2666,13 +4066,11 @@
         ],
         "time_range": {
           "type": "none",
-          "relative": null,
-          "absolute": null,
           "granularity": null
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -2739,8 +4137,28 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 452,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [
+        {
+          "metricPathId": null,
+          "code": "NON_MVP_MULTI_METRIC",
+          "reason": "single metric only"
+        }
+      ],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays, SUM(total_likes) AS total_likes FROM metric_daily md GROUP BY md.category",
-      "tokens": 3171,
+      "tokens": 3161,
       "result_check": null
     },
     {
@@ -2748,7 +4166,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19454,
+      "latency_ms": 29018,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2850,8 +4268,28 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 487,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [
+        {
+          "metricPathId": null,
+          "code": "NON_MVP_MULTI_METRIC",
+          "reason": "single metric only"
+        }
+      ],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT a.category, a.completion_rate, b.engagement_rate FROM (SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id GROUP BY cd.category) a JOIN (SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category) b ON a.category = b.category",
-      "tokens": 4365,
+      "tokens": 5327,
       "result_check": null
     },
     {
@@ -2859,7 +4297,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9960,
+      "latency_ms": 14290,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -2899,7 +4337,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -2963,8 +4401,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 446,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "6c26cf5a5fec1893",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "8655c7f1a8f2fe1f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "6c26cf5a5fec1893",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1660,
+      "planner_latency_ms": 2338.912,
       "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
-      "tokens": 2772,
+      "tokens": 3965,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -2977,14 +4506,14 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8993,
+      "latency_ms": 17377,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
         "matched": false,
         "core_ok": true,
-        "field_hits": 5,
+        "field_hits": 4,
         "field_total": 6,
         "fields": {
           "intent": true,
@@ -2992,7 +4521,7 @@
           "dimensions": true,
           "time_range": false,
           "filters": true,
-          "ordering": true
+          "ordering": false
         }
       },
       "resolved_intent": {
@@ -3016,8 +4545,12 @@
             "value": "游戏"
           }
         ],
-        "ordering": null,
-        "confidence": 1.0,
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -3081,8 +4614,101 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 451,
-      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '游戏' AND md.date BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 2782,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "f3f182b7c9aff96a",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "8bc46e2072abebde",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "f3f182b7c9aff96a",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1753,
+      "planner_latency_ms": 3609.819,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '游戏' AND md.date BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY date",
+      "tokens": 4511,
       "result_check": null
     },
     {
@@ -3090,7 +4716,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12171,
+      "latency_ms": 22518,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3131,7 +4757,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -3195,8 +4821,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 455,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "9c08531572398d54",
+          "metricPathId": "total_likes_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_likes_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "05ac1a1d761788d9",
+          "metricPathId": "total_likes_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_likes_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "9c08531572398d54",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1683,
+      "planner_latency_ms": 2712.654,
       "sql": "SELECT SUM(total_likes) AS total_likes FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
-      "tokens": 3148,
+      "tokens": 4967,
       "result_check": null
     },
     {
@@ -3204,7 +4921,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12364,
+      "latency_ms": 18878,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3249,7 +4966,7 @@
           }
         ],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -3313,8 +5030,67 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 488,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "8df3fd65461dbf1b",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER",
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "play_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "completion_rate_detail",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "8df3fd65461dbf1b",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [
+        "play_content"
+      ],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category IN ('美食', '游戏') AND pd.created_at BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY cd.category",
-      "tokens": 3364,
+      "tokens": 3911,
       "result_check": null
     },
     {
@@ -3322,7 +5098,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12342,
+      "latency_ms": 14536,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3362,7 +5138,7 @@
           "direction": "desc",
           "limit": 5
         },
-        "confidence": 1.0,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -3426,8 +5202,78 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 452,
-      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 5",
-      "tokens": 3322,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "0424e7eb2f912103",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "content"
+        }
+      ],
+      "selected_plan_id": "0424e7eb2f912103",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 5",
+      "tokens": 3418,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -3440,7 +5286,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13863,
+      "latency_ms": 14401,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3544,8 +5390,78 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 449,
-      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
-      "tokens": 3392,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "ec4c620fd2680ad5",
+          "metricPathId": "total_likes_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_likes_fact",
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_likes",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_likes_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_likes_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "content"
+        }
+      ],
+      "selected_plan_id": "ec4c620fd2680ad5",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND ubf.timestamp BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 3447,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -3558,7 +5474,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16992,
+      "latency_ms": 27878,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3598,7 +5514,7 @@
           "direction": "desc",
           "limit": 1
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -3662,8 +5578,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 483,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY cd.category ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 1",
-      "tokens": 4290,
+      "tokens": 5396,
       "result_check": null
     },
     {
@@ -3671,7 +5601,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8583,
+      "latency_ms": 13738,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3773,8 +5703,68 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 491,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "7df8e62e8af14c26",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "creator",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_creator",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "creator"
+        }
+      ],
+      "selected_plan_id": "7df8e62e8af14c26",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id ORDER BY COUNT(*) DESC LIMIT 3",
-      "tokens": 2708,
+      "tokens": 3208,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -3787,7 +5777,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10254,
+      "latency_ms": 9946,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -3820,332 +5810,6 @@
           "granularity": null
         },
         "filters": [],
-        "ordering": null,
-        "confidence": 1.0,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "metric_candidates": [
-        {
-          "metricCode": "total_plays",
-          "score": 1.0,
-          "reasons": [
-            "exact:metric_name",
-            "lexical"
-          ],
-          "matchedExpressions": [
-            "播放量"
-          ],
-          "pinned": true
-        },
-        {
-          "metricCode": "creator_revenue",
-          "score": 0.535,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "active_creator_count",
-          "score": 0.435,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "total_play_duration",
-          "score": 0.391667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "completion_rate",
-          "score": 0.175,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        }
-      ],
-      "metric_recall_mode": "topk",
-      "metric_recall_fallback": false,
-      "metric_recall_reason": null,
-      "metric_recall_configured_k": 5,
-      "metric_recall_pinned_count": 1,
-      "metric_recall_effective_k": 5,
-      "metric_recall_full_catalog_count": 15,
-      "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 490,
-      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id",
-      "tokens": 2793,
-      "result_check": null
-    },
-    {
-      "id": "n15_cross_table",
-      "type": "text2sql",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 19212,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": {
-        "matched": true,
-        "core_ok": true,
-        "field_hits": 6,
-        "field_total": 6,
-        "fields": {
-          "intent": true,
-          "metrics": true,
-          "dimensions": true,
-          "time_range": true,
-          "filters": true,
-          "ordering": true
-        }
-      },
-      "resolved_intent": {
-        "intent": "aggregate",
-        "metrics": [
-          "completion_rate"
-        ],
-        "dimensions": [
-          "creator"
-        ],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": null
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 0.9,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "metric_candidates": [
-        {
-          "metricCode": "completion_rate",
-          "score": 1.0,
-          "reasons": [
-            "exact:metric_name",
-            "lexical"
-          ],
-          "matchedExpressions": [
-            "完播率"
-          ],
-          "pinned": true
-        },
-        {
-          "metricCode": "avg_completion_ratio",
-          "score": 0.535,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "creator_revenue",
-          "score": 0.535,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "active_creator_count",
-          "score": 0.435,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "video_revenue",
-          "score": 0.391667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        }
-      ],
-      "metric_recall_mode": "topk",
-      "metric_recall_fallback": false,
-      "metric_recall_reason": null,
-      "metric_recall_configured_k": 5,
-      "metric_recall_pinned_count": 1,
-      "metric_recall_effective_k": 5,
-      "metric_recall_full_catalog_count": 15,
-      "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 497,
-      "sql": "SELECT pd.creator AS creator, AVG(completion_rate) AS completion_rate FROM play_detail pd GROUP BY pd.creator",
-      "tokens": 4125,
-      "result_check": null
-    },
-    {
-      "id": "n16_cross_table",
-      "type": "text2sql",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 25360,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": {
-        "matched": true,
-        "core_ok": true,
-        "field_hits": 6,
-        "field_total": 6,
-        "fields": {
-          "intent": true,
-          "metrics": true,
-          "dimensions": true,
-          "time_range": true,
-          "filters": true,
-          "ordering": true
-        }
-      },
-      "resolved_intent": {
-        "intent": "aggregate",
-        "metrics": [
-          "total_likes"
-        ],
-        "dimensions": [
-          "content"
-        ],
-        "time_range": {
-          "type": "none",
-          "granularity": null
-        },
-        "filters": [],
-        "ordering": null,
-        "confidence": 1.0,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "metric_candidates": [
-        {
-          "metricCode": "total_likes",
-          "score": 1.0,
-          "reasons": [
-            "exact:metric_name",
-            "lexical"
-          ],
-          "matchedExpressions": [
-            "点赞量"
-          ],
-          "pinned": true
-        },
-        {
-          "metricCode": "like_rate",
-          "score": 0.558333,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "video_revenue",
-          "score": 0.391667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "total_plays",
-          "score": 0.233333,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "total_comments",
-          "score": 0.116667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        }
-      ],
-      "metric_recall_mode": "topk",
-      "metric_recall_fallback": false,
-      "metric_recall_reason": null,
-      "metric_recall_configured_k": 5,
-      "metric_recall_pinned_count": 1,
-      "metric_recall_effective_k": 5,
-      "metric_recall_full_catalog_count": 15,
-      "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 441,
-      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' GROUP BY ubf.content_id",
-      "tokens": 4693,
-      "result_check": {
-        "kind": "exact_per_key",
-        "passed": true,
-        "detail": "all keys match",
-        "fail_reason": null
-      }
-    },
-    {
-      "id": "n17_cross_table",
-      "type": "text2sql",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 11859,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": {
-        "matched": false,
-        "core_ok": true,
-        "field_hits": 5,
-        "field_total": 6,
-        "fields": {
-          "intent": true,
-          "metrics": true,
-          "dimensions": false,
-          "time_range": true,
-          "filters": true,
-          "ordering": true
-        }
-      },
-      "resolved_intent": {
-        "intent": "aggregate",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [],
-        "time_range": {
-          "type": "none",
-          "granularity": null
-        },
-        "filters": [
-          {
-            "field": "category",
-            "op": "=",
-            "value": "美食"
-          }
-        ],
         "ordering": null,
         "confidence": 0.95,
         "coverage": "full"
@@ -4210,17 +5874,67 @@
       "metric_recall_effective_k": 5,
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 491,
-      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
-      "tokens": 2934,
+      "semantic_prompt_chars": 490,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "0505b3378df8409f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "creator",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_creator",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "creator"
+        }
+      ],
+      "selected_plan_id": "0505b3378df8409f",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id",
+      "tokens": 2761,
       "result_check": null
     },
     {
-      "id": "n19_longtail",
+      "id": "n15_cross_table",
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 31562,
+      "latency_ms": 9915,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -4239,6 +5953,530 @@
         }
       },
       "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 497,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "08f369483d86ff91",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [
+            {
+              "semanticField": "creator",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_creator",
+              "metricPathId": null,
+              "edgeIds": [
+                "play_content"
+              ]
+            }
+          ],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "d580edbaca312acf",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [
+            {
+              "semanticField": "creator",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "creator_creator",
+              "metricPathId": null,
+              "edgeIds": [
+                "play_content",
+                "content_creator"
+              ]
+            }
+          ],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 2,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "08f369483d86ff91",
+      "plan_selection_source": "AUTO_POLICY",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [
+        "play_content"
+      ],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT cd.creator_id AS creator, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id GROUP BY cd.creator_id",
+      "tokens": 2784,
+      "result_check": null
+    },
+    {
+      "id": "n16_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14645,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 441,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "0f586bfe651963dd",
+          "metricPathId": "total_likes_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_content",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_likes_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "content"
+        }
+      ],
+      "selected_plan_id": "0f586bfe651963dd",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' GROUP BY ubf.content_id",
+      "tokens": 3286,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n17_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 26834,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 491,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "bc353154779a0a3c",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "creator",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_creator",
+              "metricPathId": null,
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "creator"
+        }
+      ],
+      "selected_plan_id": "bc353154779a0a3c",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [
+        "ubf_content"
+      ],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE event_type = 'play' AND cd.category = '美食' GROUP BY ubf.creator_id",
+      "tokens": 4623,
+      "result_check": null
+    },
+    {
+      "id": "n19_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25093,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "resolved_intent": {
         "intent": "ranking",
         "metrics": [
           "engagement_rate"
@@ -4254,10 +6492,10 @@
         "ordering": {
           "field": "engagement_rate",
           "direction": "desc",
-          "limit": 10
+          "limit": null
         },
-        "confidence": 0.6,
-        "coverage": "partial"
+        "confidence": 0.7,
+        "coverage": "full"
       },
       "memory_hit": false,
       "memory_band": null,
@@ -4314,8 +6552,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 491,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT ubf.content_id AS content, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf GROUP BY ubf.content_id ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 10",
-      "tokens": 5664,
+      "tokens": 4998,
       "result_check": null
     },
     {
@@ -4323,7 +6575,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13976,
+      "latency_ms": 17515,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -4349,14 +6601,8 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
-          "relative": {
-            "amount": null,
-            "unit": null
-          },
-          "absolute": {
-            "start": null,
-            "end": null
-          },
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [
@@ -4429,8 +6675,56 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 476,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "3084a3efa6fd8679",
+          "metricPathId": "completion_rate_detail",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "play_content"
+              ]
+            }
+          ],
+          "sourceTable": "play_detail",
+          "freshness": "REALTIME",
+          "costTier": 2,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "3084a3efa6fd8679",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [
+        "play_content"
+      ],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '游戏'",
-      "tokens": 3320,
+      "tokens": 2950,
       "result_check": null
     },
     {
@@ -4438,7 +6732,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9329,
+      "latency_ms": 10579,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -4476,7 +6770,7 @@
           "direction": "desc",
           "limit": 3
         },
-        "confidence": 0.98,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -4540,8 +6834,68 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 450,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "1e58e334b80d473f",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "ubf_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [
+        {
+          "metricPathId": "total_plays_daily",
+          "code": "NO_FIELD_ROUTE",
+          "reason": "content"
+        }
+      ],
+      "selected_plan_id": "1e58e334b80d473f",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 3",
-      "tokens": 2819,
+      "tokens": 2732,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -4554,7 +6908,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12834,
+      "latency_ms": 20628,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -4580,15 +6934,16 @@
         "dimensions": [],
         "time_range": {
           "type": "absolute",
+          "relative": null,
           "absolute": {
-            "start": "2023-10-30",
-            "end": "2023-10-31"
+            "start": "2026-04-25",
+            "end": "2026-04-26"
           },
           "granularity": "day"
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -4652,8 +7007,79 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 446,
-      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-30' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
-      "tokens": 3270,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "fd086d3c9b5f2d03",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "796efdbc3579f2e0",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_BUCKET",
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "fd086d3c9b5f2d03",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1361,
+      "planner_latency_ms": 2497.609,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2026-04-25' AND '2026-04-26 23:59:59' GROUP BY md.date ORDER BY date",
+      "tokens": 4683,
       "result_check": null
     },
     {
@@ -4661,7 +7087,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8751,
+      "latency_ms": 13981,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -4697,7 +7123,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -4758,8 +7184,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 461,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "401e7557e4e8b8c3",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "1e709d4fff99b2fd",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "401e7557e4e8b8c3",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1633,
+      "planner_latency_ms": 3987.567,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.category",
-      "tokens": 2701,
+      "tokens": 2704,
       "result_check": null
     },
     {
@@ -4767,18 +7284,18 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 9174,
+      "latency_ms": 30846,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
         "matched": false,
-        "core_ok": false,
-        "field_hits": 4,
+        "core_ok": true,
+        "field_hits": 5,
         "field_total": 6,
         "fields": {
           "intent": true,
-          "metrics": false,
+          "metrics": true,
           "dimensions": true,
           "time_range": false,
           "filters": true,
@@ -4788,7 +7305,7 @@
       "resolved_intent": {
         "intent": "aggregate",
         "metrics": [
-          "daily_active_users"
+          "total_plays"
         ],
         "dimensions": [],
         "time_range": {
@@ -4858,8 +7375,77 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 15,
       "semantic_prompt_chars": 1059,
-      "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
-      "tokens": 2926,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "885ffc06ce2505e1",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "b53b3b79f3bfd80a",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "885ffc06ce2505e1",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1319,
+      "planner_latency_ms": 3418.013,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 5614,
       "result_check": null
     },
     {
@@ -4867,14 +7453,14 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 6871,
+      "latency_ms": 12400,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
-        "matched": true,
+        "matched": false,
         "core_ok": true,
-        "field_hits": 6,
+        "field_hits": 5,
         "field_total": 6,
         "fields": {
           "intent": true,
@@ -4882,7 +7468,7 @@
           "dimensions": true,
           "time_range": true,
           "filters": true,
-          "ordering": true
+          "ordering": false
         }
       },
       "resolved_intent": {
@@ -4900,7 +7486,7 @@
           "granularity": null
         },
         "filters": [],
-        "ordering": null,
+        "ordering": {},
         "confidence": 0.95,
         "coverage": "full"
       },
@@ -4965,8 +7551,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 474,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
-      "tokens": 2525,
+      "tokens": 2997,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -4979,7 +7579,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 11970,
+      "latency_ms": 13397,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5083,8 +7683,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 464,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'like' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS like_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
-      "tokens": 3348,
+      "tokens": 3095,
       "result_check": null
     },
     {
@@ -5092,7 +7706,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10821,
+      "latency_ms": 11309,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5126,7 +7740,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 1.0,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -5190,8 +7804,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 472,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'share' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS share_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category",
-      "tokens": 3106,
+      "tokens": 2883,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -5204,7 +7832,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 5753,
+      "latency_ms": 14039,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5300,8 +7928,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 483,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT AVG(completion_rate) AS avg_completion_ratio FROM play_detail pd",
-      "tokens": 2257,
+      "tokens": 3106,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -5314,7 +7956,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12925,
+      "latency_ms": 13364,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5352,7 +7994,7 @@
           "direction": "desc",
           "limit": 3
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -5414,8 +8056,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 512,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr GROUP BY cr.creator_id ORDER BY SUM(revenue) DESC LIMIT 3",
-      "tokens": 3131,
+      "tokens": 3068,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -5428,7 +8084,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13619,
+      "latency_ms": 7378,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5466,7 +8122,7 @@
           "direction": "desc",
           "limit": 5
         },
-        "confidence": 1.0,
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -5526,8 +8182,62 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 510,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "b27befa76404251c",
+          "metricPathId": "video_revenue_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "vr_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "video_revenue",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "video_revenue_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "video_revenue",
+          "freshness": "T1",
+          "costTier": 2,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "b27befa76404251c",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
-      "tokens": 3465,
+      "tokens": 2295,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -5540,7 +8250,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8971,
+      "latency_ms": 8680,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5572,7 +8282,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.9,
+        "confidence": 0.99,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -5636,8 +8346,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 481,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT COUNT(DISTINCT ubf.creator_id) AS active_creator_count FROM user_behavior_fact ubf",
-      "tokens": 2711,
+      "tokens": 2408,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -5650,7 +8374,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10954,
+      "latency_ms": 20633,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5676,6 +8400,8 @@
         "dimensions": [],
         "time_range": {
           "type": "none",
+          "relative": null,
+          "absolute": null,
           "granularity": null
         },
         "filters": [],
@@ -5742,8 +8468,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 467,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf",
-      "tokens": 2829,
+      "tokens": 4082,
       "result_check": {
         "kind": "exact",
         "passed": true,
@@ -5756,7 +8496,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 16267,
+      "latency_ms": 14798,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5792,7 +8532,7 @@
         },
         "filters": [],
         "ordering": null,
-        "confidence": 0.95,
+        "confidence": 0.9,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -5853,8 +8593,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 498,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT cr.stat_date AS date, cr.creator_id AS creator, SUM(revenue) AS creator_revenue FROM creator_revenue cr WHERE cr.stat_date BETWEEN '2023-10-18' AND '2023-10-31 23:59:59' GROUP BY cr.stat_date, cr.creator_id ORDER BY cr.stat_date",
-      "tokens": 3842,
+      "tokens": 3426,
       "result_check": null
     },
     {
@@ -5862,7 +8616,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 12593,
+      "latency_ms": 13454,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -5962,8 +8716,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 461,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT DATE(ubf.timestamp) AS date, cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), cd.category ORDER BY DATE(ubf.timestamp)",
-      "tokens": 3364,
+      "tokens": 3449,
       "result_check": null
     },
     {
@@ -5971,14 +8739,14 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 8035,
+      "latency_ms": 17436,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
       "spec_score": {
         "matched": false,
         "core_ok": true,
-        "field_hits": 5,
+        "field_hits": 4,
         "field_total": 6,
         "fields": {
           "intent": true,
@@ -5986,7 +8754,7 @@
           "dimensions": true,
           "time_range": false,
           "filters": true,
-          "ordering": true
+          "ordering": false
         }
       },
       "resolved_intent": {
@@ -6004,8 +8772,12 @@
           "granularity": "day"
         },
         "filters": [],
-        "ordering": null,
-        "confidence": 1.0,
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
         "coverage": "full"
       },
       "memory_hit": false,
@@ -6069,8 +8841,22 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 473,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT DATE(ubf.timestamp) AS date, COUNT(DISTINCT ubf.user_id) AS daily_active_users FROM user_behavior_fact ubf WHERE ubf.timestamp BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp) ORDER BY DATE(ubf.timestamp)",
-      "tokens": 2726,
+      "tokens": 3966,
       "result_check": null
     },
     {
@@ -6078,7 +8864,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 18851,
+      "latency_ms": 15427,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -6178,8 +8964,72 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 514,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "2ad3bdfb2e9250e6",
+          "metricPathId": "video_revenue_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "content",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "vr_content",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "date",
+              "usages": [
+                "TIME_FILTER"
+              ],
+              "routeKind": "TIME_FIELD",
+              "bindingId": null,
+              "metricPathId": "video_revenue_daily",
+              "edgeIds": []
+            },
+            {
+              "semanticField": "video_revenue",
+              "usages": [
+                "ORDERING"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "video_revenue_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "video_revenue",
+          "freshness": "T1",
+          "costTier": 2,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "2ad3bdfb2e9250e6",
+      "plan_selection_source": "AUTO_SINGLE",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
       "sql": "SELECT vr.content_id AS content, SUM(revenue) AS video_revenue FROM video_revenue vr WHERE vr.stat_date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY vr.content_id ORDER BY SUM(revenue) DESC LIMIT 5",
-      "tokens": 4098,
+      "tokens": 3558,
       "result_check": {
         "kind": "top_set",
         "passed": true,
@@ -6192,7 +9042,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 19672,
+      "latency_ms": 19566,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -6228,6 +9078,215 @@
           {
             "field": "total_plays",
             "op": ">",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 457,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "4b18129c98d30b36",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "f6685cf07ed9028c",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "4b18129c98d30b36",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1672,
+      "planner_latency_ms": 2144.39,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) > 3000",
+      "tokens": 4662,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 21346,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": ">=",
             "value": 3000
           }
         ],
@@ -6295,127 +9354,100 @@
       "metric_recall_effective_k": 5,
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 457,
-      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) > 3000",
-      "tokens": 3976,
-      "result_check": {
-        "kind": "exact_per_key",
-        "passed": true,
-        "detail": "all keys match",
-        "fail_reason": null
-      }
-    },
-    {
-      "id": "n39_metric_filter_gte",
-      "type": "text2sql",
-      "passed": true,
-      "reason": "PASS",
-      "latency_ms": 13544,
-      "status": "SUCCESS",
-      "retry_count": 0,
-      "sql_source": "semantic",
-      "spec_score": {
-        "matched": true,
-        "core_ok": true,
-        "field_hits": 6,
-        "field_total": 6,
-        "fields": {
-          "intent": true,
-          "metrics": true,
-          "dimensions": true,
-          "time_range": true,
-          "filters": true,
-          "ordering": true
-        }
-      },
-      "resolved_intent": {
-        "intent": "aggregate",
-        "metrics": [
-          "total_plays"
-        ],
-        "dimensions": [
-          "category"
-        ],
-        "time_range": {
-          "type": "none",
-          "relative": null,
-          "absolute": null,
-          "granularity": null
-        },
-        "filters": [
-          {
-            "field": "total_plays",
-            "op": ">=",
-            "value": 3000
-          }
-        ],
-        "ordering": null,
-        "confidence": 1.0,
-        "coverage": "full"
-      },
-      "memory_hit": false,
-      "memory_band": null,
-      "metric_candidates": [
+      "semantic_prompt_chars": 458,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
         {
-          "metricCode": "total_plays",
-          "score": 1.0,
-          "reasons": [
-            "exact:metric_name",
-            "lexical"
+          "planId": "4b18129c98d30b36",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
           ],
-          "matchedExpressions": [
-            "播放量"
-          ],
-          "pinned": true
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
         },
         {
-          "metricCode": "total_play_duration",
-          "score": 0.391667,
-          "reasons": [
-            "lexical"
+          "planId": "f6685cf07ed9028c",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
           ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "total_shares",
-          "score": 0.233333,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "completion_rate",
-          "score": 0.175,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
-        },
-        {
-          "metricCode": "share_rate",
-          "score": 0.116667,
-          "reasons": [
-            "lexical"
-          ],
-          "matchedExpressions": [],
-          "pinned": false
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
         }
       ],
-      "metric_recall_mode": "topk",
-      "metric_recall_fallback": false,
-      "metric_recall_reason": null,
-      "metric_recall_configured_k": 5,
-      "metric_recall_pinned_count": 1,
-      "metric_recall_effective_k": 5,
-      "metric_recall_full_catalog_count": 15,
-      "metric_recall_prompt_catalog_count": 5,
-      "semantic_prompt_chars": 458,
+      "rejected_plans": [],
+      "selected_plan_id": "4b18129c98d30b36",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1675,
+      "planner_latency_ms": 2601.499,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) >= 3000",
-      "tokens": 3141,
+      "tokens": 4838,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -6428,7 +9460,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 10300,
+      "latency_ms": 13965,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -6532,8 +9564,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 457,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "4b18129c98d30b36",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "f6685cf07ed9028c",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "4b18129c98d30b36",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1673,
+      "planner_latency_ms": 2346.082,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) < 3000",
-      "tokens": 2862,
+      "tokens": 3891,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,
@@ -6546,7 +9669,7 @@
       "type": "text2sql",
       "passed": true,
       "reason": "PASS",
-      "latency_ms": 13313,
+      "latency_ms": 18022,
       "status": "SUCCESS",
       "retry_count": 0,
       "sql_source": "semantic",
@@ -6650,8 +9773,99 @@
       "metric_recall_full_catalog_count": 15,
       "metric_recall_prompt_catalog_count": 5,
       "semantic_prompt_chars": 458,
+      "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+      "candidate_plans": [
+        {
+          "planId": "4b18129c98d30b36",
+          "metricPathId": "total_plays_daily",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "md_category",
+              "metricPathId": null,
+              "edgeIds": []
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_daily",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "metric_daily",
+          "freshness": "T1",
+          "costTier": 1,
+          "joinCount": 0,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        },
+        {
+          "planId": "f6685cf07ed9028c",
+          "metricPathId": "total_plays_fact",
+          "fieldRoutes": [
+            {
+              "semanticField": "category",
+              "usages": [
+                "GROUP_BY"
+              ],
+              "routeKind": "DIMENSION_BINDING",
+              "bindingId": "content_category",
+              "metricPathId": null,
+              "edgeIds": [
+                "ubf_content"
+              ]
+            },
+            {
+              "semanticField": "total_plays",
+              "usages": [
+                "FILTER"
+              ],
+              "routeKind": "METRIC_EXPRESSION",
+              "bindingId": null,
+              "metricPathId": "total_plays_fact",
+              "edgeIds": []
+            }
+          ],
+          "sourceTable": "user_behavior_fact",
+          "freshness": "REALTIME",
+          "costTier": 3,
+          "joinCount": 1,
+          "catalogVersion": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+          "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+          "legalityEvidence": [
+            "PASS"
+          ]
+        }
+      ],
+      "rejected_plans": [],
+      "selected_plan_id": "4b18129c98d30b36",
+      "plan_selection_source": "PLANNER_AGENT",
+      "plan_validation": {
+        "verdict": "PASS",
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "snapshotFingerprint": "4fdb534fa7b2a643a5a182bc54b297a5500995f41a50ff8adf9d1f9bf53f78a4",
+        "mismatchedComponents": []
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 1675,
+      "planner_latency_ms": 3777.923,
       "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) <= 2669",
-      "tokens": 3164,
+      "tokens": 4428,
       "result_check": {
         "kind": "exact_per_key",
         "passed": true,

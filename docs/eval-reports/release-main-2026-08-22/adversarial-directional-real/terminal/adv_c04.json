@@ -1,0 +1,16 @@
+{
+  "audit": {},
+  "case_id": "adv_c04",
+  "code": "PROFILE_INELIGIBLE",
+  "disposition": null,
+  "execution_unit_id": "adv_c04",
+  "layer": "synthesis",
+  "node_trace": [],
+  "observation_status": "PROFILE_INELIGIBLE",
+  "protocol": "fixed_intent",
+  "reason": null,
+  "result_rows": null,
+  "stage": "PROFILE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

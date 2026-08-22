@@ -1,0 +1,2002 @@
+{
+  "judged": 49,
+  "unjudged": 12,
+  "configured_k": 5,
+  "lexical_threshold": 0.55,
+  "recall@configured_k": {
+    "hits": 49,
+    "total": 49,
+    "rate": 1.0
+  },
+  "strict_recall@effective_k": {
+    "hits": 49,
+    "total": 49,
+    "rate": 1.0
+  },
+  "effective_recall": {
+    "hits": 49,
+    "total": 49,
+    "rate": 1.0
+  },
+  "multi_metric_complete": {
+    "hits": 2,
+    "total": 2,
+    "rate": 1.0
+  },
+  "pinned_expansion_count": 0,
+  "fallback_count": 1,
+  "fallback_reasons": {
+    "no_reliable_signal": 1
+  },
+  "gate_passed": true,
+  "failures": [],
+  "cases": [
+    {
+      "id": "c01_category_trend",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c02_category_total",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c03_last7d_daily_plays",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c04_completion_rate",
+      "golden_metrics": [
+        "completion_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "effective_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "prompt_catalog_codes": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c05_food_plays",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c06_top10_videos",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c07_compare_food_game_trend",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "share_rate",
+        "total_shares"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "share_rate",
+        "total_shares"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "share_rate",
+        "total_shares"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c08_oct1to7_plays",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c09_likes_trend",
+      "golden_metrics": [
+        "total_likes"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "total_shares",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "total_shares",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "total_shares",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c10_engagement_rate",
+      "golden_metrics": [
+        "engagement_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "engagement_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "engagement_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "engagement_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c11_shares_total",
+      "golden_metrics": [
+        "total_shares"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_shares",
+        "share_rate",
+        "total_plays",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_shares",
+        "share_rate",
+        "total_plays",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_shares",
+        "share_rate",
+        "total_plays",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c12_food_trend",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "c13_lastweek_plays",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n01_multi_metric",
+      "golden_metrics": [
+        "total_likes",
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 2,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_likes",
+        "total_plays",
+        "like_rate",
+        "total_play_duration",
+        "total_shares"
+      ],
+      "effective_candidates": [
+        "total_likes",
+        "total_plays",
+        "like_rate",
+        "total_play_duration",
+        "total_shares"
+      ],
+      "prompt_catalog_codes": [
+        "total_likes",
+        "total_plays",
+        "like_rate",
+        "total_play_duration",
+        "total_shares"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n02_multi_metric",
+      "golden_metrics": [
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 2,
+      "effective_k": 5,
+      "configured_candidates": [
+        "completion_rate",
+        "engagement_rate",
+        "avg_completion_ratio",
+        "share_rate",
+        "comment_rate"
+      ],
+      "effective_candidates": [
+        "completion_rate",
+        "engagement_rate",
+        "avg_completion_ratio",
+        "share_rate",
+        "comment_rate"
+      ],
+      "prompt_catalog_codes": [
+        "completion_rate",
+        "engagement_rate",
+        "avg_completion_ratio",
+        "share_rate",
+        "comment_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n04_multi_filter",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n05_multi_filter",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n06_multi_filter",
+      "golden_metrics": [
+        "total_likes"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_likes",
+        "like_rate",
+        "total_plays",
+        "daily_active_users",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n07_multi_filter",
+      "golden_metrics": [
+        "completion_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "effective_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "prompt_catalog_codes": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n09_ranked_time",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n10_ranked_time",
+      "golden_metrics": [
+        "total_likes"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n11_ranked_time",
+      "golden_metrics": [
+        "engagement_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "engagement_rate",
+        "share_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate"
+      ],
+      "effective_candidates": [
+        "engagement_rate",
+        "share_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate"
+      ],
+      "prompt_catalog_codes": [
+        "engagement_rate",
+        "share_rate",
+        "comment_rate",
+        "completion_rate",
+        "like_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n12_ranked_time",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n14_cross_table",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n15_cross_table",
+      "golden_metrics": [
+        "completion_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue"
+      ],
+      "effective_candidates": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue"
+      ],
+      "prompt_catalog_codes": [
+        "completion_rate",
+        "avg_completion_ratio",
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n16_cross_table",
+      "golden_metrics": [
+        "total_likes"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_likes",
+        "like_rate",
+        "video_revenue",
+        "total_plays",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n17_cross_table",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "creator_revenue",
+        "active_creator_count",
+        "total_play_duration",
+        "completion_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n19_longtail",
+      "golden_metrics": [
+        "engagement_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "engagement_rate",
+        "video_revenue",
+        "active_creator_count",
+        "avg_completion_ratio",
+        "comment_rate"
+      ],
+      "effective_candidates": [
+        "engagement_rate",
+        "video_revenue",
+        "active_creator_count",
+        "avg_completion_ratio",
+        "comment_rate"
+      ],
+      "prompt_catalog_codes": [
+        "engagement_rate",
+        "video_revenue",
+        "active_creator_count",
+        "avg_completion_ratio",
+        "comment_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n20_longtail",
+      "golden_metrics": [
+        "completion_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "completion_rate",
+        "total_plays",
+        "avg_completion_ratio",
+        "total_play_duration",
+        "active_creator_count"
+      ],
+      "effective_candidates": [
+        "completion_rate",
+        "total_plays",
+        "avg_completion_ratio",
+        "total_play_duration",
+        "active_creator_count"
+      ],
+      "prompt_catalog_codes": [
+        "completion_rate",
+        "total_plays",
+        "avg_completion_ratio",
+        "total_play_duration",
+        "active_creator_count"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n21_longtail",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "video_revenue",
+        "completion_rate",
+        "total_comments"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n22_longtail",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "completion_rate",
+        "total_comments",
+        "total_likes"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n23_longtail",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 0,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "completion_rate",
+        "share_rate",
+        "total_shares",
+        "engagement_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "completion_rate",
+        "share_rate",
+        "total_shares",
+        "engagement_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "completion_rate",
+        "share_rate",
+        "total_shares",
+        "engagement_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n25_longtail",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "full_fallback",
+      "fallback": true,
+      "fallback_reason": "no_reliable_signal",
+      "configured_k": 5,
+      "pinned_count": 0,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "engagement_rate",
+        "completion_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "engagement_rate",
+        "completion_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_likes",
+        "total_comments",
+        "total_shares",
+        "completion_rate",
+        "engagement_rate",
+        "comment_rate",
+        "like_rate",
+        "share_rate",
+        "avg_completion_ratio",
+        "creator_revenue",
+        "video_revenue",
+        "active_creator_count",
+        "daily_active_users"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n26_comment_rate",
+      "golden_metrics": [
+        "comment_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "comment_rate",
+        "total_comments",
+        "share_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "effective_candidates": [
+        "comment_rate",
+        "total_comments",
+        "share_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "prompt_catalog_codes": [
+        "comment_rate",
+        "total_comments",
+        "share_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n27_like_rate",
+      "golden_metrics": [
+        "like_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "like_rate",
+        "total_likes",
+        "total_plays",
+        "share_rate",
+        "comment_rate"
+      ],
+      "effective_candidates": [
+        "like_rate",
+        "total_likes",
+        "total_plays",
+        "share_rate",
+        "comment_rate"
+      ],
+      "prompt_catalog_codes": [
+        "like_rate",
+        "total_likes",
+        "total_plays",
+        "share_rate",
+        "comment_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n28_share_rate",
+      "golden_metrics": [
+        "share_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "share_rate",
+        "total_shares",
+        "comment_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "effective_candidates": [
+        "share_rate",
+        "total_shares",
+        "comment_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "prompt_catalog_codes": [
+        "share_rate",
+        "total_shares",
+        "comment_rate",
+        "completion_rate",
+        "engagement_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n29_avg_completion",
+      "golden_metrics": [
+        "avg_completion_ratio"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "avg_completion_ratio",
+        "completion_rate",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "effective_candidates": [
+        "avg_completion_ratio",
+        "completion_rate",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "prompt_catalog_codes": [
+        "avg_completion_ratio",
+        "completion_rate",
+        "comment_rate",
+        "engagement_rate",
+        "like_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n30_creator_revenue",
+      "golden_metrics": [
+        "creator_revenue"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue",
+        "engagement_rate",
+        "avg_completion_ratio"
+      ],
+      "effective_candidates": [
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue",
+        "engagement_rate",
+        "avg_completion_ratio"
+      ],
+      "prompt_catalog_codes": [
+        "creator_revenue",
+        "active_creator_count",
+        "video_revenue",
+        "engagement_rate",
+        "avg_completion_ratio"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n31_video_revenue",
+      "golden_metrics": [
+        "video_revenue"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "effective_candidates": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "prompt_catalog_codes": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n32_active_creator",
+      "golden_metrics": [
+        "active_creator_count"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "active_creator_count",
+        "creator_revenue",
+        "daily_active_users",
+        "total_likes",
+        "total_plays"
+      ],
+      "effective_candidates": [
+        "active_creator_count",
+        "creator_revenue",
+        "daily_active_users",
+        "total_likes",
+        "total_plays"
+      ],
+      "prompt_catalog_codes": [
+        "active_creator_count",
+        "creator_revenue",
+        "daily_active_users",
+        "total_likes",
+        "total_plays"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n33_dau",
+      "golden_metrics": [
+        "daily_active_users"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "daily_active_users",
+        "active_creator_count",
+        "total_likes",
+        "total_plays",
+        "avg_completion_ratio"
+      ],
+      "effective_candidates": [
+        "daily_active_users",
+        "active_creator_count",
+        "total_likes",
+        "total_plays",
+        "avg_completion_ratio"
+      ],
+      "prompt_catalog_codes": [
+        "daily_active_users",
+        "active_creator_count",
+        "total_likes",
+        "total_plays",
+        "avg_completion_ratio"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "golden_metrics": [
+        "creator_revenue"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 0,
+      "effective_k": 5,
+      "configured_candidates": [
+        "creator_revenue",
+        "active_creator_count",
+        "total_plays",
+        "video_revenue",
+        "engagement_rate"
+      ],
+      "effective_candidates": [
+        "creator_revenue",
+        "active_creator_count",
+        "total_plays",
+        "video_revenue",
+        "engagement_rate"
+      ],
+      "prompt_catalog_codes": [
+        "creator_revenue",
+        "active_creator_count",
+        "total_plays",
+        "video_revenue",
+        "engagement_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "golden_metrics": [
+        "comment_rate"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "comment_rate",
+        "total_comments",
+        "total_plays",
+        "share_rate",
+        "completion_rate"
+      ],
+      "effective_candidates": [
+        "comment_rate",
+        "total_comments",
+        "total_plays",
+        "share_rate",
+        "completion_rate"
+      ],
+      "prompt_catalog_codes": [
+        "comment_rate",
+        "total_comments",
+        "total_plays",
+        "share_rate",
+        "completion_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n36_dau_trend",
+      "golden_metrics": [
+        "daily_active_users"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "daily_active_users",
+        "total_plays",
+        "active_creator_count",
+        "total_likes",
+        "engagement_rate"
+      ],
+      "effective_candidates": [
+        "daily_active_users",
+        "total_plays",
+        "active_creator_count",
+        "total_likes",
+        "engagement_rate"
+      ],
+      "prompt_catalog_codes": [
+        "daily_active_users",
+        "total_plays",
+        "active_creator_count",
+        "total_likes",
+        "engagement_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "golden_metrics": [
+        "video_revenue"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "effective_candidates": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "prompt_catalog_codes": [
+        "video_revenue",
+        "creator_revenue",
+        "engagement_rate",
+        "active_creator_count",
+        "avg_completion_ratio"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n38_metric_filter_gt",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n40_metric_filter_lt",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    },
+    {
+      "id": "n41_metric_filter_lte",
+      "golden_metrics": [
+        "total_plays"
+      ],
+      "mode": "topk",
+      "fallback": false,
+      "fallback_reason": null,
+      "configured_k": 5,
+      "pinned_count": 1,
+      "effective_k": 5,
+      "configured_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "effective_candidates": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "prompt_catalog_codes": [
+        "total_plays",
+        "total_play_duration",
+        "total_shares",
+        "completion_rate",
+        "share_rate"
+      ],
+      "configured_ok": true,
+      "strict_ok": true,
+      "effective_ok": true
+    }
+  ],
+  "scan": [
+    {
+      "configured_k": 5,
+      "lexical_threshold": 0.55,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 5,
+      "lexical_threshold": 0.45,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 5,
+      "lexical_threshold": 0.35,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 8,
+      "lexical_threshold": 0.55,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 8,
+      "lexical_threshold": 0.45,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 8,
+      "lexical_threshold": 0.35,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 15,
+      "lexical_threshold": 0.55,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 15,
+      "lexical_threshold": 0.45,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    },
+    {
+      "configured_k": 15,
+      "lexical_threshold": 0.35,
+      "recall@configured_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "strict_recall@effective_k": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "effective_recall": {
+        "hits": 49,
+        "total": 49,
+        "rate": 1.0
+      },
+      "fallback_count": 1,
+      "gate_passed": true
+    }
+  ]
+}

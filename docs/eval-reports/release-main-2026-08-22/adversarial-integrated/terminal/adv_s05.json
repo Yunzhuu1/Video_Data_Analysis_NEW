@@ -1,0 +1,60 @@
+{
+  "audit": {
+    "candidate_plans": null,
+    "catalog_outside_metrics": [],
+    "catalog_version": null,
+    "metric_candidates": [],
+    "metric_recall_effective_k": 5,
+    "metric_recall_mode": "full_fallback",
+    "metric_recall_pinned_count": 0,
+    "plan_selection_source": null,
+    "plan_validation": null,
+    "resolved_intent": {
+      "confidence": 0.0,
+      "coverage": "none",
+      "dimensions": [],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": null,
+        "type": "none"
+      }
+    },
+    "run_id": "run_12747fb6-4c9a-4419-aaef-736c9f3a23b3",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      "SELECT date, SUM(total_plays) AS total_plays FROM metric_daily GROUP BY date ORDER BY date DESC LIMIT 100"
+    ],
+    "sql_source": "fallback"
+  },
+  "case_id": "adv_s05",
+  "code": "UNKNOWN_METRIC",
+  "disposition": "SUPPORTED_FALLBACK",
+  "execution_unit_id": "adv_s05",
+  "layer": "semantic",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "SQL_GENERATE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE",
+    "SQL_SOFT_DQ",
+    "SQL_GENERATE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE",
+    "SQL_SOFT_DQ",
+    "ANSWER"
+  ],
+  "observation_status": "OK",
+  "protocol": "question",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SEMANTIC_RESOLVE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

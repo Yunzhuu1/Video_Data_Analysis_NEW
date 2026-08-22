@@ -1,0 +1,4640 @@
+{
+  "config": {
+    "llm": "real",
+    "platform": "real",
+    "model": "deepseek-v4-flash",
+    "eval_date": "2023-10-14",
+    "cassette": "-",
+    "memory": "off",
+    "metric_recall": "topk"
+  },
+  "eval_date": "2023-10-14",
+  "metrics": {
+    "total": 61,
+    "evaluated": 61,
+    "error_count": 0,
+    "passed": 60,
+    "end_to_end": 0.9836065573770492,
+    "auto_fix": 1.0,
+    "auto_fix_total": 1,
+    "risk_interception": 1.0,
+    "risk_total": 3,
+    "auto_released": 23,
+    "auto_released_ratio": 0.3770491803278688,
+    "unexpected_intercepts": 0,
+    "memory_hit": 0,
+    "memory_hit_rate": 0.0,
+    "memory_inject": 0,
+    "memory_inject_rate": 0.0,
+    "metric_recall_fallback_count": 59,
+    "metric_recall_fallback_rate": 0.9672131147540983,
+    "metric_recall_fallback_reasons": {
+      "invalid_catalog": 59
+    },
+    "planner_invocation_count": 0,
+    "planner_invocation_rate": 0.0,
+    "planner_legacy_fallback_count": 46,
+    "planner_legacy_fallback_rate": 0.7540983606557377,
+    "plan_selection_sources": {
+      "LEGACY_FALLBACK": 46,
+      "NONE": 15
+    },
+    "planner_prompt_chars_total": 0,
+    "planner_latency_ms_total": 0.0,
+    "planning_retry_total": 0,
+    "semantic_prompt_chars_total": 33120,
+    "semantic_prompt_chars_count": 59,
+    "semantic_prompt_chars_avg": 561.3559322033898,
+    "semantic_prompt_chars_p50": 561,
+    "semantic_prompt_chars_p95": 566.0,
+    "tokens_total": 0,
+    "tokens_hit_avg": 0.0,
+    "tokens_miss_avg": 0.0,
+    "result_judged": 21,
+    "result_passed": 21,
+    "result_rate": 1.0,
+    "result_value_mismatch": [],
+    "repeat_pairs": 0,
+    "direct_hit_pairs": 0,
+    "direct_hit_avg_token_delta": 0.0,
+    "direct_hit_avg_latency_delta": 0.0,
+    "judged": 49,
+    "core_accuracy": 0.7346938775510204,
+    "core_hits": 36,
+    "strict_accuracy": 0.5102040816326531,
+    "strict_hits": 25,
+    "avg_field_match": 0.8537414965986394,
+    "per_field": {
+      "intent": 0.9183673469387755,
+      "metrics": 0.7346938775510204,
+      "dimensions": 0.9387755102040817,
+      "time_range": 0.7551020408163265,
+      "filters": 0.9591836734693877,
+      "ordering": 0.8163265306122449
+    },
+    "latency_p50": 16853,
+    "latency_p95": 41472.0
+  },
+  "subsets": {
+    "all": {
+      "total": 61,
+      "evaluated": 61,
+      "error_count": 0,
+      "passed": 60,
+      "end_to_end": 0.9836065573770492,
+      "auto_fix": 1.0,
+      "auto_fix_total": 1,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 23,
+      "auto_released_ratio": 0.3770491803278688,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 59,
+      "metric_recall_fallback_rate": 0.9672131147540983,
+      "metric_recall_fallback_reasons": {
+        "invalid_catalog": 59
+      },
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 46,
+      "planner_legacy_fallback_rate": 0.7540983606557377,
+      "plan_selection_sources": {
+        "LEGACY_FALLBACK": 46,
+        "NONE": 15
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 33120,
+      "semantic_prompt_chars_count": 59,
+      "semantic_prompt_chars_avg": 561.3559322033898,
+      "semantic_prompt_chars_p50": 561,
+      "semantic_prompt_chars_p95": 566.0,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 21,
+      "result_passed": 21,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 49,
+      "core_accuracy": 0.7346938775510204,
+      "core_hits": 36,
+      "strict_accuracy": 0.5102040816326531,
+      "strict_hits": 25,
+      "avg_field_match": 0.8537414965986394,
+      "per_field": {
+        "intent": 0.9183673469387755,
+        "metrics": 0.7346938775510204,
+        "dimensions": 0.9387755102040817,
+        "time_range": 0.7551020408163265,
+        "filters": 0.9591836734693877,
+        "ordering": 0.8163265306122449
+      },
+      "latency_p50": 16853,
+      "latency_p95": 41472.0
+    },
+    "existing_57": {
+      "total": 57,
+      "evaluated": 57,
+      "error_count": 0,
+      "passed": 56,
+      "end_to_end": 0.9824561403508771,
+      "auto_fix": 1.0,
+      "auto_fix_total": 1,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 23,
+      "auto_released_ratio": 0.40350877192982454,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 55,
+      "metric_recall_fallback_rate": 0.9649122807017544,
+      "metric_recall_fallback_reasons": {
+        "invalid_catalog": 55
+      },
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 42,
+      "planner_legacy_fallback_rate": 0.7368421052631579,
+      "plan_selection_sources": {
+        "LEGACY_FALLBACK": 42,
+        "NONE": 15
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 30866,
+      "semantic_prompt_chars_count": 55,
+      "semantic_prompt_chars_avg": 561.2,
+      "semantic_prompt_chars_p50": 561,
+      "semantic_prompt_chars_p95": 566.0,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 17,
+      "result_passed": 17,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 45,
+      "core_accuracy": 0.7111111111111111,
+      "core_hits": 32,
+      "strict_accuracy": 0.4666666666666667,
+      "strict_hits": 21,
+      "avg_field_match": 0.8407407407407408,
+      "per_field": {
+        "intent": 0.9111111111111111,
+        "metrics": 0.7111111111111111,
+        "dimensions": 0.9333333333333333,
+        "time_range": 0.7333333333333333,
+        "filters": 0.9555555555555556,
+        "ordering": 0.8
+      },
+      "latency_p50": 16853,
+      "latency_p95": 44841.199999999924
+    },
+    "added_4": {
+      "total": 4,
+      "evaluated": 4,
+      "error_count": 0,
+      "passed": 4,
+      "end_to_end": 1.0,
+      "auto_fix": 0.0,
+      "auto_fix_total": 0,
+      "risk_interception": 0.0,
+      "risk_total": 0,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 4,
+      "metric_recall_fallback_rate": 1.0,
+      "metric_recall_fallback_reasons": {
+        "invalid_catalog": 4
+      },
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 4,
+      "planner_legacy_fallback_rate": 1.0,
+      "plan_selection_sources": {
+        "LEGACY_FALLBACK": 4
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 2254,
+      "semantic_prompt_chars_count": 4,
+      "semantic_prompt_chars_avg": 563.5,
+      "semantic_prompt_chars_p50": 563.5,
+      "semantic_prompt_chars_p95": 564.0,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 4,
+      "result_passed": 4,
+      "result_rate": 1.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 4,
+      "core_accuracy": 1.0,
+      "core_hits": 4,
+      "strict_accuracy": 1.0,
+      "strict_hits": 4,
+      "avg_field_match": 1.0,
+      "per_field": {
+        "intent": 1.0,
+        "metrics": 1.0,
+        "dimensions": 1.0,
+        "time_range": 1.0,
+        "filters": 1.0,
+        "ordering": 1.0
+      },
+      "latency_p50": 15599.0,
+      "latency_p95": 18583.4
+    }
+  },
+  "cases": [
+    {
+      "id": "c01_category_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20300,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "series match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c02_category_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12392,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c03_last7d_daily_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15818,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 0,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c04_completion_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10507,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 556,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "completion_rate=43.660119 vs 43.660119 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c05_food_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15536,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食'",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=3828.0 vs 3828.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c06_top10_videos",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16853,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 10
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 0,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "6 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c07_compare_food_game_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20222,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "series match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c08_oct1to7_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11485,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "relative": null,
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 567,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=2924.0 vs 2924.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c09_likes_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 17354,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 558,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c10_engagement_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12147,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.8,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 556,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c11_shares_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14687,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_shares"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_shares) AS total_shares FROM metric_daily md GROUP BY md.category",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c12_food_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 19525,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' GROUP BY md.date ORDER BY md.date",
+      "tokens": 0,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c13_lastweek_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10313,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 0,
+      "result_check": {
+        "kind": "trend_pattern",
+        "passed": true,
+        "detail": "points match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "c14_answer_structure",
+      "type": "answer_quality",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12086,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c15_hard_guard_retry",
+      "type": "hard_guard",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16412,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 41472,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_plays AS total_plays FROM metric_daily md GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c17_dq_warning",
+      "type": "dq",
+      "passed": false,
+      "reason": "final report missing expected keywords",
+      "latency_ms": 25765,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category IN ('美食', '游戏') GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c18_detail_playback",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20126,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 558,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": null,
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 67861,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [
+          "total_plays",
+          "total_likes",
+          "total_comments",
+          "total_shares"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": null,
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c20_open_analysis",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 32168,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.3,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 556,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays, total_play_duration, ROUND(total_play_duration / NULLIF(total_plays, 0), 2) AS avg_play_duration_per_play FROM metric_daily ORDER BY date, category;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c21_open_reason",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 22086,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT DATE(pd.created_at) AS date, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '美食' GROUP BY DATE(pd.created_at) ORDER BY DATE(pd.created_at)",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c22_fact_full_scan_approval",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 17015,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "detail",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.3,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": null,
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c23_aggregate_full_scan_pass",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16109,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": null,
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c24_memory_repeat",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "c25_memory_counterexample",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "n01_multi_metric",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9513,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays",
+          "total_likes"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays, SUM(total_likes) AS total_likes FROM metric_daily md GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n02_multi_metric",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10482,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate",
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT a.category, a.completion_rate, b.engagement_rate FROM (SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id GROUP BY cd.category) a JOIN (SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category) b ON a.category = b.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n04_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15612,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact",
+        "passed": true,
+        "detail": "total_plays=632.0 vs 632.0 (tol=0.01)",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n05_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15476,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-02",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 566,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.category = '游戏' AND md.date BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n06_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 17007,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "relative": null,
+          "absolute": {
+            "start": "2023-10-01",
+            "end": "2023-10-07"
+          },
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 568,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT SUM(total_likes) AS total_likes FROM metric_daily md WHERE md.category = '美食' AND md.date BETWEEN '2023-10-01' AND '2023-10-07 23:59:59'",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n07_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 14829,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 3,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": true,
+          "dimensions": false,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "in",
+            "value": [
+              "美食",
+              "游戏"
+            ]
+          }
+        ],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category IN ('美食', '游戏')",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n09_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 24634,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 5",
+      "tokens": 0,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "5 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n10_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18061,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-02",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_likes",
+          "direction": "desc",
+          "limit": 10
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 566,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-02' AND '2023-10-31 23:59:59' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 0,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "6 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n11_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11424,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "engagement_rate"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 1,
+            "unit": "week"
+          },
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "engagement_rate",
+          "direction": "desc",
+          "limit": 1
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id GROUP BY cd.category ORDER BY (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) DESC LIMIT 1",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n12_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12042,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id ORDER BY COUNT(*) DESC LIMIT 3",
+      "tokens": 0,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n14_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16322,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.creator_id",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n15_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7541,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT pd.creator AS creator, AVG(completion_rate) AS completion_rate FROM play_detail pd GROUP BY pd.creator",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n16_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 21851,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_likes"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 558,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' GROUP BY ubf.content_id",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n17_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12098,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "美食"
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.creator_id AS creator, COUNT(*) AS total_plays FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE event_type = 'play' AND cd.category = '美食' GROUP BY ubf.creator_id",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n19_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11926,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": null
+        },
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 558,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 10",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n20_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8352,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "category",
+            "op": "=",
+            "value": "游戏"
+          }
+        ],
+        "ordering": {
+          "field": null,
+          "direction": null,
+          "limit": null
+        },
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE cd.category = '游戏'",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n21_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10329,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT ubf.content_id AS content, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' GROUP BY ubf.content_id ORDER BY COUNT(*) DESC LIMIT 3",
+      "tokens": 0,
+      "result_check": {
+        "kind": "top_set",
+        "passed": true,
+        "detail": "3 items match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n22_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20668,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-30",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-30' AND '2023-10-31 23:59:59' GROUP BY md.date ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n23_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 19210,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 3,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 562,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n25_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9250,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": true,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59'",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n26_comment_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 27556,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_comments"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT category, ROUND(SUM(total_comments) / NULLIF(SUM(total_plays), 0), 4) AS comment_rate FROM metric_daily GROUP BY category;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n27_like_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 58318,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": false,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [
+          "total_likes",
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "absolute",
+          "absolute": {
+            "start": "2023-10-25",
+            "end": "2023-10-31"
+          },
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.7,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.date AS date, md.category AS category, total_likes AS total_likes, total_plays AS total_plays FROM metric_daily md WHERE md.date BETWEEN '2023-10-25' AND '2023-10-31 23:59:59' GROUP BY md.date, md.category ORDER BY md.date",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n28_share_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 19745,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_shares"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.5,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 560,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_shares) AS total_shares FROM metric_daily md GROUP BY md.category",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n29_avg_completion",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10804,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "completion_rate"
+        ],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 558,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT AVG(completion_rate) AS completion_rate FROM play_detail pd",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n30_creator_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 19506,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [],
+        "dimensions": [
+          "creator"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": null,
+          "direction": "desc",
+          "limit": 3
+        },
+        "confidence": 0.2,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT cr.creator_id, cd.name, SUM(cr.revenue) AS total_revenue FROM creator_revenue cr LEFT JOIN creator_dim cd ON cr.creator_id = cd.creator_id GROUP BY cr.creator_id, cd.name ORDER BY total_revenue DESC LIMIT 3",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n31_video_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25749,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 561,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT c.content_id, c.title, SUM(vr.revenue) AS total_revenue FROM video_revenue vr JOIN content_dim c ON vr.content_id = c.content_id GROUP BY c.content_id, c.title ORDER BY total_revenue DESC LIMIT 5",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n32_active_creator",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 38489,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.3,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT COUNT(DISTINCT u.user_id) AS active_creator_count FROM user_retention u INNER JOIN creator_dim c ON u.user_id = c.creator_id WHERE u.is_active = 1 AND u.stat_date = (SELECT MAX(stat_date) FROM user_retention);",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n33_dau",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 35059,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "none",
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.1,
+        "coverage": "none"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 559,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT stat_date, COUNT(DISTINCT user_id) AS dau FROM user_retention WHERE is_active = 1 GROUP BY stat_date ORDER BY stat_date DESC LIMIT 1;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 20753,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT creator_id, stat_date, revenue FROM creator_revenue WHERE stat_date >= DATE_SUB(CURDATE(), INTERVAL 14 DAY) ORDER BY creator_id, stat_date LIMIT 1000",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 108210,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT m.date, m.category, ROUND(COALESCE(m.total_comments / NULLIF(m.total_plays, 0), 0), 4) AS comment_rate FROM metric_daily m WHERE m.date >= (SELECT MAX(date) FROM metric_daily) - INTERVAL 6 DAY ORDER BY m.category, m.date;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n36_dau_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 25143,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 5,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "trend",
+        "metrics": [],
+        "dimensions": [],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "absolute": null,
+          "granularity": "day"
+        },
+        "filters": [],
+        "ordering": null,
+        "confidence": 0.3,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT stat_date, COUNT(DISTINCT user_id) AS dau FROM user_retention WHERE stat_date >= CURDATE() - INTERVAL 6 DAY AND stat_date <= CURDATE() AND is_active = 1 GROUP BY stat_date ORDER BY stat_date;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 41089,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 4,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": false,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": false
+        }
+      },
+      "auto_released": true,
+      "resolved_intent": {
+        "intent": "ranking",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "content"
+        ],
+        "time_range": {
+          "type": "relative",
+          "relative": {
+            "amount": 7,
+            "unit": "day"
+          },
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [],
+        "ordering": {
+          "field": "total_plays",
+          "direction": "desc",
+          "limit": 5
+        },
+        "confidence": 0.4,
+        "coverage": "partial"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 565,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT vr.content_id, cd.title, SUM(vr.revenue) AS total_revenue FROM video_revenue vr LEFT JOIN content_dim cd ON vr.content_id = cd.content_id WHERE vr.stat_date BETWEEN DATE_SUB(CURDATE(), INTERVAL 6 DAY) AND CURDATE() GROUP BY vr.content_id, cd.title ORDER BY total_revenue DESC LIMIT 5;",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n38_metric_filter_gt",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18053,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": ">",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) > 3000",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18677,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": ">=",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 1.0,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) >= 3000",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n40_metric_filter_lt",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12884,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": "<",
+            "value": 3000
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.95,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 563,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) < 3000",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    },
+    {
+      "id": "n41_metric_filter_lte",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13145,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "semantic",
+      "spec_score": {
+        "matched": true,
+        "core_ok": true,
+        "field_hits": 6,
+        "field_total": 6,
+        "fields": {
+          "intent": true,
+          "metrics": true,
+          "dimensions": true,
+          "time_range": true,
+          "filters": true,
+          "ordering": true
+        }
+      },
+      "auto_released": false,
+      "resolved_intent": {
+        "intent": "aggregate",
+        "metrics": [
+          "total_plays"
+        ],
+        "dimensions": [
+          "category"
+        ],
+        "time_range": {
+          "type": "none",
+          "relative": null,
+          "absolute": null,
+          "granularity": null
+        },
+        "filters": [
+          {
+            "field": "total_plays",
+            "op": "<=",
+            "value": 2669
+          }
+        ],
+        "ordering": null,
+        "confidence": 0.9,
+        "coverage": "full"
+      },
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "invalid_catalog",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 7,
+      "metric_recall_prompt_catalog_count": 7,
+      "semantic_prompt_chars": 564,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": "LEGACY_FALLBACK",
+      "plan_validation": {
+        "verdict": "UNSUPPORTED",
+        "code": "NO_CANDIDATE"
+      },
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": true,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT md.category AS category, SUM(total_plays) AS total_plays FROM metric_daily md GROUP BY md.category HAVING SUM(total_plays) <= 2669",
+      "tokens": 0,
+      "result_check": {
+        "kind": "exact_per_key",
+        "passed": true,
+        "detail": "all keys match",
+        "fail_reason": null
+      }
+    }
+  ]
+}

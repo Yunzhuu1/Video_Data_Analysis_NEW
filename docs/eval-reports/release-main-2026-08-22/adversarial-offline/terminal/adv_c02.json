@@ -1,0 +1,21 @@
+{
+  "audit": {
+    "sql": "SELECT a.content, a.date, a.total_plays, b.total_likes FROM (SELECT ubf.content_id AS content, DATE(ubf.timestamp) AS date, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-29' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), ubf.content_id) a JOIN (SELECT ubf.content_id AS content, DATE(ubf.timestamp) AS date, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-29' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), ubf.content_id) b ON a.content = b.content AND a.date = b.date ORDER BY a.date",
+    "sql_source": "semantic"
+  },
+  "case_id": "adv_c02",
+  "code": "PASS",
+  "disposition": "EXECUTE_SUCCESS",
+  "execution_unit_id": "adv_c02",
+  "layer": "synthesis",
+  "node_trace": [
+    "SQL_SYNTHESIZE"
+  ],
+  "observation_status": "OK",
+  "protocol": "fixed_intent",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SQL_SYNTHESIZE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

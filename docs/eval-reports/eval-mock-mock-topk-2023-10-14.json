@@ -1,0 +1,6015 @@
+{
+  "config": {
+    "llm": "mock",
+    "platform": "mock",
+    "model": "deepseek-v4-flash",
+    "eval_date": "2023-10-14",
+    "cassette": "-",
+    "memory": "off",
+    "metric_recall": "topk"
+  },
+  "eval_date": "2023-10-14",
+  "metrics": {
+    "total": 61,
+    "evaluated": 61,
+    "error_count": 0,
+    "passed": 56,
+    "end_to_end": 0.9180327868852459,
+    "auto_fix": 1.0,
+    "auto_fix_total": 2,
+    "risk_interception": 1.0,
+    "risk_total": 3,
+    "auto_released": 0,
+    "auto_released_ratio": 0.0,
+    "unexpected_intercepts": 0,
+    "memory_hit": 0,
+    "memory_hit_rate": 0.0,
+    "memory_inject": 0,
+    "memory_inject_rate": 0.0,
+    "metric_recall_fallback_count": 3,
+    "metric_recall_fallback_rate": 0.04918032786885246,
+    "metric_recall_fallback_reasons": {
+      "no_reliable_signal": 3
+    },
+    "planner_invocation_count": 0,
+    "planner_invocation_rate": 0.0,
+    "planner_legacy_fallback_count": 0,
+    "planner_legacy_fallback_rate": 0.0,
+    "plan_selection_sources": {
+      "NONE": 61
+    },
+    "planner_prompt_chars_total": 0,
+    "planner_latency_ms_total": 0.0,
+    "planning_retry_total": 0,
+    "semantic_prompt_chars_total": 29306,
+    "semantic_prompt_chars_count": 59,
+    "semantic_prompt_chars_avg": 496.7118644067797,
+    "semantic_prompt_chars_p50": 459,
+    "semantic_prompt_chars_p95": 568.4999999999969,
+    "tokens_total": 0,
+    "tokens_hit_avg": 0.0,
+    "tokens_miss_avg": 0.0,
+    "result_judged": 0,
+    "result_passed": 0,
+    "result_rate": 0.0,
+    "result_value_mismatch": [],
+    "repeat_pairs": 0,
+    "direct_hit_pairs": 0,
+    "direct_hit_avg_token_delta": 0.0,
+    "direct_hit_avg_latency_delta": 0.0,
+    "judged": 49,
+    "core_accuracy": 0.0,
+    "core_hits": 0,
+    "strict_accuracy": 0.0,
+    "strict_hits": 0,
+    "avg_field_match": 0.0,
+    "per_field": {
+      "intent": 0.0,
+      "metrics": 0.0,
+      "dimensions": 0.0,
+      "time_range": 0.0,
+      "filters": 0.0,
+      "ordering": 0.0
+    },
+    "latency_p50": 8,
+    "latency_p95": 15.0
+  },
+  "subsets": {
+    "all": {
+      "total": 61,
+      "evaluated": 61,
+      "error_count": 0,
+      "passed": 56,
+      "end_to_end": 0.9180327868852459,
+      "auto_fix": 1.0,
+      "auto_fix_total": 2,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 3,
+      "metric_recall_fallback_rate": 0.04918032786885246,
+      "metric_recall_fallback_reasons": {
+        "no_reliable_signal": 3
+      },
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 0,
+      "planner_legacy_fallback_rate": 0.0,
+      "plan_selection_sources": {
+        "NONE": 61
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 29306,
+      "semantic_prompt_chars_count": 59,
+      "semantic_prompt_chars_avg": 496.7118644067797,
+      "semantic_prompt_chars_p50": 459,
+      "semantic_prompt_chars_p95": 568.4999999999969,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 0,
+      "result_passed": 0,
+      "result_rate": 0.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 49,
+      "core_accuracy": 0.0,
+      "core_hits": 0,
+      "strict_accuracy": 0.0,
+      "strict_hits": 0,
+      "avg_field_match": 0.0,
+      "per_field": {
+        "intent": 0.0,
+        "metrics": 0.0,
+        "dimensions": 0.0,
+        "time_range": 0.0,
+        "filters": 0.0,
+        "ordering": 0.0
+      },
+      "latency_p50": 8,
+      "latency_p95": 15.0
+    },
+    "existing_57": {
+      "total": 57,
+      "evaluated": 57,
+      "error_count": 0,
+      "passed": 56,
+      "end_to_end": 0.9824561403508771,
+      "auto_fix": 1.0,
+      "auto_fix_total": 2,
+      "risk_interception": 1.0,
+      "risk_total": 3,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 3,
+      "metric_recall_fallback_rate": 0.05263157894736842,
+      "metric_recall_fallback_reasons": {
+        "no_reliable_signal": 3
+      },
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 0,
+      "planner_legacy_fallback_rate": 0.0,
+      "plan_selection_sources": {
+        "NONE": 57
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 27476,
+      "semantic_prompt_chars_count": 55,
+      "semantic_prompt_chars_avg": 499.56363636363636,
+      "semantic_prompt_chars_p50": 461,
+      "semantic_prompt_chars_p95": 677.4999999999984,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 0,
+      "result_passed": 0,
+      "result_rate": 0.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 45,
+      "core_accuracy": 0.0,
+      "core_hits": 0,
+      "strict_accuracy": 0.0,
+      "strict_hits": 0,
+      "avg_field_match": 0.0,
+      "per_field": {
+        "intent": 0.0,
+        "metrics": 0.0,
+        "dimensions": 0.0,
+        "time_range": 0.0,
+        "filters": 0.0,
+        "ordering": 0.0
+      },
+      "latency_p50": 8,
+      "latency_p95": 15.199999999999996
+    },
+    "added_4": {
+      "total": 4,
+      "evaluated": 4,
+      "error_count": 0,
+      "passed": 0,
+      "end_to_end": 0.0,
+      "auto_fix": 0.0,
+      "auto_fix_total": 0,
+      "risk_interception": 0.0,
+      "risk_total": 0,
+      "auto_released": 0,
+      "auto_released_ratio": 0.0,
+      "unexpected_intercepts": 0,
+      "memory_hit": 0,
+      "memory_hit_rate": 0.0,
+      "memory_inject": 0,
+      "memory_inject_rate": 0.0,
+      "metric_recall_fallback_count": 0,
+      "metric_recall_fallback_rate": 0.0,
+      "metric_recall_fallback_reasons": {},
+      "planner_invocation_count": 0,
+      "planner_invocation_rate": 0.0,
+      "planner_legacy_fallback_count": 0,
+      "planner_legacy_fallback_rate": 0.0,
+      "plan_selection_sources": {
+        "NONE": 4
+      },
+      "planner_prompt_chars_total": 0,
+      "planner_latency_ms_total": 0.0,
+      "planning_retry_total": 0,
+      "semantic_prompt_chars_total": 1830,
+      "semantic_prompt_chars_count": 4,
+      "semantic_prompt_chars_avg": 457.5,
+      "semantic_prompt_chars_p50": 457.5,
+      "semantic_prompt_chars_p95": 458.0,
+      "tokens_total": 0,
+      "tokens_hit_avg": 0.0,
+      "tokens_miss_avg": 0.0,
+      "result_judged": 0,
+      "result_passed": 0,
+      "result_rate": 0.0,
+      "result_value_mismatch": [],
+      "repeat_pairs": 0,
+      "direct_hit_pairs": 0,
+      "direct_hit_avg_token_delta": 0.0,
+      "direct_hit_avg_latency_delta": 0.0,
+      "judged": 4,
+      "core_accuracy": 0.0,
+      "core_hits": 0,
+      "strict_accuracy": 0.0,
+      "strict_hits": 0,
+      "avg_field_match": 0.0,
+      "per_field": {
+        "intent": 0.0,
+        "metrics": 0.0,
+        "dimensions": 0.0,
+        "time_range": 0.0,
+        "filters": 0.0,
+        "ordering": 0.0
+      },
+      "latency_p50": 7.0,
+      "latency_p95": 7.85
+    }
+  },
+  "cases": [
+    {
+      "id": "c01_category_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 18,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 454,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c02_category_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 453,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c03_last7d_daily_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 447,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c04_completion_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 21,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 481,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c05_food_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 16,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 450,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c06_top10_videos",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 449,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c07_compare_food_game_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:alias",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放趋势"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 458,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c08_oct1to7_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 12,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "daily_active_users",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 459,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c09_likes_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 15,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 447,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c10_engagement_rate",
+      "type": "metric",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "engagement_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "互动率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 477,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c11_shares_total",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_shares",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "分享量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 441,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c12_food_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 448,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c13_lastweek_plays",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 444,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c14_answer_structure",
+      "type": "answer_quality",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 457,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c15_hard_guard_retry",
+      "type": "hard_guard",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 454,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c16_dq_retry",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13,
+      "status": "SUCCESS",
+      "retry_count": 1,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 454,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c17_dq_warning",
+      "type": "dq",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 456,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c18_detail_playback",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.07,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 474,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c19_detail_without_time",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "daily_active_users",
+          "score": 0.3025,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "no_reliable_signal",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1063,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c20_open_analysis",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.479167,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 450,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c21_open_reason",
+      "type": "open",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 481,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c22_fact_full_scan_approval",
+      "type": "risk",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "WAITING_APPROVAL",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "daily_active_users",
+          "score": 0.3025,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "no_reliable_signal",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1061,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c23_aggregate_full_scan_pass",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": null,
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 453,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "c24_memory_repeat",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "c25_memory_counterexample",
+      "type": "memory",
+      "passed": true,
+      "reason": "SKIPPED (memory off)",
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "latency_ms": 0,
+      "sql_source": null,
+      "spec_score": null,
+      "memory_hit": false,
+      "tokens": 0
+    },
+    {
+      "id": "n01_multi_metric",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 2,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 452,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n02_multi_metric",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "generated SQL missing expected fragments",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "互动率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 2,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 487,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n04_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 446,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n05_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 451,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n06_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "daily_active_users",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 455,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n07_multi_filter",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 11,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 488,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n09_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 452,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n10_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 10,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 449,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n11_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 13,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "engagement_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "互动率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 483,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n12_ranked_time",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 9,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 491,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n14_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 490,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n15_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 497,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n16_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_likes",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 441,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n17_cross_table",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 6,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 491,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n19_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "engagement_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:alias",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "最受欢迎"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 491,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n20_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:alias",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "完播表现"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.479167,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.3025,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 476,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n21_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 450,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n22_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 446,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n23_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.3725,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 461,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n25_longtail",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.07,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "full_fallback",
+      "metric_recall_fallback": true,
+      "metric_recall_reason": "no_reliable_signal",
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 15,
+      "semantic_prompt_chars": 1059,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n26_comment_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "comment_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "评论率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 474,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n27_like_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "like_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "点赞率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 464,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n28_share_rate",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "share_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "分享率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 472,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n29_avg_completion",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "平均完播率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 1.0,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "comment_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "like_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 483,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n30_creator_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "creator_revenue",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "创作者收益"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 512,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n31_video_revenue",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "video_revenue",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "视频收益"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.3025,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 510,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n32_active_creator",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 6,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "active_creator_count",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "活跃创作者数"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.535,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "daily_active_users",
+          "score": 0.305,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 481,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n33_dau",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "daily_active_users",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "日活跃用户数"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.305,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 467,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n34_creator_revenue_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.8375,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.435,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "video_revenue",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 0,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 498,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n35_comment_rate_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "comment_rate",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "评论率"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_comments",
+          "score": 0.558333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 461,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n36_dau_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "daily_active_users",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "日活跃用户数"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_plays",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.305,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_likes",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 473,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n37_video_revenue_rank_trend",
+      "type": "text2sql",
+      "passed": true,
+      "reason": "PASS",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "video_revenue",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "视频收益"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "creator_revenue",
+          "score": 0.3025,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "engagement_rate",
+          "score": 0.0875,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "active_creator_count",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "avg_completion_ratio",
+          "score": 0.0,
+          "reasons": [],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 514,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n38_metric_filter_gt",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "generated SQL missing expected fragments",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 457,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n39_metric_filter_gte",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "generated SQL missing expected fragments",
+      "latency_ms": 6,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 458,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n40_metric_filter_lt",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "generated SQL missing expected fragments",
+      "latency_ms": 8,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 457,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    },
+    {
+      "id": "n41_metric_filter_lte",
+      "type": "text2sql",
+      "passed": false,
+      "reason": "generated SQL missing expected fragments",
+      "latency_ms": 7,
+      "status": "SUCCESS",
+      "retry_count": 0,
+      "sql_source": "fallback",
+      "spec_score": {
+        "matched": false,
+        "core_ok": false,
+        "field_hits": 0,
+        "field_total": 6,
+        "fields": {
+          "intent": false,
+          "metrics": false,
+          "dimensions": false,
+          "time_range": false,
+          "filters": false,
+          "ordering": false
+        }
+      },
+      "resolved_intent": null,
+      "memory_hit": false,
+      "memory_band": null,
+      "metric_candidates": [
+        {
+          "metricCode": "total_plays",
+          "score": 1.0,
+          "reasons": [
+            "exact:metric_name",
+            "lexical"
+          ],
+          "matchedExpressions": [
+            "播放量"
+          ],
+          "pinned": true
+        },
+        {
+          "metricCode": "total_play_duration",
+          "score": 0.391667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "total_shares",
+          "score": 0.233333,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "completion_rate",
+          "score": 0.175,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        },
+        {
+          "metricCode": "share_rate",
+          "score": 0.116667,
+          "reasons": [
+            "lexical"
+          ],
+          "matchedExpressions": [],
+          "pinned": false
+        }
+      ],
+      "metric_recall_mode": "topk",
+      "metric_recall_fallback": false,
+      "metric_recall_reason": null,
+      "metric_recall_configured_k": 5,
+      "metric_recall_pinned_count": 1,
+      "metric_recall_effective_k": 5,
+      "metric_recall_full_catalog_count": 15,
+      "metric_recall_prompt_catalog_count": 5,
+      "semantic_prompt_chars": 458,
+      "catalog_version": null,
+      "candidate_plans": [],
+      "rejected_plans": [],
+      "selected_plan_id": null,
+      "plan_selection_source": null,
+      "plan_validation": null,
+      "planning_retry_count": 0,
+      "lineage_edge_ids": [],
+      "legacy_planner_fallback": false,
+      "planner_prompt_chars": 0,
+      "planner_latency_ms": 0,
+      "sql": "SELECT date, category, total_plays FROM metric_daily ORDER BY date DESC LIMIT 20",
+      "tokens": 0,
+      "result_check": null
+    }
+  ]
+}

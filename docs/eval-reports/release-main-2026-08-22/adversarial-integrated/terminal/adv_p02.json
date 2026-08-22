@@ -1,0 +1,29 @@
+{
+  "audit": {
+    "candidate_hash": "347bbd6c36b981c366eb51dbf8dc5763445bfecd6771d38183895cde318f1351",
+    "mutation_after_hash": "544ed9c011560e577e01134d141ed95c2d7e8f4468b934ff2d130b797607014d",
+    "mutation_before_hash": "edc8a181eaa4eef5eb3721870797bb5126212bbd3ae48b878b32a6069f962a6a",
+    "plan_validation": {
+      "code": "CANDIDATE_TAMPERED",
+      "reason": "selected candidate does not match the frozen snapshot enumeration",
+      "suggestion": "select another enumerated plan",
+      "verdict": "REPLAN"
+    },
+    "selected_plan_id": "19fbd751d9e0ae05"
+  },
+  "case_id": "adv_p02",
+  "code": "CANDIDATE_TAMPERED",
+  "disposition": "SAFE_REJECT",
+  "execution_unit_id": "adv_p02",
+  "layer": "planning",
+  "node_trace": [
+    "PLAN_VALIDATE"
+  ],
+  "observation_status": "OK",
+  "protocol": "mutated_plan",
+  "reason": "selected candidate does not match the frozen snapshot enumeration",
+  "result_rows": null,
+  "stage": "PLAN_VALIDATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}
