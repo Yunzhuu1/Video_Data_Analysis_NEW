@@ -134,3 +134,25 @@ async def test_catalog_invalid_not_hit(monkeypatch):
 
     assert calls["resolved"] == 1
     assert state.get("sql_source") != "memory"
+
+
+@pytest.mark.asyncio
+async def test_degraded_memory_short_circuits_hooks_and_keeps_semantic_path(monkeypatch, tmp_path):
+    """DEGRADED + nodes.memory=None：图级读写钩子均短路，不能误报命中。"""
+    settings.memory_enabled = True
+    await graph_builder.init_memory(str(tmp_path), backend="sqlite")  # 目录不能作为 sqlite 文件
+    assert graph_builder.memory_runtime_status()["status"] == "DEGRADED"
+    assert nodes.memory is None
+
+    calls = {"resolved": 0}
+    monkeypatch.setattr(nodes, "semantic_resolver", _SpyResolver(calls, _intent))
+    monkeypatch.setattr(nodes, "build_retriever",
+                        lambda *args, **kwargs: pytest.fail("retriever must not be constructed"))
+
+    state = await run_chatbi_graph(_initial_state())
+
+    assert calls["resolved"] == 1
+    assert state.get("sql_source") == "semantic"
+    assert state.get("memory_hit") is False
+    assert state.get("memory_band") is None
+    assert state.get("final_report")

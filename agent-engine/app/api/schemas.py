@@ -65,6 +65,16 @@ class ApprovalRequest(BaseModel):
     approved: bool
 
 
+class MemoryHealth(BaseModel):
+    enabled: bool
+    backend: str
+    status: Literal["READY", "DISABLED", "DEGRADED"]
+    reason_code: str | None = Field(default=None, alias="reasonCode")
+
+    model_config = {"populate_by_name": True}
+
+
 class HealthResponse(BaseModel):
     status: Literal["UP"]
     service: str
+    memory: MemoryHealth

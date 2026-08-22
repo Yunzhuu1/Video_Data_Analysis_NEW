@@ -25,3 +25,5 @@ app:
     cheap-model: ${AI_CHEAP_MODEL:test-model}
   data-initializer:
     enabled: false
+  metric-catalog-sync:
+    enabled: false

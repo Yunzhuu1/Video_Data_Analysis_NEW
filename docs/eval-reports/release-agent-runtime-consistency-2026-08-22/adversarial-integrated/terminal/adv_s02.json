@@ -1,0 +1,116 @@
+{
+  "audit": {
+    "candidate_plans": [],
+    "catalog_outside_metrics": [],
+    "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+    "metric_candidates": [
+      {
+        "matchedExpressions": [
+          "赞数"
+        ],
+        "metricCode": "total_likes",
+        "pinned": true,
+        "reasons": [
+          "exact:alias",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "观看数"
+        ],
+        "metricCode": "total_plays",
+        "pinned": true,
+        "reasons": [
+          "exact:alias",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [],
+        "metricCode": "completion_rate",
+        "pinned": false,
+        "reasons": [
+          "lexical"
+        ],
+        "score": 0.3025
+      },
+      {
+        "matchedExpressions": [],
+        "metricCode": "like_rate",
+        "pinned": false,
+        "reasons": [
+          "lexical"
+        ],
+        "score": 0.116667
+      },
+      {
+        "matchedExpressions": [],
+        "metricCode": "share_rate",
+        "pinned": false,
+        "reasons": [
+          "lexical"
+        ],
+        "score": 0.116667
+      }
+    ],
+    "metric_recall_effective_k": 5,
+    "metric_recall_mode": "topk",
+    "metric_recall_pinned_count": 2,
+    "plan_selection_source": "LEGACY_FALLBACK",
+    "plan_validation": {
+      "code": "NO_CANDIDATE",
+      "verdict": "UNSUPPORTED"
+    },
+    "resolved_intent": {
+      "confidence": 0.95,
+      "coverage": "full",
+      "dimensions": [],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [
+        "total_plays",
+        "total_likes"
+      ],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": null,
+        "type": "none"
+      }
+    },
+    "run_id": "run_6158496f-6ec1-48b0-bba6-15aa9aa98c2f",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      "SELECT SUM(total_plays) AS total_plays, SUM(total_likes) AS total_likes FROM metric_daily md"
+    ],
+    "sql_source": "semantic"
+  },
+  "case_id": "adv_s02",
+  "code": "PASS",
+  "disposition": "EXECUTE_SUCCESS",
+  "execution_unit_id": "adv_s02",
+  "layer": "semantic",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "PLAN_ENUMERATE",
+    "PLAN_VALIDATE",
+    "SQL_SYNTHESIZE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE",
+    "SQL_SOFT_DQ",
+    "ANSWER"
+  ],
+  "observation_status": "OK",
+  "protocol": "question",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SEMANTIC_RESOLVE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

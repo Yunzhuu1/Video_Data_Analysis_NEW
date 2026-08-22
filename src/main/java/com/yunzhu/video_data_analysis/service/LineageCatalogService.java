@@ -1,6 +1,5 @@
 package com.yunzhu.video_data_analysis.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -12,10 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +41,7 @@ public class LineageCatalogService {
     LineageSnapshotDto buildSnapshot(List<MetricDefinitionDto> definitions) {
         validate(lineage, schemas, definitions.stream().map(MetricDefinitionDto::metricCode).collect(
                 java.util.stream.Collectors.toSet()));
-        List<Map<String, Object>> normalized = normalizeMetrics(definitions);
+        List<Map<String, Object>> normalized = MetricCatalogProjection.normalize(mapper, definitions);
         Map<String, List<String>> projection = schemaProjection();
         JsonNode metricNode = mapper.valueToTree(normalized);
         JsonNode schemaNode = mapper.valueToTree(projection);
@@ -59,36 +55,6 @@ public class LineageCatalogService {
         return new LineageSnapshotDto(CanonicalJson.sha256(mapper, combined), lineageHash,
                 metricHash, schemaHash, lineage.deepCopy(), List.copyOf(normalized),
                 java.util.Collections.unmodifiableMap(projection));
-    }
-
-    private List<Map<String, Object>> normalizeMetrics(List<MetricDefinitionDto> definitions) {
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (MetricDefinitionDto metric : definitions) {
-            Map<String, Object> item = new LinkedHashMap<>();
-            item.put("metricCode", metric.metricCode());
-            item.put("formula", metric.formula());
-            item.put("dimensions", parseDimensions(metric.dimensions()));
-            item.put("sourceTable", metric.sourceTable());
-            item.put("timeField", metric.timeField());
-            item.put("factFormula", metric.factFormula());
-            item.put("factEventFilter", metric.factEventFilter());
-            result.add(item);
-        }
-        result.sort(Comparator.comparing(item -> String.valueOf(item.get("metricCode"))));
-        return result;
-    }
-
-    private List<String> parseDimensions(String raw) {
-        if (raw == null || raw.isBlank()) {
-            return List.of();
-        }
-        try {
-            List<String> dimensions = mapper.readValue(raw, new TypeReference<>() {});
-            return dimensions.stream().sorted().toList();
-        } catch (Exception ignored) {
-            return java.util.Arrays.stream(raw.split(",")).map(String::trim)
-                    .filter(value -> !value.isBlank()).sorted().toList();
-        }
     }
 
     private Map<String, List<String>> schemaProjection() {

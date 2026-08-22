@@ -13,7 +13,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 
 class LineageCatalogServiceTest {
 
@@ -32,7 +31,7 @@ class LineageCatalogServiceTest {
     @Test
     void snapshotFreezesMetricsAndMetricChangeInvalidatesVersion() {
         LineageCatalogService service = new LineageCatalogService(
-                mapper, new TableSchemaRegistry(), mock(MetricCatalogService.class));
+                mapper, new TableSchemaRegistry(), null);
         MetricDefinitionDto first = metric("total_plays", "total_plays");
         MetricDefinitionDto changed = metric("total_plays", "SUM(total_plays)");
         MetricDefinitionDto likes = metric("total_likes", "total_likes");
@@ -53,7 +52,7 @@ class LineageCatalogServiceTest {
     @Test
     void repositorySnapshotMatchesPythonHashes() throws Exception {
         LineageCatalogService service = new LineageCatalogService(
-                mapper, new TableSchemaRegistry(), mock(MetricCatalogService.class));
+                mapper, new TableSchemaRegistry(), null);
         JsonNode catalog = mapper.readTree(
                 new ClassPathResource("metric_catalog.json").getInputStream());
         List<MetricDefinitionDto> definitions = new java.util.ArrayList<>();
@@ -69,6 +68,8 @@ class LineageCatalogServiceTest {
                     "demo", 1, "ACTIVE"));
         }
         LineageSnapshotDto snapshot = service.buildSnapshot(definitions);
+        assertThat(MetricCatalogProjection.hash(mapper, definitions))
+                .isEqualTo("91f6f54d0f2aa622b866ee302133ae8212b8064710e88a650670ccd6eb9f08b8");
         assertThat(snapshot.catalogVersion())
                 .isEqualTo("2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235");
         assertThat(snapshot.lineageHash())

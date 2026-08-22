@@ -1,4 +1,7 @@
+import logging
+from dataclasses import asdict, dataclass
 from functools import wraps
+from pathlib import Path
 
 from langgraph.errors import GraphInterrupt
 from langgraph.graph import END, START, StateGraph
@@ -23,10 +26,41 @@ from app.graph.state import DataAgentState
 
 MAX_SQL_RETRIES = 3
 
+logger = logging.getLogger(__name__)
+
 platform = PlatformClient()
 
 
-async def init_memory(db_path: str, backend: str | None = None) -> None:
+@dataclass(frozen=True)
+class MemoryRuntimeStatus:
+    enabled: bool
+    backend: str
+    status: str  # READY | DISABLED | DEGRADED
+    reason_code: str | None = None
+
+
+_memory_runtime_status = MemoryRuntimeStatus(
+    enabled=False, backend="none", status="DISABLED", reason_code=None
+)
+
+
+def memory_runtime_status() -> dict:
+    return asdict(_memory_runtime_status)
+
+
+def resolve_memory_path(backend: str | None = None) -> str:
+    """配置后端到持久化路径的唯一映射；评测显式路径不经过本函数。"""
+    from app.settings import settings
+
+    selected = (backend or settings.memory_store_backend).lower()
+    if selected == "lance":
+        return settings.memory_lance_path
+    if selected == "sqlite":
+        return settings.memory_db_path
+    raise ValueError(f"unsupported memory backend: {selected}")
+
+
+async def init_memory(db_path: str | None = None, backend: str | None = None) -> None:
     """启动时注入语义记忆（nodes.memory）。失败仅告警，不阻断服务。
 
     backend 默认取 settings.memory_store_backend；lance 需要真实路径 + 方舟 key，
@@ -37,20 +71,75 @@ async def init_memory(db_path: str, backend: str | None = None) -> None:
     from app.memory.vector_store import build_memory_store
     from app.settings import settings
 
-    backend = backend or settings.memory_store_backend
-    if backend == "lance" and (db_path == ":memory:" or not get_embedding_provider().available()):
-        backend = "sqlite"
+    global _memory_runtime_status
+
+    if not settings.memory_enabled:
+        await close_memory()
+        _memory_runtime_status = MemoryRuntimeStatus(
+            enabled=False, backend=(backend or settings.memory_store_backend).lower(),
+            status="DISABLED", reason_code=None)
+        return
+
+    explicit_path = db_path is not None
+    backend = (backend or ("sqlite" if db_path == ":memory:" else settings.memory_store_backend)).lower()
+    db_path = db_path if explicit_path else resolve_memory_path(backend)
+    old_store = nodes.memory
+
+    if backend == "lance" and not get_embedding_provider().available():
+        if old_store is None:
+            nodes.memory = None
+            _memory_runtime_status = MemoryRuntimeStatus(
+                enabled=True, backend=backend, status="DEGRADED",
+                reason_code="EMBEDDING_UNAVAILABLE")
+        logger.warning("memory init degraded: EMBEDDING_UNAVAILABLE")
+        return
+
+    path = Path(db_path) if db_path != ":memory:" else None
+    if (backend == "lance" and path is not None and path.exists() and path.is_file()) or (
+        backend == "sqlite" and path is not None and path.exists() and path.is_dir()
+    ):
+        if old_store is None:
+            nodes.memory = None
+            _memory_runtime_status = MemoryRuntimeStatus(
+                enabled=True, backend=backend, status="DEGRADED",
+                reason_code="INVALID_STORE_PATH")
+        logger.warning("memory init degraded: INVALID_STORE_PATH")
+        return
     try:
-        store = await build_memory_store(
+        new_store = await build_memory_store(
             db_path, backend=backend,
             provider=get_embedding_provider() if backend == "lance" else None,
             embedding_model=settings.ark_embedding_model)
-        nodes.memory = store
-        if backend == "lance":
-            print(f"[memory] lance store ready: {db_path}")
+        nodes.memory = new_store
+        _memory_runtime_status = MemoryRuntimeStatus(
+            enabled=True, backend=backend, status="READY", reason_code=None)
+        if old_store is not None and old_store is not new_store:
+            await old_store.close()
+        logger.info("memory store READY: backend=%s", backend)
     except Exception as exc:  # noqa: BLE001
-        print(f"[memory] init failed, memory disabled: {exc}")
-        nodes.memory = None
+        if old_store is None:
+            nodes.memory = None
+            _memory_runtime_status = MemoryRuntimeStatus(
+                enabled=True, backend=backend, status="DEGRADED",
+                reason_code="STORE_INIT_FAILED")
+        logger.warning("memory init degraded: STORE_INIT_FAILED: %s", exc)
+
+
+async def close_memory() -> None:
+    """幂等关闭当前 store；FastAPI shutdown 与测试均复用。"""
+    global _memory_runtime_status
+    from app.graph import nodes
+
+    store = nodes.memory
+    nodes.memory = None
+    if store is not None:
+        try:
+            await store.close()
+        except Exception as exc:  # noqa: BLE001
+            logger.warning("memory close failed: %s", exc)
+    _memory_runtime_status = MemoryRuntimeStatus(
+        enabled=False, backend=_memory_runtime_status.backend,
+        status="DISABLED", reason_code=None)
 
 
 # ---------------------------------------------------------------------------
