@@ -6,8 +6,9 @@
 ## 2. 三道执行边界
 
 - [ ] 2.1 在 `PlanEnumerator` 入口调用共享校验；`plan_enumerate_node` 对专用完整性异常记录 `REJECT/SNAPSHOT_INTEGRITY_MISMATCH`、零候选、mismatchedComponents 与 legacy fallback，不以普通异常/NO_CANDIDATE 掩盖
-- [ ] 2.2 在 `PlanValidator` 所有 candidate/ID 检查前调用共享校验并返回不可重试 `REJECT`；更新 graph 路由使该 verdict 不增加 planningRetryCount、不再进入 PLAN_SELECT且 plan compiler 仅接受 PASS
-- [ ] 2.3 在 `synthesize_plan` 解析任何 snapshot ID 前重复校验，覆盖 Validator PASS 后内容再次变化的 TOCTOU 测试；失败不得生成部分 SQL并转换为既有可观测 SynthesisError/降级链路
+- [ ] 2.2 在 `PlanValidator` 所有 candidate/ID 检查前调用共享校验并返回不可重试 `REJECT`；更新 graph 状态/路由使该 verdict 不增加 planningRetryCount、不进入 PLAN_SELECT且 plan compiler 仅接受 PASS，并保证已有 integrity code/components 不被 NO_CANDIDATE 覆盖
+- [ ] 2.3 在 `synthesize_plan` 入口以 canonical JSON round-trip 复制 snapshot，在私有副本上校验后递归冻结，后续只读取冻结对象；测试冻结前漂移被拒绝、冻结后修改原对象不影响 SQL且 Compiler 不再读取原 snapshot
+- [ ] 2.4 增加 graph 级失配 snapshot 测试，使用 fake platform 与 Planner/plan-compiler/Guard spies 断言有序路径 `PLAN_ENUMERATE→PLAN_VALIDATE(REJECT)→SQL_SYNTHESIZE(legacy)→SQL_HARD_GUARD`、retry=0、PLAN_SELECT=0、plan compiler=0，并验证 integrity code/components 原样保留
 
 ## 3. 对抗回归闭环
 
