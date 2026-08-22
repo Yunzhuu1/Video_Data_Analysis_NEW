@@ -1,0 +1,16 @@
+{
+  "audit": {},
+  "case_id": "adv_g02",
+  "code": "OFFLINE_INELIGIBLE",
+  "disposition": null,
+  "execution_unit_id": "adv_g02",
+  "layer": "safety_recovery",
+  "node_trace": [],
+  "observation_status": "PROFILE_INELIGIBLE",
+  "protocol": "raw_sql_or_fault",
+  "reason": "requires external/graph integration",
+  "result_rows": null,
+  "stage": "PROFILE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

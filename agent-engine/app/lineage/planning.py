@@ -6,7 +6,11 @@ from collections import deque
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
-from app.lineage.catalog import canonical_bytes
+from app.lineage.catalog import (
+    SnapshotIntegrityError,
+    canonical_bytes,
+    require_snapshot_integrity,
+)
 
 Usage = Literal["GROUP_BY", "FILTER", "ORDERING", "TIME_FILTER", "TIME_BUCKET"]
 
@@ -31,6 +35,7 @@ class CandidateQueryPlan:
     costTier: int
     joinCount: int
     catalogVersion: str
+    snapshotFingerprint: str
     legalityEvidence: tuple[str, ...] = ("PASS",)
 
     def to_dict(self) -> dict[str, Any]:
@@ -56,6 +61,10 @@ class PlanEnumerator:
         self.max_candidates = max_candidates
 
     def enumerate(self, intent: dict[str, Any], snapshot: dict[str, Any]) -> EnumerationResult:
+        integrity = require_snapshot_integrity(snapshot)
+        fingerprint = integrity.snapshot_fingerprint
+        if fingerprint is None:  # pragma: no cover - guaranteed by require
+            raise SnapshotIntegrityError(integrity)
         metrics = intent.get("metrics") or []
         if len(metrics) != 1:
             return EnumerationResult(rejected=[RejectedPlan(None, "NON_MVP_MULTI_METRIC", "single metric only")])
@@ -98,11 +107,12 @@ class PlanEnumerator:
                     "metricPathId": path["pathId"],
                     "fieldRoutes": [asdict(route) for route in routes],
                     "catalogVersion": snapshot["catalogVersion"],
+                    "snapshotFingerprint": fingerprint,
                 }
                 plan_id = hashlib.sha256(canonical_bytes(raw)).hexdigest()[:16]
                 result.candidates.append(CandidateQueryPlan(
                     plan_id, path["pathId"], routes, path["sourceTable"], path["freshness"],
-                    int(path["costTier"]), len(edges), snapshot["catalogVersion"],
+                    int(path["costTier"]), len(edges), snapshot["catalogVersion"], fingerprint,
                 ))
         unique = {plan.planId: plan for plan in result.candidates}
         result.candidates = sorted(unique.values(), key=lambda p: (p.costTier, p.joinCount, p.metricPathId, p.planId))[:self.max_candidates]
@@ -186,10 +196,21 @@ class PlanValidator:
 
     def validate(self, selected_plan_id: str | None, candidates: list[CandidateQueryPlan],
                  intent: dict[str, Any], snapshot: dict[str, Any]) -> dict[str, Any]:
+        try:
+            integrity = require_snapshot_integrity(snapshot)
+        except SnapshotIntegrityError as exc:
+            return self._integrity_failure(exc)
         by_id = {plan.planId: plan for plan in candidates}
         if selected_plan_id not in by_id:
             return self._failure("INVALID_PLAN_ID", "selected plan is not a candidate")
         plan = by_id[selected_plan_id]
+        if plan.snapshotFingerprint != integrity.snapshot_fingerprint:
+            return self._failure(
+                "SNAPSHOT_INTEGRITY_MISMATCH",
+                "candidate snapshot fingerprint differs from current snapshot",
+                verdict="REJECT",
+                mismatchedComponents=["snapshotFingerprint"],
+            )
         if plan.catalogVersion != snapshot.get("catalogVersion"):
             return self._failure("CATALOG_VERSION_MISMATCH", "plan snapshot changed")
         canonical = {
@@ -216,9 +237,21 @@ class PlanValidator:
                 if not edge or edge["fromTable"] != current or edge["cardinalityFromTo"] not in {"N:1", "1:1"}:
                     return self._failure("INVALID_JOIN_DIRECTION", edge_id)
                 current = edge["toTable"]
-        return {"verdict": "PASS", "code": None, "reason": None, "suggestion": None}
+        return {"verdict": "PASS", "code": None, "reason": None, "suggestion": None,
+                "snapshotFingerprint": integrity.snapshot_fingerprint,
+                "mismatchedComponents": []}
 
     @staticmethod
-    def _failure(code: str, reason: str):
-        return {"verdict": "REPLAN", "code": code, "reason": reason,
-                "suggestion": "select another enumerated plan"}
+    def _failure(code: str, reason: str, *, verdict: str = "REPLAN", **extra):
+        return {"verdict": verdict, "code": code, "reason": reason,
+                "suggestion": "select another enumerated plan" if verdict == "REPLAN" else None,
+                **extra}
+
+    @classmethod
+    def _integrity_failure(cls, exc: SnapshotIntegrityError):
+        result = exc.result
+        return cls._failure(
+            "SNAPSHOT_INTEGRITY_MISMATCH", str(exc), verdict="REJECT",
+            mismatchedComponents=list(result.mismatched_components),
+            snapshotFingerprint=result.snapshot_fingerprint,
+        )

@@ -71,6 +71,7 @@ class DataAgentState(TypedDict, total=False):
     planner_reason_code: str | None
     planner_skill_version: str | None
     plan_validation: dict[str, Any]
+    validated_snapshot_fingerprint: str
     planning_retry_count: int
     lineage_edge_ids: list[str]
     legacy_planner_fallback: bool

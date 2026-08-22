@@ -23,7 +23,12 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
-from app.lineage.catalog import canonical_hash, load_mock_snapshot
+from app.lineage.catalog import (
+    canonical_hash,
+    load_mock_snapshot,
+    refresh_snapshot_declarations,
+    snapshot_hashes,
+)
 from app.lineage.planning import CandidateQueryPlan, PlanEnumerator, PlanValidator
 from app.synthesis.sql_synthesizer import SynthesisError, synthesize, synthesize_plan
 
@@ -175,7 +180,8 @@ def _candidate_from_dict(data: dict[str, Any]) -> CandidateQueryPlan:
         data["planId"], data["metricPathId"],
         tuple(FieldRoute(**route) for route in data["fieldRoutes"]),
         data["sourceTable"], data["freshness"], data["costTier"], data["joinCount"],
-        data["catalogVersion"], tuple(data.get("legalityEvidence") or ("PASS",)),
+        data["catalogVersion"], data["snapshotFingerprint"],
+        tuple(data.get("legalityEvidence") or ("PASS",)),
     )
 
 
@@ -193,6 +199,7 @@ def execute_fixed_intent(case: dict[str, Any]) -> AdversarialObservation:
             for edge in mutated["lineage"]["joinEdges"]:
                 edge["fromTable"], edge["toTable"] = edge["toTable"], edge["fromTable"]
                 edge["fromColumns"], edge["toColumns"] = edge["toColumns"], edge["fromColumns"]
+            refresh_snapshot_declarations(mutated)
             result = PlanEnumerator().enumerate(intent, mutated)
             codes = [item.code for item in result.rejected]
             code = "REVERSE_JOIN_NOT_ALLOWED" if "REVERSE_JOIN_NOT_ALLOWED" in codes else (codes[0] if codes else "PASS")
@@ -216,7 +223,10 @@ def execute_fixed_intent(case: dict[str, Any]) -> AdversarialObservation:
                     "OK", "SAFE_REJECT", "PLAN_VALIDATE", verdict["code"], verdict["reason"], trace,
                     audit={"plan_validation": verdict, "selected_plan_id": selected.planId})
             trace += ["SQL_SYNTHESIZE"]
-            sql = synthesize_plan(intent, snapshot, selected.to_dict())
+            sql = synthesize_plan(
+                intent, snapshot, selected.to_dict(),
+                validated_snapshot_fingerprint=verdict["snapshotFingerprint"],
+            )
             return AdversarialObservation(unit, unit, case["layer"], case["protocol"],
                 "OK", "EXECUTE_SUCCESS", "SQL_SYNTHESIZE", "PASS", node_trace=trace,
                 audit={"sql": sql, "selected_plan_id": selected.planId,
@@ -320,6 +330,15 @@ def execute_mutated_plan(case: dict[str, Any]) -> AdversarialObservation:
                 if edge["edgeId"] == edge_id:
                     edge["cardinalityFromTo"] = "1:N"
                     break
+        refresh_snapshot_declarations(snapshot)
+        changed["catalogVersion"] = snapshot["catalogVersion"]
+        changed["snapshotFingerprint"] = snapshot_hashes(snapshot)["fingerprint"]
+        changed["planId"] = canonical_hash({
+            "metricPathId": changed["metricPathId"],
+            "fieldRoutes": changed["fieldRoutes"],
+            "catalogVersion": changed["catalogVersion"],
+            "snapshotFingerprint": changed["snapshotFingerprint"],
+        })[:16]
     mutated = _candidate_from_dict(changed)
     verdict = validator.validate(mutated.planId, [mutated], intent, snapshot)
     return AdversarialObservation(unit, unit, case["layer"], case["protocol"], "OK",
