@@ -29,6 +29,15 @@ _ALIAS = {
     "creator_dim": "ctd",
 }
 
+_PHYSICAL_TIME_FIELD = {
+    "metric_daily": "date",
+    "user_behavior_fact": "timestamp",
+    "play_detail": "created_at",
+    "creator_revenue": "stat_date",
+    "video_revenue": "stat_date",
+    "user_retention": "stat_date",
+}
+
 DIMENSIONS = [
     {"code": "date", "name": "日期", "description": "时间维度（日粒度）"},
     {"code": "category", "name": "分类", "description": "内容分类（美食/美妆/游戏）"},
@@ -136,6 +145,21 @@ def _resolve_path(mdef: dict[str, Any], intent: str, dims: list[str]) -> dict[st
         "expr": mdef.get("formula") or "COUNT(*)",
         "event_filter": None,
     }
+
+
+def _resolve_time_binding(
+    mdef: dict[str, Any], intent: str, dims: list[str]
+) -> tuple[str, str]:
+    """Legacy 合成路径的实际物理 source/time field；锚点与最终过滤复用。"""
+    path = _resolve_path(mdef, intent, dims)
+    source = path["source"]
+    original_source = mdef.get("sourceTable") or "metric_daily"
+    if source == original_source and mdef.get("timeField"):
+        return source, str(mdef["timeField"])
+    time_field = _PHYSICAL_TIME_FIELD.get(source)
+    if not time_field:
+        raise SynthesisError(f"no physical time field for source: {source}")
+    return source, time_field
 
 
 def _synthesize_join_multi(intent: dict[str, Any], metric_defs: dict[str, dict[str, Any]],

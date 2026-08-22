@@ -294,6 +294,8 @@ async def _memory_pre_resolve(
 
 async def semantic_resolve_node(state: DataAgentState, platform: PlatformClient) -> DataAgentState:
     """LLM 只做语义匹配：把问题解析为结构化 ResolvedIntent（不写 SQL）。"""
+    state.setdefault("memory_hit", False)
+    state.setdefault("memory_band", None)
     catalog = await platform.metric_catalog()
     catalog = catalog or []
     recall = MetricCandidateRetriever(
@@ -326,32 +328,46 @@ async def _expand_relative_time(relative: dict, metric_defs: dict, intent: dict,
     - real：platform.execute_sql 查 MAX(时间列)（走 Spring SQL 网关，符合"Python 不直连库"）。
     - mock：固定锚点 2023-10-31（与 seed 42 数据末日一致）。
     """
-    from app.synthesis.sql_synthesizer import _ALIAS, _field_expr, _resolve_path
-    from app.synthesis.time_expand import time_expand
+    from app.synthesis.sql_synthesizer import _ALIAS, _resolve_time_binding
+    from app.synthesis.time_expand import normalize_anchor_date, time_expand
 
     codes = list(intent.get("metrics") or [])
     mdef = metric_defs.get(codes[0]) if codes else None
     if mdef is None:
         raise ValueError("no metric def for anchor query")
-    path = _resolve_path(mdef, intent.get("intent", "aggregate"), list(intent.get("dimensions") or []))
-    source = path["source"]
-    tcol = mdef.get("timeField") or "date"
+    active_plan = (
+        settings.lineage_planning_mode == "active"
+        and (state.get("plan_validation") or {}).get("verdict") == "PASS"
+    )
+    if active_plan:
+        selected = next(
+            item for item in state.get("candidate_plans") or []
+            if item.get("planId") == state.get("selected_plan_id")
+        )
+        path = next(
+            item for item in state["lineage_snapshot"]["lineage"]["metricPaths"]
+            if item["pathId"] == selected["metricPathId"]
+        )
+        source, tcol = path["sourceTable"], path["timeFieldRef"]
+    else:
+        source, tcol = _resolve_time_binding(
+            mdef, intent.get("intent", "aggregate"), list(intent.get("dimensions") or [])
+        )
     rel_inner = relative.get("relative") or relative  # time_range 可能是 {type, relative:{...}, granularity}
     if not settings.platform_calls_enabled:  # mock 固定锚点（seed 42 数据末日）
         expanded = time_expand(rel_inner, "2023-10-31")
         expanded["granularity"] = relative.get("granularity") or rel_inner.get("granularity")
         return expanded
-    expr, joins = _field_expr(source, tcol)
     alias = _ALIAS.get(source, source)
-    join_sql = (" " + " ".join(dict.fromkeys(joins))) if joins else ""
-    sql = f"SELECT MAX({expr}) FROM {source} {alias}{join_sql}"
+    sql = f"SELECT MAX(DATE({alias}.{tcol})) AS anchor_date FROM {source} {alias}"
     qr = await platform.execute_sql(
         run_id=state.get("run_id", ""), user_id=state.get("user_id", "eval"),
         question=state.get("question", ""), sql=sql, purpose="anchor_time")
     rows = qr.get("rows") or []
     if not rows:
         raise ValueError("anchor query returned no rows")
-    anchor = str(next(iter(rows[0].values())))
+    anchor_raw = rows[0].get("anchor_date", next(iter(rows[0].values()), None))
+    anchor = normalize_anchor_date(anchor_raw)
     expanded = time_expand(rel_inner, anchor)
     expanded["granularity"] = relative.get("granularity") or rel_inner.get("granularity")
     return expanded

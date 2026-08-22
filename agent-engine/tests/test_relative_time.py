@@ -25,6 +25,84 @@ async def test_expand_relative_time_mock_anchor(monkeypatch):
     assert expanded["absolute"]["end"] == "2023-10-31"
 
 
+class _AnchorPlatform:
+    def __init__(self, anchor="2023-10-31T23:59:59+08:00"):
+        self.anchor = anchor
+        self.sql = None
+
+    async def execute_sql(self, **kwargs):
+        self.sql = kwargs["sql"]
+        return {"rows": [{"anchor_date": self.anchor}]}
+
+
+@pytest.mark.asyncio
+async def test_real_anchor_uses_legacy_resolved_fact_path(monkeypatch):
+    from app.graph.nodes import _expand_relative_time
+
+    monkeypatch.setattr(settings, "platform_calls_enabled", True)
+    monkeypatch.setattr(settings, "lineage_planning_mode", "off")
+    platform = _AnchorPlatform()
+    relative = {"type": "relative", "relative": {"amount": 7, "unit": "day"}}
+    mdefs = {"total_plays": {
+        "metricCode": "total_plays", "sourceTable": "metric_daily", "timeField": "date",
+        "formula": "total_plays", "factFormula": "COUNT(*)", "factEventFilter": "event_type='play'",
+    }}
+    intent = {"intent": "ranking", "metrics": ["total_plays"], "dimensions": ["content"]}
+
+    expanded = await _expand_relative_time(relative, mdefs, intent,
+                                            {"run_id": "r", "question": "q"}, platform)
+
+    assert platform.sql == (
+        "SELECT MAX(DATE(ubf.timestamp)) AS anchor_date FROM user_behavior_fact ubf"
+    )
+    assert expanded["absolute"] == {"start": "2023-10-25", "end": "2023-10-31"}
+
+
+@pytest.mark.asyncio
+async def test_real_anchor_uses_validated_plan_path(monkeypatch):
+    from app.graph.nodes import _expand_relative_time
+
+    monkeypatch.setattr(settings, "platform_calls_enabled", True)
+    monkeypatch.setattr(settings, "lineage_planning_mode", "active")
+    platform = _AnchorPlatform("2023-10-31 12:00:00")
+    relative = {"type": "relative", "relative": {"amount": 1, "unit": "day"}}
+    mdefs = {"video_revenue": {
+        "metricCode": "video_revenue", "sourceTable": "video_revenue", "timeField": "stat_date",
+    }}
+    intent = {"intent": "trend", "metrics": ["video_revenue"], "dimensions": ["content"]}
+    state = {
+        "run_id": "r", "question": "q", "plan_validation": {"verdict": "PASS"},
+        "selected_plan_id": "p1",
+        "candidate_plans": [{"planId": "p1", "metricPathId": "video_revenue_daily"}],
+        "lineage_snapshot": {"lineage": {"metricPaths": [{
+            "pathId": "video_revenue_daily", "sourceTable": "video_revenue",
+            "timeFieldRef": "stat_date",
+        }]}}
+    }
+
+    expanded = await _expand_relative_time(relative, mdefs, intent, state, platform)
+
+    assert platform.sql == "SELECT MAX(DATE(vr.stat_date)) AS anchor_date FROM video_revenue vr"
+    assert expanded["absolute"] == {"start": "2023-10-31", "end": "2023-10-31"}
+
+
+@pytest.mark.asyncio
+async def test_invalid_anchor_raises_stable_error(monkeypatch):
+    from app.graph.nodes import _expand_relative_time
+
+    monkeypatch.setattr(settings, "platform_calls_enabled", True)
+    monkeypatch.setattr(settings, "lineage_planning_mode", "off")
+    platform = _AnchorPlatform("not-a-date")
+    mdefs = {"total_plays": {
+        "metricCode": "total_plays", "sourceTable": "metric_daily", "timeField": "date",
+    }}
+    with pytest.raises(ValueError, match="ANCHOR_DATE_INVALID"):
+        await _expand_relative_time(
+            {"amount": 7, "unit": "day"}, mdefs,
+            {"intent": "trend", "metrics": ["total_plays"], "dimensions": []},
+            {"run_id": "r", "question": "q"}, platform)
+
+
 # ------------------------------------------------------------------ 2.x 集成：c03 合成 SQL 含时间过滤
 class _FakeResolverRelative:
     """返回 relative time_range 的 intent（模拟 LLM 解析 c03）。"""

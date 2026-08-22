@@ -1,0 +1,71 @@
+{
+  "audit": {
+    "guard_verdict": "PASS",
+    "query_result": {
+      "accessedTables": [
+        "user_behavior_fact",
+        "content_dim"
+      ],
+      "columns": [
+        "category",
+        "comment_rate"
+      ],
+      "durationMs": 31,
+      "error": null,
+      "errorCode": null,
+      "resultText": null,
+      "riskLevel": "LOW",
+      "rowCount": 3,
+      "rows": [
+        {
+          "category": "美妆",
+          "comment_rate": 0.0925
+        },
+        {
+          "category": "游戏",
+          "comment_rate": 0.098
+        },
+        {
+          "category": "美食",
+          "comment_rate": 0.0974
+        }
+      ],
+      "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-01' AND '2023-10-31 23:59:59' GROUP BY cd.category",
+      "success": true,
+      "truncated": false,
+      "warnings": []
+    },
+    "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-01' AND '2023-10-31 23:59:59' GROUP BY cd.category",
+    "sql_source": "semantic"
+  },
+  "case_id": "adv_c01",
+  "code": "PASS",
+  "disposition": "EXECUTE_SUCCESS",
+  "execution_unit_id": "adv_c01",
+  "layer": "synthesis",
+  "node_trace": [
+    "SQL_SYNTHESIZE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE"
+  ],
+  "observation_status": "OK",
+  "protocol": "fixed_intent",
+  "reason": null,
+  "result_rows": [
+    {
+      "category": "美妆",
+      "comment_rate": 0.0925
+    },
+    {
+      "category": "游戏",
+      "comment_rate": 0.098
+    },
+    {
+      "category": "美食",
+      "comment_rate": 0.0974
+    }
+  ],
+  "stage": "SQL_SYNTHESIZE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

@@ -1,0 +1,141 @@
+{
+  "audit": {
+    "candidate_plans": [],
+    "catalog_outside_metrics": [],
+    "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+    "metric_candidates": [
+      {
+        "matchedExpressions": [
+          "日活跃用户数"
+        ],
+        "metricCode": "daily_active_users",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "评论量"
+        ],
+        "metricCode": "total_comments",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "点赞量"
+        ],
+        "metricCode": "total_likes",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "播放时长"
+        ],
+        "metricCode": "total_play_duration",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "播放量"
+        ],
+        "metricCode": "total_plays",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      },
+      {
+        "matchedExpressions": [
+          "分享量"
+        ],
+        "metricCode": "total_shares",
+        "pinned": true,
+        "reasons": [
+          "exact:metric_name",
+          "lexical"
+        ],
+        "score": 1.0
+      }
+    ],
+    "metric_recall_effective_k": 6,
+    "metric_recall_mode": "topk",
+    "metric_recall_pinned_count": 6,
+    "plan_selection_source": "LEGACY_FALLBACK",
+    "plan_validation": {
+      "code": "NO_CANDIDATE",
+      "verdict": "UNSUPPORTED"
+    },
+    "resolved_intent": {
+      "confidence": 1.0,
+      "coverage": "full",
+      "dimensions": [],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [
+        "total_plays",
+        "total_play_duration",
+        "total_likes",
+        "total_comments",
+        "total_shares",
+        "daily_active_users"
+      ],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": null,
+        "type": "none"
+      }
+    },
+    "run_id": "run_9639601b-5127-4c3f-a5e4-a44c44458f70",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      ""
+    ],
+    "sql_source": "fallback"
+  },
+  "case_id": "adv_s03",
+  "code": "APPROVAL_NEEDED",
+  "disposition": "APPROVAL_REQUIRED",
+  "execution_unit_id": "adv_s03",
+  "layer": "semantic",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "PLAN_ENUMERATE",
+    "PLAN_VALIDATE",
+    "SQL_SYNTHESIZE",
+    "SQL_GENERATE",
+    "SQL_HARD_GUARD",
+    "SQL_GENERATE",
+    "SQL_HARD_GUARD"
+  ],
+  "observation_status": "OK",
+  "protocol": "question",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SQL_HARD_GUARD",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

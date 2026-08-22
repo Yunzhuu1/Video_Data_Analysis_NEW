@@ -2,22 +2,17 @@ package com.yunzhu.video_data_analysis.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.IsoFields;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 /**
@@ -68,11 +63,6 @@ public class DataInitializer implements CommandLineRunner {
                     "挑战赛", "[\"content_5\",\"content_6\"]", "100积分"}
     };
 
-    /** 共享指标字典文件（与 Python mock catalog 同源）。 */
-    private static final String METRIC_CATALOG = "metric_catalog.json";
-
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     /* ==================== 运行入口 ==================== */
 
     public DataInitializer(JdbcTemplate jdbcTemplate) {
@@ -94,7 +84,6 @@ public class DataInitializer implements CommandLineRunner {
         insertCreatorDim();
         insertContentDim();
         insertActivityDim();
-        insertMetricDef();
         insertUserBehaviorFact();
         insertMetricDaily();
         insertPlayDetail();
@@ -189,44 +178,6 @@ public class DataInitializer implements CommandLineRunner {
         }
         jdbcTemplate.batchUpdate(sql, batch);
         log.info("  activity_dim: {} activities inserted", ACTIVITIES.length);
-    }
-
-    private void insertMetricDef() {
-        String sql = "INSERT IGNORE INTO metric_definition "
-                + "(metric_name, metric_code, business_definition, formula, dimensions, "
-                + " time_granularity, source_table, time_field, fact_formula, fact_event_filter) "
-                + "VALUES (?, ?, ?, ?, CAST(? AS JSON), ?, ?, ?, ?, ?)";
-
-        List<Map<String, Object>> metrics = loadMetricCatalog();
-        for (Map<String, Object> m : metrics) {
-            jdbcTemplate.update(sql,
-                    m.get("metricName"), m.get("metricCode"), m.get("businessDefinition"),
-                    m.get("formula"), toJson(m.get("dimensions")),
-                    m.get("timeGranularity"), m.get("sourceTable"), m.get("timeField"),
-                    m.get("factFormula"), m.get("factEventFilter"));
-        }
-        log.info("  metric_definition: {} metrics inserted", metrics.size());
-    }
-
-    private List<Map<String, Object>> loadMetricCatalog() {
-        try {
-            return objectMapper.readValue(
-                    new ClassPathResource(METRIC_CATALOG).getInputStream(),
-                    new TypeReference<List<Map<String, Object>>>() {});
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to load " + METRIC_CATALOG, e);
-        }
-    }
-
-    private String toJson(Object value) {
-        if (value == null) {
-            return null;
-        }
-        try {
-            return objectMapper.writeValueAsString(value);
-        } catch (IOException e) {
-            throw new IllegalStateException("Failed to serialize metric field", e);
-        }
     }
 
     /* ==================== 行为事实数据 ==================== */

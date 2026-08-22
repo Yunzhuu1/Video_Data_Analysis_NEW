@@ -20,6 +20,22 @@ public class MetricCatalogService {
             + "fact_formula, fact_event_filter, owner, version, status "
             + "FROM metric_definition WHERE status = 'ACTIVE'";
 
+    private static final String INSERT_SQL = """
+            INSERT INTO metric_definition
+              (metric_name, metric_code, business_definition, formula, dimensions,
+               time_granularity, source_table, time_field, fact_formula, fact_event_filter,
+               version, status)
+            VALUES (?, ?, ?, ?, CAST(? AS JSON), ?, ?, ?, ?, ?, 1, 'ACTIVE')
+            """;
+
+    private static final String UPDATE_SQL = """
+            UPDATE metric_definition
+            SET metric_name=?, business_definition=?, formula=?, dimensions=CAST(? AS JSON),
+                time_granularity=?, source_table=?, time_field=?, fact_formula=?,
+                fact_event_filter=?, status='ACTIVE', version=version+1
+            WHERE metric_code=?
+            """;
+
     private final JdbcTemplate jdbcTemplate;
 
     public MetricCatalogService(JdbcTemplate jdbcTemplate) {
@@ -28,6 +44,25 @@ public class MetricCatalogService {
 
     public List<MetricDefinitionDto> listAll() {
         return jdbcTemplate.query(BASE_SQL + " ORDER BY id", (rs, i) -> map(rs));
+    }
+
+    public List<MetricDefinitionDto> listAllIncludingInactive() {
+        String sql = BASE_SQL.replace(" WHERE status = 'ACTIVE'", "") + " ORDER BY id";
+        return jdbcTemplate.query(sql, (rs, i) -> map(rs));
+    }
+
+    public void insertManaged(MetricCatalogResource.ManagedMetric metric) {
+        jdbcTemplate.update(INSERT_SQL,
+                metric.metricName(), metric.metricCode(), metric.businessDefinition(), metric.formula(),
+                metric.dimensions(), metric.timeGranularity(), metric.sourceTable(), metric.timeField(),
+                metric.factFormula(), metric.factEventFilter());
+    }
+
+    public void updateManaged(MetricCatalogResource.ManagedMetric metric) {
+        jdbcTemplate.update(UPDATE_SQL,
+                metric.metricName(), metric.businessDefinition(), metric.formula(), metric.dimensions(),
+                metric.timeGranularity(), metric.sourceTable(), metric.timeField(), metric.factFormula(),
+                metric.factEventFilter(), metric.metricCode());
     }
 
     public MetricDefinitionDto findByCode(String metricCode) {

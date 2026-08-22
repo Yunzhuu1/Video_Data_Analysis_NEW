@@ -3,7 +3,7 @@ from pydantic import BaseModel, Field
 
 from app.api.schemas import AnalyzeRequest, AnalyzeResponse, ApprovalRequest, HealthResponse
 from app.graph import nodes
-from app.graph.graph_builder import resume_graph, run_chatbi_graph
+from app.graph.graph_builder import memory_runtime_status, resume_graph, run_chatbi_graph
 from app.memory.retriever import normalize_question
 from app.settings import settings
 
@@ -12,7 +12,8 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse)
 async def health() -> HealthResponse:
-    return HealthResponse(status="UP", service=settings.service_name)
+    return HealthResponse(status="UP", service=settings.service_name,
+                          memory=memory_runtime_status())
 
 
 # ---------------------------------------------------------------------------

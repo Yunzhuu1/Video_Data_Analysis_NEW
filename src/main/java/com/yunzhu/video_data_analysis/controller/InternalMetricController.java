@@ -1,7 +1,9 @@
 package com.yunzhu.video_data_analysis.controller;
 
 import com.yunzhu.video_data_analysis.dto.MetricDefinitionDto;
+import com.yunzhu.video_data_analysis.dto.MetricCatalogRuntimeStatus;
 import com.yunzhu.video_data_analysis.service.MetricCatalogService;
+import com.yunzhu.video_data_analysis.service.MetricCatalogRuntimeState;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +18,17 @@ import java.util.List;
 public class InternalMetricController {
 
     private final MetricCatalogService metricCatalogService;
+    private final MetricCatalogRuntimeState runtimeState;
 
-    public InternalMetricController(MetricCatalogService metricCatalogService) {
+    public InternalMetricController(MetricCatalogService metricCatalogService,
+                                    MetricCatalogRuntimeState runtimeState) {
         this.metricCatalogService = metricCatalogService;
+        this.runtimeState = runtimeState;
+    }
+
+    @GetMapping("/runtime-status")
+    public MetricCatalogRuntimeStatus runtimeStatus() {
+        return runtimeState.current();
     }
 
     @GetMapping

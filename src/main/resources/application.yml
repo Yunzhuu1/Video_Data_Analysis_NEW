@@ -31,6 +31,8 @@ app:
     cheap-model: ${AI_CHEAP_MODEL:deepseek-v4-flash}
   data-initializer:
     enabled: ${DATA_INITIALIZER_ENABLED:false}
+  metric-catalog-sync:
+    enabled: ${METRIC_CATALOG_SYNC_ENABLED:true}
   cache:
     similarity-threshold: 0.92
     ttl-minutes: 60

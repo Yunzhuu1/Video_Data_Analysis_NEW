@@ -1,7 +1,9 @@
 """relative-time-synthesis：time_expand 单测（含端点/unit 换算/边界）。"""
+from datetime import UTC, date, datetime
+
 import pytest
 
-from app.synthesis.time_expand import time_expand
+from app.synthesis.time_expand import normalize_anchor_date, time_expand
 
 
 def test_last7days_inclusive_endpoints():
@@ -43,3 +45,21 @@ def test_granularity_passthrough():
 def test_unsupported_unit_raises():
     with pytest.raises(ValueError):
         time_expand({"amount": 1, "unit": "year"}, "2023-10-31")
+
+
+@pytest.mark.parametrize("value", [
+    "2023-10-31",
+    "2023-10-31T23:59:59",
+    "2023-10-31T23:59:59+08:00",
+    "2023-10-31T15:59:59Z",
+    date(2023, 10, 31),
+    datetime(2023, 10, 31, 23, 59, tzinfo=UTC),
+])
+def test_normalize_anchor_date_accepts_date_and_datetime(value):
+    assert normalize_anchor_date(value) == "2023-10-31"
+
+
+@pytest.mark.parametrize("value", [None, "", "not-a-date"])
+def test_normalize_anchor_date_rejects_missing_or_invalid(value):
+    with pytest.raises(ValueError, match="ANCHOR_DATE"):
+        normalize_anchor_date(value)
