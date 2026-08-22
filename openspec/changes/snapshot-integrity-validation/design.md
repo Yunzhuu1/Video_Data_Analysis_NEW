@@ -10,9 +10,10 @@ P05 分别修改三类内容并保留全部旧声明值，真实 Validator 三�
 
 - 从 snapshot 实际内容独立重算三个子 hash 与组合 `catalogVersion`，拒绝缺失、非法或不一致声明。
 - 在枚举、Validator 和 compiler 三个边界实施同一完整性算法；Compiler 只消费经复制、校验并递归冻结的私有副本，关闭验证后篡改的 TOCTOU 窗口。
+- 将 Enumerator 实际 fingerprint、Validator PASS fingerprint 与 Compiler 私有副本 fingerprint 三方绑定，拒绝“Validator 验证 S0、Compiler 改用另一份自洽 S1”。
 - 完整性失败使用稳定 code `SNAPSHOT_INTEGRITY_MISMATCH` 和确定顺序的 component diagnostics；禁止 plan compiler 消费失配 snapshot。
 - 把不可由“换一个候选”恢复的完整性错误与普通 `REPLAN` 分开，不浪费 Planner 重试。
-- 保持合法 snapshot 的 candidate/planId/SQL 完全不变，并复用 P05 将 unsafe pass 3/3 降为 0/3。
+- 保持合法 snapshot 的候选语义与 SQL 不变；planId 因纳入实际 fingerprint 发生一次预期版本变化，此后对同一 snapshot 确定稳定；复用 P05 将 unsafe pass 3/3 降为 0/3。
 
 **Non-Goals:**
 
@@ -37,6 +38,16 @@ actual_catalog_version = sha256(canonical({
   "metrics": snapshot.metricDefinitions,
   "schema":  snapshot.schemaProjection
 }))
+
+snapshot_fingerprint = sha256(canonical({
+  "catalogVersion": snapshot.catalogVersion,
+  "lineageHash": snapshot.lineageHash,
+  "metricCatalogHash": snapshot.metricCatalogHash,
+  "schemaHash": snapshot.schemaHash,
+  "lineage": snapshot.lineage,
+  "metricDefinitions": snapshot.metricDefinitions,
+  "schemaProjection": snapshot.schemaProjection
+}))
 ```
 
 按 `lineage → metric → schema → catalog` 固定顺序比较 `lineageHash / metricCatalogHash / schemaHash / catalogVersion`。任一内容或声明缺失、声明不是 64 位小写 hex、canonicalization 失败或值不一致，都返回 `valid=false`、统一 code 和 `mismatchedComponents`；审计可记录 declared/actual hash，但不得记录完整 catalog 内容。
@@ -50,8 +61,9 @@ actual_catalog_version = sha256(canonical({
 ### D2. 三道相同校验，Validator 是规范决策点
 
 1. `PlanEnumerator.enumerate()` 开始前校验，避免从失配内容生成候选；失败抛出专用 `SnapshotIntegrityError`，`plan_enumerate_node` 记录 `REJECT/SNAPSHOT_INTEGRITY_MISMATCH`、零候选和 legacy fallback。
-2. `PlanValidator.validate()` 在 selected ID membership、candidate canonical re-enumeration之前校验。失败返回 `verdict=REJECT`，不得被 `INVALID_PLAN_ID` 或 `CANDIDATE_TAMPERED` 覆盖真实根因。
-3. `synthesize_plan()` 不在原始可变 dict 上执行“校验后继续读取”。入口先用 canonical JSON round-trip 复制出仅由 JSON 值组成、无外部引用的私有副本；在该副本上执行完整性校验，通过后把 dict/list 递归转换为只读 mapping/tuple，Compiler 后续只持有并读取这份冻结对象。原始 snapshot 在复制前已漂移会使副本校验失败；复制后再漂移不会影响编译输入。失败转换为现有可观测的 `SynthesisError`，不得生成部分 SQL。
+2. Enumerator 将完整 snapshot 的实际 `snapshotFingerprint` 写入每个 Candidate，并把它纳入 planId 原文；因此 Candidate 不仅绑定 catalogVersion，也绑定本轮实际 payload。
+3. `PlanValidator.validate()` 在 selected ID membership、candidate canonical re-enumeration之前校验。失败返回 `verdict=REJECT`，不得被 `INVALID_PLAN_ID` 或 `CANDIDATE_TAMPERED` 覆盖真实根因；PASS 结果必须返回实际 `snapshotFingerprint`，Graph 保存为独立 `validated_snapshot_fingerprint`。
+4. `synthesize_plan()` 不在原始可变 dict 上执行“校验后继续读取”。入口先用 canonical JSON round-trip 复制出仅由 JSON 值组成、无外部引用的私有副本；在该副本上执行完整性校验，通过后要求 `private_copy_fingerprint == validated_snapshot_fingerprint == plan.snapshotFingerprint`，再把 dict/list 递归转换为只读 mapping/tuple。Compiler 后续只持有并读取这份冻结对象。S0 被一份四 hash 自洽的 S1 整体替换时，S1 fingerprint 仍与 Validator 返回的 S0 fingerprint 不同，必须拒绝。失败转换为现有可观测的 `SynthesisError`，不得生成部分 SQL。
 
 三处必须调用同一个 helper，不复制 hash 公式。冻结函数只接受通过 JSON canonicalization 的 payload，不保留指向原 snapshot 的嵌套引用，也不向调用方暴露可变内部对象。合法 snapshot 重复计算成本仅为小型 JSON 的 SHA-256，远低于一次 LLM/数据库调用；MVP 不做缓存，避免缓存键再次成为可伪造声明。
 
@@ -80,7 +92,7 @@ actual_catalog_version = sha256(canonical({
 variant coverage = 3/3
 ```
 
-另补四类单测：合法 snapshot PASS；只改声明值拒绝；缺失/非法 hash 拒绝；Validator PASS 后再篡改原 snapshot 时，Compiler 使用其入口创建的私有冻结副本且不再读取原对象。再增加并发 mutation fixture：冻结完成后修改原 snapshot，输出 SQL 必须与未修改基线一致；冻结前已漂移则必须拒绝。旧 adversarial 报告保持不可变，新报告使用新 run 目录。
+另补五类单测：合法 snapshot PASS；只改声明值拒绝；缺失/非法 hash 拒绝；Validator PASS 后把原 snapshot 替换为四 hash 自洽 S1 时因 fingerprint 不同拒绝；冻结完成后修改原 snapshot，输出 SQL 与未修改基线一致。旧 adversarial 报告保持不可变，新报告使用新 run 目录。
 
 ### D5. 回归范围按确定性证据收敛
 
@@ -89,13 +101,14 @@ variant coverage = 3/3
 - snapshot integrity + PlanValidator + graph fallback + compiler sentinel 定向测试；
 - adversarial offline P05 三 variants 全拒绝、unsafe 0/3；
 - lineage offline 原有 Path Recall 8/8、选择/拒绝门槛不回退；
-- N=61 replay/mock 实现前后 behavior projection 一致；
+- N=61 replay/mock 实现前后 behavior projection 一致；lineage planId 验证同 snapshot 重复枚举稳定且变化可归因于新增 fingerprint，不要求与旧算法 ID 相等；
 - 全量 Python、Java、ruff 与 OpenSpec strict 通过。
 
 ## Risks / Trade-offs
 
 - **[合法跨版本部署被识别为 mismatch]** → 这是预期 fail-closed；必须由 Spring 在单次冻结时同步生成内容和四个声明值，不能拼接不同版本 payload。
 - **[三次 canonical hash 有重复 CPU]** → 当前 catalog 很小且纯本地，优先安全与简单；只有 profiling 证明成本显著后才考虑以不可伪造的对象封装缓存。
+- **[planId 一次性变化]** → fingerprint 必须进入 planId 才能绑定实际 payload；当前 planId 仅 run 内使用且没有数据库/API 持久化消费者，以 deterministic 测试替代旧 ID 兼容承诺。
 - **[legacy fallback 掩盖规划不可用]** → `planValidation.code`、warning、legacy flag 与 mismatch components 必须保留，评测单独统计；业务 SQL 仍过 Guard。
 - **[冻结结构与现有 Compiler 的 dict/list 假设不兼容]** → 只使用支持 `[]`、`.get()` 与迭代的只读 Mapping/tuple，并为全部 path/binding/edge/filter/order 分支跑既有 compiler 测试。
 - **[compiler 直接调用异常类型改变]** → 统一转换为既有 `SynthesisError`，保留原降级路由和观测 code/reason。

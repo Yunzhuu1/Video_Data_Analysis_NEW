@@ -3,11 +3,33 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+from collections.abc import Mapping
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 _ROOT = Path(__file__).resolve().parents[3]
 _RESOURCE = _ROOT / "src/main/resources"
+_HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+_COMPONENTS = ("lineage", "metric", "schema", "catalog")
+
+
+@dataclass(frozen=True)
+class SnapshotIntegrityResult:
+    valid: bool
+    snapshot_fingerprint: str | None
+    mismatched_components: tuple[str, ...]
+    declared_hashes: dict[str, str | None]
+    actual_hashes: dict[str, str | None]
+    reason: str | None = None
+
+
+class SnapshotIntegrityError(ValueError):
+    def __init__(self, result: SnapshotIntegrityResult):
+        self.result = result
+        components = ",".join(result.mismatched_components) or "unknown"
+        super().__init__(f"snapshot integrity mismatch: {components}")
 
 
 def canonical_bytes(value: Any) -> bytes:
@@ -20,6 +42,116 @@ def canonical_bytes(value: Any) -> bytes:
 
 def canonical_hash(value: Any) -> str:
     return hashlib.sha256(canonical_bytes(value)).hexdigest()
+
+
+def snapshot_hashes(snapshot: Mapping[str, Any]) -> dict[str, str]:
+    """Recompute all hashes from the supplied in-memory payload."""
+    lineage = snapshot["lineage"]
+    metrics = snapshot["metricDefinitions"]
+    schema = snapshot["schemaProjection"]
+    hashes = {
+        "lineage": canonical_hash(lineage),
+        "metric": canonical_hash(metrics),
+        "schema": canonical_hash(schema),
+        "catalog": canonical_hash({"lineage": lineage, "metrics": metrics, "schema": schema}),
+    }
+    fingerprint_payload = {
+        "catalogVersion": snapshot.get("catalogVersion"),
+        "lineageHash": snapshot.get("lineageHash"),
+        "metricCatalogHash": snapshot.get("metricCatalogHash"),
+        "schemaHash": snapshot.get("schemaHash"),
+        "lineage": lineage,
+        "metricDefinitions": metrics,
+        "schemaProjection": schema,
+    }
+    hashes["fingerprint"] = canonical_hash(fingerprint_payload)
+    return hashes
+
+
+def refresh_snapshot_declarations(snapshot: dict[str, Any]) -> dict[str, Any]:
+    """Test/fixture helper for creating a new self-consistent snapshot version."""
+    computed = snapshot_hashes(snapshot)
+    snapshot.update({
+        "lineageHash": computed["lineage"],
+        "metricCatalogHash": computed["metric"],
+        "schemaHash": computed["schema"],
+        "catalogVersion": computed["catalog"],
+    })
+    return snapshot
+
+
+def inspect_snapshot_integrity(snapshot: Mapping[str, Any]) -> SnapshotIntegrityResult:
+    declared = {
+        "lineage": snapshot.get("lineageHash"),
+        "metric": snapshot.get("metricCatalogHash"),
+        "schema": snapshot.get("schemaHash"),
+        "catalog": snapshot.get("catalogVersion"),
+    }
+    actual: dict[str, str | None] = {component: None for component in _COMPONENTS}
+    fingerprint = None
+    reason = None
+    try:
+        computed = snapshot_hashes(snapshot)
+        actual.update({component: computed[component] for component in _COMPONENTS})
+        fingerprint = computed["fingerprint"]
+    except (KeyError, TypeError, ValueError) as exc:
+        reason = str(exc)
+    mismatched = []
+    for component in _COMPONENTS:
+        value = declared[component]
+        if not isinstance(value, str) or not _HASH_PATTERN.fullmatch(value) or actual[component] != value:
+            mismatched.append(component)
+    if reason and not mismatched:
+        mismatched.extend(_COMPONENTS)
+    return SnapshotIntegrityResult(
+        valid=not mismatched and reason is None,
+        snapshot_fingerprint=fingerprint,
+        mismatched_components=tuple(mismatched),
+        declared_hashes=declared,
+        actual_hashes=actual,
+        reason=reason,
+    )
+
+
+def require_snapshot_integrity(snapshot: Mapping[str, Any]) -> SnapshotIntegrityResult:
+    result = inspect_snapshot_integrity(snapshot)
+    if not result.valid:
+        raise SnapshotIntegrityError(result)
+    return result
+
+
+def seal_compilation_snapshot(
+    snapshot: Mapping[str, Any], *, validated_fingerprint: str, plan_fingerprint: str,
+) -> Mapping[str, Any]:
+    """Copy, validate and recursively freeze the exact compiler input."""
+    try:
+        private_copy = json.loads(canonical_bytes(dict(snapshot)))
+    except (TypeError, ValueError, json.JSONDecodeError) as exc:
+        result = SnapshotIntegrityResult(
+            False, None, ("catalog",), {}, {}, reason=str(exc),
+        )
+        raise SnapshotIntegrityError(result) from exc
+    integrity = require_snapshot_integrity(private_copy)
+    actual = integrity.snapshot_fingerprint
+    if actual != validated_fingerprint or actual != plan_fingerprint:
+        result = SnapshotIntegrityResult(
+            False,
+            actual,
+            ("validatedFingerprint",),
+            {"validatedFingerprint": validated_fingerprint, "planFingerprint": plan_fingerprint},
+            {"validatedFingerprint": actual, "planFingerprint": actual},
+            reason="compiler snapshot differs from the validator-approved snapshot",
+        )
+        raise SnapshotIntegrityError(result)
+    return _freeze_json(private_copy)
+
+
+def _freeze_json(value: Any) -> Any:
+    if isinstance(value, dict):
+        return MappingProxyType({key: _freeze_json(item) for key, item in value.items()})
+    if isinstance(value, list):
+        return tuple(_freeze_json(item) for item in value)
+    return value
 
 
 def _validate_numbers(value: Any) -> None:

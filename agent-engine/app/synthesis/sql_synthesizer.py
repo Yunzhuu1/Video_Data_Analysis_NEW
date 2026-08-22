@@ -363,8 +363,21 @@ def synthesize(intent: ResolvedIntent, metric_defs: dict[str, dict[str, Any]]) -
     return sql.strip()
 
 
-def synthesize_plan(intent: ResolvedIntent, snapshot: dict[str, Any], plan: dict[str, Any]) -> str:
+def synthesize_plan(
+    intent: ResolvedIntent, snapshot: dict[str, Any], plan: dict[str, Any], *,
+    validated_snapshot_fingerprint: str,
+) -> str:
     """只按 validated plan + run 冻结 snapshot 编译单指标 SQL；不做路径推导。"""
+    from app.lineage.catalog import SnapshotIntegrityError, seal_compilation_snapshot
+
+    try:
+        snapshot = seal_compilation_snapshot(
+            snapshot,
+            validated_fingerprint=validated_snapshot_fingerprint,
+            plan_fingerprint=str(plan.get("snapshotFingerprint") or ""),
+        )
+    except SnapshotIntegrityError as exc:
+        raise SynthesisError(f"SNAPSHOT_INTEGRITY_MISMATCH: {exc}") from exc
     metrics = list(intent.get("metrics") or [])
     if len(metrics) != 1:
         raise SynthesisError("lineage plan compiler only supports one metric")

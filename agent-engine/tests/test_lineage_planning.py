@@ -5,7 +5,14 @@ from pathlib import Path
 import pytest
 
 from app.agents.query_planner import QueryPlannerAgent
-from app.lineage.catalog import canonical_bytes, canonical_hash, load_mock_snapshot
+from app.lineage.catalog import (
+    canonical_bytes,
+    canonical_hash,
+    inspect_snapshot_integrity,
+    load_mock_snapshot,
+    refresh_snapshot_declarations,
+    snapshot_hashes,
+)
 from app.lineage.planning import PlanEnumerator, PlanValidator, route_selection
 from app.synthesis.sql_synthesizer import synthesize_plan
 
@@ -22,6 +29,17 @@ def _intent(metric="completion_rate", dimensions=None, filters=None, ordering=No
     }
 
 
+def _compile(intent, snapshot, plan):
+    candidates = PlanEnumerator().enumerate(intent, snapshot).candidates
+    selected = next(item for item in candidates if item.planId == plan.planId)
+    verdict = PlanValidator().validate(selected.planId, candidates, intent, snapshot)
+    assert verdict["verdict"] == "PASS"
+    return synthesize_plan(
+        intent, snapshot, selected.to_dict(),
+        validated_snapshot_fingerprint=verdict["snapshotFingerprint"],
+    )
+
+
 def test_canonical_fixture_and_snapshot_are_stable():
     root = Path(__file__).resolve().parents[2] / "src/main/resources"
     fixture = json.loads((root / "canonical_hash_fixture.json").read_text())
@@ -32,6 +50,45 @@ def test_canonical_fixture_and_snapshot_are_stable():
     second = load_mock_snapshot()
     assert first == second
     assert len(first["catalogVersion"]) == 64
+    integrity = inspect_snapshot_integrity(first)
+    assert integrity.valid
+    assert integrity.snapshot_fingerprint == snapshot_hashes(first)["fingerprint"]
+
+
+@pytest.mark.parametrize("component", ["lineage", "metric", "schema"])
+def test_integrity_rejects_stale_declarations_for_each_component(component):
+    snapshot = load_mock_snapshot()
+    if component == "lineage":
+        snapshot["lineage"]["tables"][0]["tableType"] = "MUTATED"
+    elif component == "metric":
+        snapshot["metricDefinitions"][0]["formula"] = "COUNT(*)"
+    else:
+        table = min(snapshot["schemaProjection"])
+        snapshot["schemaProjection"][table].append("tampered")
+    result = inspect_snapshot_integrity(snapshot)
+    assert not result.valid
+    assert component in result.mismatched_components
+    assert "catalog" in result.mismatched_components
+
+
+@pytest.mark.parametrize("value", [None, "changed", "A" * 64])
+def test_integrity_rejects_missing_or_invalid_declaration(value):
+    snapshot = load_mock_snapshot()
+    if value is None:
+        snapshot.pop("lineageHash")
+    else:
+        snapshot["lineageHash"] = value
+    result = inspect_snapshot_integrity(snapshot)
+    assert not result.valid
+    assert "lineage" in result.mismatched_components
+
+
+def test_integrity_rejects_non_canonical_number():
+    snapshot = load_mock_snapshot()
+    snapshot["lineage"]["metricPaths"][0]["costTier"] = 1.5
+    result = inspect_snapshot_integrity(snapshot)
+    assert not result.valid
+    assert result.reason
 
 
 def test_enumerator_covers_direct_two_hop_filter_order_and_time_routes():
@@ -78,6 +135,7 @@ def test_reverse_edge_and_non_mvp_are_rejected():
         "bindingId": "pd_reverse", "dimensionCode": "reverse_test", "tableName": "play_detail",
         "keyColumn": "content_id", "labelColumn": "content_id",
     })
+    refresh_snapshot_declarations(mutated)
     result = PlanEnumerator().enumerate(_intent(dimensions=["reverse_test"]), mutated)
     assert any(item.code == "REVERSE_JOIN_NOT_ALLOWED" for item in result.rejected)
     assert not PlanEnumerator().enumerate({**_intent(), "metrics": ["completion_rate", "total_likes"]}, snapshot).candidates
@@ -95,15 +153,17 @@ def test_validator_rejects_missing_route_and_catalog_drift():
     assert PlanValidator().validate(
         tampered_source.planId, [tampered_source], intent, snapshot,
     )["code"] == "CANDIDATE_TAMPERED"
-    drifted = {**snapshot, "catalogVersion": "changed"}
-    assert PlanValidator().validate(plans[0].planId, plans, intent, drifted)["code"] == "CATALOG_VERSION_MISMATCH"
+    drifted = {**snapshot, "catalogVersion": "0" * 64}
+    rejected = PlanValidator().validate(plans[0].planId, plans, intent, drifted)
+    assert rejected["verdict"] == "REJECT"
+    assert rejected["code"] == "SNAPSHOT_INTEGRITY_MISMATCH"
 
 
 def test_plan_compiler_uses_filter_route_and_selected_path():
     snapshot = load_mock_snapshot()
     intent = _intent(filters=[{"field": "category", "op": "=", "value": "美食"}])
-    plan = PlanEnumerator().enumerate(intent, snapshot).candidates[0].to_dict()
-    sql = synthesize_plan(intent, snapshot, plan)
+    plan = PlanEnumerator().enumerate(intent, snapshot).candidates[0]
+    sql = _compile(intent, snapshot, plan)
     assert "FROM play_detail pd JOIN content_dim cd" in sql
     assert "WHERE cd.category = '美食'" in sql
     assert "pd.category" not in sql
@@ -118,24 +178,64 @@ def test_plan_compiler_covers_creator_revenue_and_daily_fact_tradeoff():
         plan for plan in enum.enumerate(creator_intent, snapshot).candidates
         if any(route.bindingId == "creator_creator" for route in plan.fieldRoutes)
     )
-    creator_sql = synthesize_plan(creator_intent, snapshot, creator_plan.to_dict())
+    creator_sql = _compile(creator_intent, snapshot, creator_plan)
     assert "JOIN content_dim cd" in creator_sql and "JOIN creator_dim ctd" in creator_sql
     assert "ctd.name AS creator" in creator_sql
 
     revenue_intent = _intent(metric="video_revenue", dimensions=["category"])
     revenue_plan = enum.enumerate(revenue_intent, snapshot).candidates[0]
-    assert "JOIN content_dim cd" in synthesize_plan(
-        revenue_intent, snapshot, revenue_plan.to_dict(),
-    )
+    assert "JOIN content_dim cd" in _compile(revenue_intent, snapshot, revenue_plan)
 
     likes_intent = _intent(metric="total_likes", dimensions=["category"])
     likes_plans = enum.enumerate(likes_intent, snapshot).candidates
     daily = next(plan for plan in likes_plans if plan.metricPathId == "total_likes_daily")
     fact = next(plan for plan in likes_plans if plan.metricPathId == "total_likes_fact")
-    assert "FROM metric_daily md" in synthesize_plan(likes_intent, snapshot, daily.to_dict())
-    fact_sql = synthesize_plan(likes_intent, snapshot, fact.to_dict())
+    assert "FROM metric_daily md" in _compile(likes_intent, snapshot, daily)
+    fact_sql = _compile(likes_intent, snapshot, fact)
     assert "FROM user_behavior_fact ubf JOIN content_dim cd" in fact_sql
     assert "event_type = 'like'" in fact_sql
+
+
+def test_compiler_rejects_self_consistent_snapshot_not_validated_by_validator():
+    snapshot_s0 = load_mock_snapshot()
+    intent = _intent(filters=[{"field": "category", "op": "=", "value": "美食"}])
+    plans = PlanEnumerator().enumerate(intent, snapshot_s0).candidates
+    verdict = PlanValidator().validate(plans[0].planId, plans, intent, snapshot_s0)
+    assert verdict["verdict"] == "PASS"
+
+    snapshot_s1 = json.loads(json.dumps(snapshot_s0))
+    snapshot_s1["metricDefinitions"][0]["formula"] = "COUNT(*)"
+    refresh_snapshot_declarations(snapshot_s1)
+    assert inspect_snapshot_integrity(snapshot_s1).valid
+    with pytest.raises(Exception, match="SNAPSHOT_INTEGRITY_MISMATCH"):
+        synthesize_plan(
+            intent, snapshot_s1, plans[0].to_dict(),
+            validated_snapshot_fingerprint=verdict["snapshotFingerprint"],
+        )
+
+
+def test_compiler_uses_sealed_copy_after_original_is_mutated(monkeypatch):
+    from app.lineage import catalog
+
+    snapshot = load_mock_snapshot()
+    intent = _intent(filters=[{"field": "category", "op": "=", "value": "美食"}])
+    plans = PlanEnumerator().enumerate(intent, snapshot).candidates
+    plan = plans[0]
+    verdict = PlanValidator().validate(plan.planId, plans, intent, snapshot)
+    real_seal = catalog.seal_compilation_snapshot
+
+    def seal_then_mutate(source, **kwargs):
+        sealed = real_seal(source, **kwargs)
+        source["metricDefinitions"][0]["formula"] = "COUNT(*)"
+        refresh_snapshot_declarations(source)
+        return sealed
+
+    monkeypatch.setattr(catalog, "seal_compilation_snapshot", seal_then_mutate)
+    sql = synthesize_plan(
+        intent, snapshot, plan.to_dict(),
+        validated_snapshot_fingerprint=verdict["snapshotFingerprint"],
+    )
+    assert "FROM play_detail pd" in sql
 
 
 class _FakePlannerLLM:

@@ -63,19 +63,18 @@ def test_c_truth_contract_is_manual_and_never_self_confirming():
             assert "expected_result" not in case
 
 
-def test_p05_three_variants_report_real_validator_unsafe_pass():
+def test_p05_three_variants_are_rejected_by_real_validator():
     case = next(c for c in load_manifest()["cases"] if c["id"] == "adv_p05")
     observations = [classify_offline(case, variant) for variant in case["variants"]]
     assert [o.execution_unit_id for o in observations] == [
         "adv_p05::lineage", "adv_p05::metric", "adv_p05::schema",
     ]
     assert all(o.audit["oracle_mismatch"] for o in observations)
-    # Current product only compares declared version + canonical candidates; the
-    # harness honestly exposes rather than fixes this P1.
     assert all(o.observation_status == "OK" for o in observations)
-    assert all(o.disposition == "SYSTEM_ERROR" for o in observations)
-    assert all(o.unsafe_pass for o in observations)
-    assert all(o.audit["compiler_invocation_attempted"] for o in observations)
+    assert all(o.disposition == "SAFE_REJECT" for o in observations)
+    assert all(o.code == "SNAPSHOT_INTEGRITY_MISMATCH" for o in observations)
+    assert not any(o.unsafe_pass for o in observations)
+    assert not any(o.audit["compiler_invocation_attempted"] for o in observations)
 
 
 def test_g04_isolated_worker_uses_fixed_retry_contract(monkeypatch):

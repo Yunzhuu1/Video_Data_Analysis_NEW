@@ -5,6 +5,7 @@ from app.agents.semantic_resolver import SemanticResolver
 from app.agents.sql_agent import SQLGenerationAgent
 from app.clients.platform_client import PlatformClient
 from app.graph.state import DataAgentState
+from app.lineage.catalog import SnapshotIntegrityError, seal_compilation_snapshot
 from app.lineage.planning import PlanEnumerator, PlanValidator, route_selection
 from app.memory.aliases import get_aliases
 from app.memory.embeddings import get_embedding_provider
@@ -41,6 +42,24 @@ async def plan_enumerate_node(state: DataAgentState, platform: PlatformClient) -
         result = PlanEnumerator(settings.lineage_max_hops, settings.lineage_max_candidates).enumerate(
             state.get("resolved_intent") or {}, snapshot,
         )
+    except SnapshotIntegrityError as exc:
+        state["lineage_snapshot"] = snapshot
+        state["catalog_version"] = snapshot.get("catalogVersion")
+        state["lineage_hash"] = snapshot.get("lineageHash")
+        state["metric_catalog_hash"] = snapshot.get("metricCatalogHash")
+        state["schema_hash"] = snapshot.get("schemaHash")
+        state["candidate_plans"] = []
+        state["rejected_plans"] = []
+        state["plan_validation"] = {
+            "verdict": "REJECT", "code": "SNAPSHOT_INTEGRITY_MISMATCH",
+            "reason": str(exc),
+            "mismatchedComponents": list(exc.result.mismatched_components),
+            "snapshotFingerprint": exc.result.snapshot_fingerprint,
+        }
+        state["warnings"] = [*state.get("warnings", []), f"lineage snapshot rejected: {exc}"]
+        state["plan_selection_source"] = "LEGACY_FALLBACK"
+        state["legacy_planner_fallback"] = True
+        return state
     except Exception as exc:  # noqa: BLE001
         state["warnings"] = [*state.get("warnings", []), f"lineage planning fallback: {exc}"]
         state["plan_selection_source"] = "LEGACY_FALLBACK"
@@ -81,6 +100,9 @@ async def plan_select_node(state: DataAgentState) -> DataAgentState:
 
 
 async def plan_validate_node(state: DataAgentState) -> DataAgentState:
+    if (state.get("plan_validation") or {}).get("verdict") == "REJECT":
+        state["legacy_planner_fallback"] = True
+        return state
     if not state.get("candidate_plans"):
         state["plan_validation"] = {"verdict": "UNSUPPORTED", "code": "NO_CANDIDATE"}
         state["legacy_planner_fallback"] = True
@@ -96,11 +118,15 @@ async def plan_validate_node(state: DataAgentState) -> DataAgentState:
         state["lineage_snapshot"],
     )
     state["plan_validation"] = result
-    if result["verdict"] != "PASS":
+    if result["verdict"] == "REJECT":
+        state["legacy_planner_fallback"] = True
+        state.pop("validated_snapshot_fingerprint", None)
+    elif result["verdict"] != "PASS":
         state["planning_retry_count"] = int(state.get("planning_retry_count", 0)) + 1
         if state["planning_retry_count"] > settings.lineage_max_retries:
             state["legacy_planner_fallback"] = True
     else:
+        state["validated_snapshot_fingerprint"] = result["snapshotFingerprint"]
         selected = next(item for item in state["candidate_plans"]
                         if item["planId"] == state["selected_plan_id"])
         state["lineage_edge_ids"] = sorted({edge for route in selected["fieldRoutes"]
@@ -339,7 +365,21 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
         and (state.get("plan_validation") or {}).get("verdict") == "PASS"
     )
     if active_plan:
-        metric_defs = {item["metricCode"]: item for item in state["lineage_snapshot"]["metricDefinitions"]}
+        selected = next(item for item in state["candidate_plans"]
+                        if item["planId"] == state["selected_plan_id"])
+        try:
+            compiler_snapshot = seal_compilation_snapshot(
+                state["lineage_snapshot"],
+                validated_fingerprint=state["validated_snapshot_fingerprint"],
+                plan_fingerprint=selected["snapshotFingerprint"],
+            )
+        except SnapshotIntegrityError as exc:
+            state["synthesis_error_code"] = "SYNTHESIS_ERROR"
+            state["synthesis_error_reason"] = f"SNAPSHOT_INTEGRITY_MISMATCH: {exc}"
+            state["semantic_ok"] = False
+            return state
+        metric_defs = {item["metricCode"]: item
+                       for item in compiler_snapshot["metricDefinitions"]}
     else:
         metric_defs = {}
         for code in intent.get("metrics") or []:
@@ -360,9 +400,10 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
 
     try:
         if active_plan:
-            selected = next(item for item in state["candidate_plans"]
-                            if item["planId"] == state["selected_plan_id"])
-            sql = synthesize_plan(intent, state["lineage_snapshot"], selected)
+            sql = synthesize_plan(
+                intent, state["lineage_snapshot"], selected,
+                validated_snapshot_fingerprint=state["validated_snapshot_fingerprint"],
+            )
         else:
             sql = synthesize(intent, metric_defs)
     except SynthesisError as exc:
