@@ -97,6 +97,8 @@ def traced(node_name: str):
                     "plan_validation": next_state.get("plan_validation"),
                     "planning_retry_count": next_state.get("planning_retry_count"),
                     "lineage_edge_ids": next_state.get("lineage_edge_ids"),
+                    "synthesis_error_code": next_state.get("synthesis_error_code"),
+                    "synthesis_error_reason": next_state.get("synthesis_error_reason"),
                 },
             )
             return next_state

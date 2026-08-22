@@ -56,6 +56,8 @@ class DataAgentState(TypedDict, total=False):
     metric_recall_full_catalog_count: int
     metric_recall_prompt_catalog_count: int
     semantic_prompt_chars: int | None
+    synthesis_error_code: str | None
+    synthesis_error_reason: str | None
 
     lineage_snapshot: dict[str, Any]
     catalog_version: str

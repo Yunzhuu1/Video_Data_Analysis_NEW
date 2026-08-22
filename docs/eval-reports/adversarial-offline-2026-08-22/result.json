@@ -1,0 +1,823 @@
+{
+  "audit_completeness": {
+    "hits": 44,
+    "total": 44
+  },
+  "backlog": [
+    {
+      "evidence": [
+        "code CANDIDATE_TAMPERED != INVALID_JOIN_DIRECTION"
+      ],
+      "execution_unit_id": "adv_p02",
+      "recommendation": "open product change",
+      "severity": "P2"
+    },
+    {
+      "evidence": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::lineage",
+      "recommendation": "open separate hotfix",
+      "severity": "P1"
+    },
+    {
+      "evidence": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::metric",
+      "recommendation": "open separate hotfix",
+      "severity": "P1"
+    },
+    {
+      "evidence": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::schema",
+      "recommendation": "open separate hotfix",
+      "severity": "P1"
+    }
+  ],
+  "by_layer": {
+    "planning": {
+      "hits": 3,
+      "total": 5
+    },
+    "safety_recovery": {
+      "hits": 1,
+      "total": 1
+    },
+    "synthesis": {
+      "hits": 5,
+      "total": 5
+    }
+  },
+  "case_coverage": {
+    "hits": 11,
+    "total": 11
+  },
+  "comparisons": [
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_c01",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_c02",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_c03",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_c04",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_c05",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_g04",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_p01",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": false,
+      "disposition_match": true,
+      "errors": [
+        "code CANDIDATE_TAMPERED != INVALID_JOIN_DIRECTION"
+      ],
+      "execution_unit_id": "adv_p02",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_p03",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": true,
+      "disposition_match": true,
+      "errors": [],
+      "execution_unit_id": "adv_p04",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": false,
+      "disposition_match": false,
+      "errors": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::lineage",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": false,
+      "disposition_match": false,
+      "errors": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::metric",
+      "missing_audit_fields": []
+    },
+    {
+      "audit_complete": true,
+      "contract_match": false,
+      "disposition_match": false,
+      "errors": [
+        "disposition SYSTEM_ERROR != SAFE_REJECT",
+        "code PASS != SNAPSHOT_INTEGRITY_MISMATCH",
+        "forbidden call synthesize_plan"
+      ],
+      "execution_unit_id": "adv_p05::schema",
+      "missing_audit_fields": []
+    }
+  ],
+  "expected_disposition": {
+    "accuracy": 0.8181818181818182,
+    "conformance": "9/11",
+    "hits": 9,
+    "total": 11
+  },
+  "graceful_fallback": {
+    "hits": 2,
+    "total": 2
+  },
+  "harness_status": "PASS",
+  "illegal_plan_rejection": {
+    "hits": 3,
+    "total": 7
+  },
+  "ledger_integrity": {
+    "duplicate": [],
+    "expected_count": 22,
+    "missing": [],
+    "orphan": [],
+    "record_count": 22,
+    "records": [
+      {
+        "hash": "d2a1bc00fc6b0426602e0fa3f2ca952e17eae29115b81db8b58bda10f4fc796c",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_c01.json"
+      },
+      {
+        "hash": "81ceb1ab069d485ecb9edf9238ea799d61e9b11b582ef9d80ae309cd03b9e355",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_c02.json"
+      },
+      {
+        "hash": "f1a4155c4b6f28c92cfc51fae6cb6bc2fe03012164cf38495d65266fc8374462",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_c03.json"
+      },
+      {
+        "hash": "86911df1e264f72e9cf0f8a0d3e17aa2933beb6cacbac7c5edfae04e64a8a13b",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_c04.json"
+      },
+      {
+        "hash": "116dbe66f03be11daba594a73a8e9602db2dfb3f14fd95acd1dcba8630e6e95b",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_c05.json"
+      },
+      {
+        "hash": "0cfbe4307be7481f03b15ce42658ad76c9ca090615fa5d120dff873b0c265e0f",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_g01.json"
+      },
+      {
+        "hash": "a78317a1ad3dcac6466ac876d42db56b49576086b6d52f6cba8fecbae17b3e88",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_g02.json"
+      },
+      {
+        "hash": "77ed2a37051aeebb24461d4c4d99c4dab249b46ec9660d8a96eccd1c7e34f7cf",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_g03.json"
+      },
+      {
+        "hash": "47bb3d10e1b39004870d80d782edf6e31a8c04506c5fa9a34834d8fd17434532",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_g04.json"
+      },
+      {
+        "hash": "58470d21d88dc265a2ac93cdb81589b14df12140b263dc5a9bae0e30edceaba3",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_g05.json"
+      },
+      {
+        "hash": "b4a4c0c4530e941bdb0213d6fee54ee12dcae70cf7f264e326de8c2d6764e646",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p01.json"
+      },
+      {
+        "hash": "cecd4af215038a170946e82720af94d232ca71131c0dabd7159379d8c368b5a0",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p02.json"
+      },
+      {
+        "hash": "633d8147d582dcd8213a7aa1e3597ff59f2bea2b883960075628e82f05f3bb2f",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p03.json"
+      },
+      {
+        "hash": "ba7550f7e6805e6b79e2806b2f71d1a7bb8318e59f8c2fa1c40d6eb5012ec26e",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p04.json"
+      },
+      {
+        "hash": "66c885bc863660acae70b3a7e3f429391ad130e41989a305ce668806afde3f82",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p05::lineage.json"
+      },
+      {
+        "hash": "344158b1357a0ed40f2ba8b8580ab7bc828ec8b5b0e8ca0b5c261ecb8d9925ae",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p05::metric.json"
+      },
+      {
+        "hash": "1c9f411ab3389c2404f52c7042ff739fc3562ab4439bfe63690f9d44e9edf994",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_p05::schema.json"
+      },
+      {
+        "hash": "1bb17fa50fbb78cb030018551b0322847baa585fb6763acd2adc081923c11ea9",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_s01.json"
+      },
+      {
+        "hash": "9e4835d3b3f3c5b9f0595c412832c11063cd33f6449cb6d25eba1b174657a439",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_s02.json"
+      },
+      {
+        "hash": "7372db59d79dae222f8fc649e6099b40efa505cb32c321869375ac3511bef5e5",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_s03.json"
+      },
+      {
+        "hash": "e8be2bc4dacbe21227809a7aca436088aaea9f2ed32b03aeec59789cb1818192",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_s04.json"
+      },
+      {
+        "hash": "9478bb91cf60372fe0ca7750be6e5b0bc70feee3df9cdb7537a0c46cb942fdf3",
+        "path": "../docs/eval-reports/adversarial-offline-2026-08-22/terminal/adv_s05.json"
+      }
+    ],
+    "status": "PASS",
+    "unknown": []
+  },
+  "observations": [
+    {
+      "audit": {
+        "sql": "SELECT cd.category AS category, COUNT(CASE WHEN event_type = 'comment' THEN 1 END) / NULLIF(COUNT(CASE WHEN event_type = 'play' THEN 1 END), 0) AS comment_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-01' AND '2023-10-31 23:59:59' GROUP BY cd.category",
+        "sql_source": "semantic"
+      },
+      "case_id": "adv_c01",
+      "code": "PASS",
+      "disposition": "EXECUTE_SUCCESS",
+      "execution_unit_id": "adv_c01",
+      "layer": "synthesis",
+      "node_trace": [
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": null,
+      "result_rows": null,
+      "stage": "SQL_SYNTHESIZE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "sql": "SELECT a.content, a.date, a.total_plays, b.total_likes FROM (SELECT ubf.content_id AS content, DATE(ubf.timestamp) AS date, COUNT(*) AS total_plays FROM user_behavior_fact ubf WHERE event_type = 'play' AND DATE(ubf.timestamp) BETWEEN '2023-10-29' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), ubf.content_id) a JOIN (SELECT ubf.content_id AS content, DATE(ubf.timestamp) AS date, COUNT(*) AS total_likes FROM user_behavior_fact ubf WHERE event_type = 'like' AND DATE(ubf.timestamp) BETWEEN '2023-10-29' AND '2023-10-31 23:59:59' GROUP BY DATE(ubf.timestamp), ubf.content_id) b ON a.content = b.content AND a.date = b.date ORDER BY a.date",
+        "sql_source": "semantic"
+      },
+      "case_id": "adv_c02",
+      "code": "PASS",
+      "disposition": "EXECUTE_SUCCESS",
+      "execution_unit_id": "adv_c02",
+      "layer": "synthesis",
+      "node_trace": [
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": null,
+      "result_rows": null,
+      "stage": "SQL_SYNTHESIZE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "sql": "SELECT a.category, a.completion_rate, b.engagement_rate FROM (SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id WHERE pd.created_at BETWEEN '2023-10-01' AND '2023-10-31 23:59:59' GROUP BY cd.category) a JOIN (SELECT cd.category AS category, (SUM(CASE WHEN event_type = 'like' THEN 1 ELSE 0 END) + SUM(CASE WHEN event_type = 'comment' THEN 1 ELSE 0 END)) / NULLIF(SUM(CASE WHEN event_type = 'play' THEN 1 ELSE 0 END), 0) AS engagement_rate FROM user_behavior_fact ubf JOIN content_dim cd ON ubf.content_id = cd.content_id WHERE ubf.timestamp BETWEEN '2023-10-01' AND '2023-10-31 23:59:59' GROUP BY cd.category) b ON a.category = b.category",
+        "sql_source": "semantic"
+      },
+      "case_id": "adv_c03",
+      "code": "PASS",
+      "disposition": "EXECUTE_SUCCESS",
+      "execution_unit_id": "adv_c03",
+      "layer": "synthesis",
+      "node_trace": [
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": null,
+      "result_rows": null,
+      "stage": "SQL_SYNTHESIZE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "sql": "SELECT cd.category AS category, AVG(completion_rate) AS completion_rate FROM play_detail pd JOIN content_dim cd ON pd.content_id = cd.content_id GROUP BY cd.category HAVING AVG(completion_rate) > 50",
+        "sql_source": "semantic"
+      },
+      "case_id": "adv_c04",
+      "code": "PASS",
+      "disposition": "EXECUTE_SUCCESS",
+      "execution_unit_id": "adv_c04",
+      "layer": "synthesis",
+      "node_trace": [
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": null,
+      "result_rows": null,
+      "stage": "SQL_SYNTHESIZE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "fallback_sql": "SELECT SUM(total_plays) AS total_plays FROM metric_daily",
+        "fallback_terminal": "EXECUTE_SUCCESS",
+        "guard_verdict": "PASS",
+        "sql_source": "fallback",
+        "synthesis_error_code": "SYNTHESIS_ERROR",
+        "synthesis_error_reason": "conflict multi-metric + metric-value filter not supported"
+      },
+      "case_id": "adv_c05",
+      "code": "SYNTHESIS_ERROR",
+      "disposition": "SUPPORTED_FALLBACK",
+      "execution_unit_id": "adv_c05",
+      "layer": "synthesis",
+      "node_trace": [
+        "SQL_SYNTHESIZE",
+        "SQL_GENERATE",
+        "SQL_HARD_GUARD",
+        "SQL_EXECUTE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": "conflict multi-metric + metric-value filter not supported",
+      "result_rows": null,
+      "stage": "SQL_SYNTHESIZE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_g01",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_g01",
+      "layer": "safety_recovery",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "raw_sql_or_fault",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_g02",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_g02",
+      "layer": "safety_recovery",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "raw_sql_or_fault",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_g03",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_g03",
+      "layer": "safety_recovery",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "raw_sql_or_fault",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "compiler_invocation_attempted": false,
+        "configured_fail_count": 2,
+        "effective_lineage_max_retries": 1,
+        "fallback_reason": "PLANNER_RETRY_EXHAUSTED",
+        "guard_visited": true,
+        "legacy_planner_fallback": true,
+        "node_counts": {
+          "PLAN_SELECT": 2,
+          "PLAN_VALIDATE": 2
+        },
+        "planning_retry_count": 2,
+        "worker_reaped": true
+      },
+      "case_id": "adv_g04",
+      "code": "INVALID_PLAN_ID",
+      "disposition": "SUPPORTED_FALLBACK",
+      "execution_unit_id": "adv_g04",
+      "layer": "safety_recovery",
+      "node_trace": [
+        "PLAN_SELECT",
+        "PLAN_VALIDATE",
+        "PLAN_SELECT",
+        "PLAN_VALIDATE",
+        "SQL_HARD_GUARD"
+      ],
+      "observation_status": "OK",
+      "protocol": "raw_sql_or_fault",
+      "reason": null,
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_g05",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_g05",
+      "layer": "safety_recovery",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "raw_sql_or_fault",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "candidate_count": 0,
+        "catalog_version": "2ed1b7d6dbe10beecc72f7a6f69f4e65bfe56da130e183178214667ad6f7a235",
+        "rejections": [
+          "REVERSE_JOIN_NOT_ALLOWED"
+        ]
+      },
+      "case_id": "adv_p01",
+      "code": "REVERSE_JOIN_NOT_ALLOWED",
+      "disposition": "SAFE_REJECT",
+      "execution_unit_id": "adv_p01",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_ENUMERATE"
+      ],
+      "observation_status": "OK",
+      "protocol": "fixed_intent",
+      "reason": null,
+      "result_rows": null,
+      "stage": "PLAN_ENUMERATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "candidate_hash": "cae1d41dec466ca8b979630eec49a5e961acce239b844628b8e447117d06952d",
+        "mutation_after_hash": "ab0872aa433003cf5ed01e1fed04336503bfaf38c9a62f74f2f666f4f08feaf2",
+        "mutation_before_hash": "cae1d41dec466ca8b979630eec49a5e961acce239b844628b8e447117d06952d",
+        "plan_validation": {
+          "code": "CANDIDATE_TAMPERED",
+          "reason": "selected candidate does not match the frozen snapshot enumeration",
+          "suggestion": "select another enumerated plan",
+          "verdict": "REPLAN"
+        },
+        "selected_plan_id": "7b49875fa475d49d"
+      },
+      "case_id": "adv_p02",
+      "code": "CANDIDATE_TAMPERED",
+      "disposition": "SAFE_REJECT",
+      "execution_unit_id": "adv_p02",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_VALIDATE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": "selected candidate does not match the frozen snapshot enumeration",
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "plan_validation": [
+          {
+            "code": "INVALID_PLAN_ID",
+            "reason": "selected plan is not a candidate",
+            "suggestion": "select another enumerated plan",
+            "verdict": "REPLAN"
+          },
+          {
+            "code": null,
+            "reason": null,
+            "suggestion": null,
+            "verdict": "PASS"
+          }
+        ],
+        "planning_retry_count": 1,
+        "selected_plan_id": "463f2e8421b13aa8"
+      },
+      "case_id": "adv_p03",
+      "code": "INVALID_PLAN_ID",
+      "disposition": "RECOVERED",
+      "execution_unit_id": "adv_p03",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_SELECT",
+        "PLAN_VALIDATE",
+        "PLAN_SELECT",
+        "PLAN_VALIDATE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": null,
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "candidate_hash": "4ece916204ede0ee1000f57607587d440d5b053568cd2ac67d447b6044372493",
+        "mutation_after_hash": "31f778a5a7226e7907e02cf776b6580c2089ae4fa8f40742fe45ed94722e6714",
+        "mutation_before_hash": "cae1d41dec466ca8b979630eec49a5e961acce239b844628b8e447117d06952d",
+        "plan_validation": {
+          "code": "CANDIDATE_TAMPERED",
+          "reason": "selected candidate does not match the frozen snapshot enumeration",
+          "suggestion": "select another enumerated plan",
+          "verdict": "REPLAN"
+        },
+        "selected_plan_id": "7b49875fa475d49d"
+      },
+      "case_id": "adv_p04",
+      "code": "CANDIDATE_TAMPERED",
+      "disposition": "SAFE_REJECT",
+      "execution_unit_id": "adv_p04",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_VALIDATE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": "selected candidate does not match the frozen snapshot enumeration",
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {
+        "compiler_invocation_args_hash": "2233f2ca90001fa47c0b9949d2c4f35b36d490df1ac9ac89db3994f5992ae26f",
+        "compiler_invocation_attempted": true,
+        "declared_hash": "284d02ccfe1b1c676fb99c207eeac61443c738dc1d3ad45051b38c180edc605a",
+        "oracle_actual_hash": "a373518e6886558ddd8256f530c9cfbf7694d222f33ada2099833ae96cde4595",
+        "oracle_mismatch": true,
+        "plan_validation": {
+          "code": null,
+          "reason": null,
+          "suggestion": null,
+          "verdict": "PASS"
+        }
+      },
+      "case_id": "adv_p05",
+      "code": "PASS",
+      "disposition": "SYSTEM_ERROR",
+      "execution_unit_id": "adv_p05::lineage",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_VALIDATE",
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": "validator accepted stale component content",
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": true
+    },
+    {
+      "audit": {
+        "compiler_invocation_args_hash": "08358e770305e6b2f2243d9939ff8b90aedb0cfcc005ae1b2307a7dd0d8797a9",
+        "compiler_invocation_attempted": true,
+        "declared_hash": "91f6f54d0f2aa622b866ee302133ae8212b8064710e88a650670ccd6eb9f08b8",
+        "oracle_actual_hash": "b23ddbced89a5ac316d79f94b363f594d818c880be3cad63a46e1cc9d88d82be",
+        "oracle_mismatch": true,
+        "plan_validation": {
+          "code": null,
+          "reason": null,
+          "suggestion": null,
+          "verdict": "PASS"
+        }
+      },
+      "case_id": "adv_p05",
+      "code": "PASS",
+      "disposition": "SYSTEM_ERROR",
+      "execution_unit_id": "adv_p05::metric",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_VALIDATE",
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": "validator accepted stale component content",
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": true
+    },
+    {
+      "audit": {
+        "compiler_invocation_args_hash": "d29c416060df9f1b1329eb1cf07630e20c7a573cfd3d73ee975879950fcb2670",
+        "compiler_invocation_attempted": true,
+        "declared_hash": "fa038280eaf7683b9ba032f95282b0a1810a898381e0558c4512436d310636e8",
+        "oracle_actual_hash": "fafe47d27d0e50d1eaa47d65453f8e12668a8e4a4f1d5fc8ccc0a7213c6750d7",
+        "oracle_mismatch": true,
+        "plan_validation": {
+          "code": null,
+          "reason": null,
+          "suggestion": null,
+          "verdict": "PASS"
+        }
+      },
+      "case_id": "adv_p05",
+      "code": "PASS",
+      "disposition": "SYSTEM_ERROR",
+      "execution_unit_id": "adv_p05::schema",
+      "layer": "planning",
+      "node_trace": [
+        "PLAN_VALIDATE",
+        "SQL_SYNTHESIZE"
+      ],
+      "observation_status": "OK",
+      "protocol": "mutated_plan",
+      "reason": "validator accepted stale component content",
+      "result_rows": null,
+      "stage": "PLAN_VALIDATE",
+      "synthetic_finalization": false,
+      "unsafe_pass": true
+    },
+    {
+      "audit": {},
+      "case_id": "adv_s01",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_s01",
+      "layer": "semantic",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "question",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_s02",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_s02",
+      "layer": "semantic",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "question",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_s03",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_s03",
+      "layer": "semantic",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "question",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_s04",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_s04",
+      "layer": "semantic",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "question",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    },
+    {
+      "audit": {},
+      "case_id": "adv_s05",
+      "code": "OFFLINE_INELIGIBLE",
+      "disposition": null,
+      "execution_unit_id": "adv_s05",
+      "layer": "semantic",
+      "node_trace": [],
+      "observation_status": "PROFILE_INELIGIBLE",
+      "protocol": "question",
+      "reason": "requires external/graph integration",
+      "result_rows": null,
+      "stage": "PROFILE",
+      "synthetic_finalization": false,
+      "unsafe_pass": false
+    }
+  ],
+  "product_denominator_status": "COMPUTED",
+  "profile_execution_status": "COMPLETED",
+  "r1": {
+    "hits": 0,
+    "total": 0
+  },
+  "recovery_success": {
+    "hits": 1,
+    "total": 1
+  },
+  "system_readiness": "FAIL",
+  "unsafe_pass": {
+    "hits": 3,
+    "total": 6
+  },
+  "variant_coverage": {
+    "hits": 3,
+    "total": 3
+  }
+}

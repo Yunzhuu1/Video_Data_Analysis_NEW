@@ -365,7 +365,14 @@ async def sql_synthesize_node(state: DataAgentState, platform: PlatformClient) -
             sql = synthesize_plan(intent, state["lineage_snapshot"], selected)
         else:
             sql = synthesize(intent, metric_defs)
-    except (SynthesisError, KeyError, TypeError, ValueError):
+    except SynthesisError as exc:
+        # Pure observability: preserve the existing semantic_ok=false fallback
+        # route while exposing the deterministic boundary reason for audit/eval.
+        state["synthesis_error_code"] = "SYNTHESIS_ERROR"
+        state["synthesis_error_reason"] = str(exc)
+        state["semantic_ok"] = False
+        return state
+    except (KeyError, TypeError, ValueError):
         state["semantic_ok"] = False
         return state
 

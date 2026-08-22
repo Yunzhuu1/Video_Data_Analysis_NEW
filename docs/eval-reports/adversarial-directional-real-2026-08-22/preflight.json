@@ -1,0 +1,7 @@
+{
+  "checks": {
+    "llm": "CONFIGURED",
+    "spring_mysql": "UP"
+  },
+  "ok": true
+}

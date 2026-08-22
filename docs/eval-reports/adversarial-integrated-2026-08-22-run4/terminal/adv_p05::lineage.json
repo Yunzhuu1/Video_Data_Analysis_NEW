@@ -1,0 +1,31 @@
+{
+  "audit": {
+    "compiler_invocation_args_hash": "2233f2ca90001fa47c0b9949d2c4f35b36d490df1ac9ac89db3994f5992ae26f",
+    "compiler_invocation_attempted": true,
+    "declared_hash": "284d02ccfe1b1c676fb99c207eeac61443c738dc1d3ad45051b38c180edc605a",
+    "oracle_actual_hash": "a373518e6886558ddd8256f530c9cfbf7694d222f33ada2099833ae96cde4595",
+    "oracle_mismatch": true,
+    "plan_validation": {
+      "code": null,
+      "reason": null,
+      "suggestion": null,
+      "verdict": "PASS"
+    }
+  },
+  "case_id": "adv_p05",
+  "code": "PASS",
+  "disposition": "SYSTEM_ERROR",
+  "execution_unit_id": "adv_p05::lineage",
+  "layer": "planning",
+  "node_trace": [
+    "PLAN_VALIDATE",
+    "SQL_SYNTHESIZE"
+  ],
+  "observation_status": "OK",
+  "protocol": "mutated_plan",
+  "reason": "validator accepted stale component content",
+  "result_rows": null,
+  "stage": "PLAN_VALIDATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": true
+}

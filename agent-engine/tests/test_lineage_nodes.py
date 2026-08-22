@@ -73,3 +73,29 @@ async def test_shadow_mode_observes_plan_but_compiles_legacy_sql(monkeypatch):
     assert state["plan_validation"]["verdict"] == "PASS"
     assert state["sql_attempts"][-1]["sql"] == "SELECT legacy_path"
     assert state["sql_attempts"][-1]["assumptions"][-1] == "plan=legacy"
+
+
+@pytest.mark.asyncio
+async def test_synthesis_error_adds_audit_fields_without_changing_fallback_route(monkeypatch):
+    from app.synthesis.sql_synthesizer import SynthesisError
+
+    monkeypatch.setattr(settings, "lineage_planning_mode", "off")
+
+    def unsupported(*args, **kwargs):
+        raise SynthesisError("conflict multi-metric + metric-value filter not supported")
+
+    monkeypatch.setattr(nodes, "synthesize", unsupported)
+    state = {
+        "semantic_ok": True, "resolved_intent": {
+            "intent": "aggregate", "metrics": ["completion_rate", "engagement_rate"],
+            "dimensions": ["category"], "filters": [],
+            "time_range": {"type": "none"}, "ordering": None,
+        },
+    }
+    await nodes.sql_synthesize_node(state, _Platform())
+    assert state["semantic_ok"] is False
+    assert state["synthesis_error_code"] == "SYNTHESIS_ERROR"
+    assert state["synthesis_error_reason"] == (
+        "conflict multi-metric + metric-value filter not supported"
+    )
+    assert "sql_attempts" not in state

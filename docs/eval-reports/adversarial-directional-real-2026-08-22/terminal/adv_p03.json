@@ -1,0 +1,65 @@
+{
+  "audit": {
+    "candidate_plans": null,
+    "catalog_outside_metrics": [],
+    "catalog_version": null,
+    "metric_candidates": [],
+    "metric_recall_effective_k": 5,
+    "metric_recall_mode": "full_fallback",
+    "metric_recall_pinned_count": 0,
+    "plan_selection_source": "LEGACY_FALLBACK",
+    "plan_validation": {
+      "code": "NO_CANDIDATE",
+      "verdict": "UNSUPPORTED"
+    },
+    "resolved_intent": {
+      "confidence": 0.95,
+      "coverage": "full",
+      "dimensions": [
+        "category"
+      ],
+      "filters": [],
+      "intent": "aggregate",
+      "metrics": [
+        "total_likes"
+      ],
+      "ordering": null,
+      "time_range": {
+        "absolute": null,
+        "granularity": null,
+        "relative": null,
+        "type": "none"
+      }
+    },
+    "run_id": "run_3d9c9f4f-315a-4811-ac24-9a2e223fbd22",
+    "selected_plan_id": null,
+    "sql_attempts": [
+      "SELECT md.category AS category, SUM(total_likes) AS total_likes FROM metric_daily md GROUP BY md.category"
+    ],
+    "sql_source": "semantic"
+  },
+  "case_id": "adv_p03",
+  "code": "DIRECTIONAL_OBSERVATION",
+  "disposition": "EXECUTE_SUCCESS",
+  "execution_unit_id": "adv_p03",
+  "layer": "planning",
+  "node_trace": [
+    "ROUTER",
+    "SCHEMA",
+    "SEMANTIC_RESOLVE",
+    "PLAN_ENUMERATE",
+    "PLAN_VALIDATE",
+    "SQL_SYNTHESIZE",
+    "SQL_HARD_GUARD",
+    "SQL_EXECUTE",
+    "SQL_SOFT_DQ",
+    "ANSWER"
+  ],
+  "observation_status": "OK",
+  "protocol": "mutated_plan",
+  "reason": "ordinary",
+  "result_rows": null,
+  "stage": "PLAN_SELECT",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

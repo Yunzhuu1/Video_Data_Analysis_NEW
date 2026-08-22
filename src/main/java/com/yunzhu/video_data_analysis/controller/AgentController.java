@@ -121,6 +121,8 @@ public class AgentController {
         debug.put("metricRecallFullCatalogCount", response.metricRecallFullCatalogCount());
         debug.put("metricRecallPromptCatalogCount", response.metricRecallPromptCatalogCount());
         debug.put("semanticPromptChars", response.semanticPromptChars());
+        debug.put("synthesisErrorCode", response.synthesisErrorCode());
+        debug.put("synthesisErrorReason", response.synthesisErrorReason());
         debug.put("catalogVersion", response.catalogVersion());
         debug.put("lineageHash", response.lineageHash());
         debug.put("metricCatalogHash", response.metricCatalogHash());

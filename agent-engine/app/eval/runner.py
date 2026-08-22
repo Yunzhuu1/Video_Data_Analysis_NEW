@@ -1522,6 +1522,16 @@ async def main() -> None:
                         help="仅运行固定 ResolvedIntent 的离线血缘规划门禁")
     parser.add_argument("--lineage-report", type=Path,
                         default=DEFAULT_REPORT_DIR / "lineage-offline.json")
+    parser.add_argument("--adversarial-profile",
+                        choices=["offline", "integrated", "directional-real"], default=None,
+                        help="运行独立跨层对抗协议；不改变普通 N=61 runner")
+    parser.add_argument("--adversarial-manifest", type=Path,
+                        default=Path(__file__).with_name("adversarial_cases.json"))
+    parser.add_argument("--adversarial-report", type=Path,
+                        default=DEFAULT_REPORT_DIR / "adversarial-run",
+                        help="对抗评测 run directory（journal/result/report）")
+    parser.add_argument("--adversarial-finalize", type=Path, default=None,
+                        help="终结 STARTED 后中断的持久化对抗 run directory")
     parser.add_argument("--compare", nargs=2, metavar=("A_JSON", "B_JSON"))
     parser.add_argument("--synonym-cases", type=Path, default=None,
                         help="同义集实验：跑组 A（无记忆）/组 B（有记忆）对比")
@@ -1536,6 +1546,30 @@ async def main() -> None:
     parser.add_argument("--virtual-clarify", action="store_true", default=False,
                         help="虚拟澄清实验（需 --synonym-cases；--memory on 加阶段 2 澄清率随记忆下降）")
     args = parser.parse_args()
+
+    if args.adversarial_finalize:
+        from app.eval.adversarial import AdversarialRunJournal
+
+        result = AdversarialRunJournal(args.adversarial_finalize).finalize()
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        return
+
+    if args.adversarial_profile:
+        from app.eval.adversarial import load_manifest, run_adversarial_profile, run_offline
+
+        manifest = load_manifest(args.adversarial_manifest)
+        if args.adversarial_report.exists() and any(args.adversarial_report.iterdir()):
+            raise SystemExit("adversarial report directory must be new/empty (runs are immutable)")
+        if args.adversarial_profile == "offline":
+            result = run_offline(manifest, args.adversarial_report)
+        else:
+            result = await run_adversarial_profile(
+                manifest, args.adversarial_profile, args.adversarial_report,
+            )
+        print(json.dumps({key: value for key, value in result.items()
+                          if key not in {"observations", "comparisons"}},
+                         ensure_ascii=False, indent=2))
+        return
 
     if args.compare:
         a = json.loads(Path(args.compare[0]).read_text(encoding="utf-8"))

@@ -1,0 +1,6 @@
+{
+  "checks": {
+    "spring_mysql": "UP"
+  },
+  "ok": true
+}

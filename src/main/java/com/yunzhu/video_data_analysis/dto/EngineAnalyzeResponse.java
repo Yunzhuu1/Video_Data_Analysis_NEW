@@ -24,6 +24,8 @@ public record EngineAnalyzeResponse(
         Integer metricRecallFullCatalogCount,
         Integer metricRecallPromptCatalogCount,
         Integer semanticPromptChars,
+        String synthesisErrorCode,
+        String synthesisErrorReason,
         String catalogVersion,
         String lineageHash,
         String metricCatalogHash,
