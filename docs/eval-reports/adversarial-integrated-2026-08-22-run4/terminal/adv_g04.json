@@ -1,0 +1,35 @@
+{
+  "audit": {
+    "compiler_invocation_attempted": false,
+    "configured_fail_count": 2,
+    "effective_lineage_max_retries": 1,
+    "fallback_reason": "PLANNER_RETRY_EXHAUSTED",
+    "guard_visited": true,
+    "legacy_planner_fallback": true,
+    "node_counts": {
+      "PLAN_SELECT": 2,
+      "PLAN_VALIDATE": 2
+    },
+    "planning_retry_count": 2,
+    "worker_reaped": true
+  },
+  "case_id": "adv_g04",
+  "code": "INVALID_PLAN_ID",
+  "disposition": "SUPPORTED_FALLBACK",
+  "execution_unit_id": "adv_g04",
+  "layer": "safety_recovery",
+  "node_trace": [
+    "PLAN_SELECT",
+    "PLAN_VALIDATE",
+    "PLAN_SELECT",
+    "PLAN_VALIDATE",
+    "SQL_HARD_GUARD"
+  ],
+  "observation_status": "OK",
+  "protocol": "raw_sql_or_fault",
+  "reason": null,
+  "result_rows": null,
+  "stage": "PLAN_VALIDATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

@@ -1,0 +1,38 @@
+{
+  "audit": {
+    "plan_validation": [
+      {
+        "code": "INVALID_PLAN_ID",
+        "reason": "selected plan is not a candidate",
+        "suggestion": "select another enumerated plan",
+        "verdict": "REPLAN"
+      },
+      {
+        "code": null,
+        "reason": null,
+        "suggestion": null,
+        "verdict": "PASS"
+      }
+    ],
+    "planning_retry_count": 1,
+    "selected_plan_id": "463f2e8421b13aa8"
+  },
+  "case_id": "adv_p03",
+  "code": "INVALID_PLAN_ID",
+  "disposition": "RECOVERED",
+  "execution_unit_id": "adv_p03",
+  "layer": "planning",
+  "node_trace": [
+    "PLAN_SELECT",
+    "PLAN_VALIDATE",
+    "PLAN_SELECT",
+    "PLAN_VALIDATE"
+  ],
+  "observation_status": "OK",
+  "protocol": "mutated_plan",
+  "reason": null,
+  "result_rows": null,
+  "stage": "PLAN_VALIDATE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

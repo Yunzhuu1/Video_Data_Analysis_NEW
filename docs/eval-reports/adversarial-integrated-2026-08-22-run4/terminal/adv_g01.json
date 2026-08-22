@@ -1,0 +1,22 @@
+{
+  "audit": {
+    "hard_guard_code": "SQL_NOT_SELECT",
+    "hard_guard_verdict": "RETRYABLE",
+    "sql_hash": "701ea221d5d129476ca9e38056625642def112ad36209bafbe1b8d8ef78acefb"
+  },
+  "case_id": "adv_g01",
+  "code": "SQL_NOT_SELECT",
+  "disposition": "SAFE_REJECT",
+  "execution_unit_id": "adv_g01",
+  "layer": "safety_recovery",
+  "node_trace": [
+    "SQL_HARD_GUARD"
+  ],
+  "observation_status": "OK",
+  "protocol": "raw_sql_or_fault",
+  "reason": "Only SELECT statements are allowed.",
+  "result_rows": null,
+  "stage": "SQL_HARD_GUARD",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

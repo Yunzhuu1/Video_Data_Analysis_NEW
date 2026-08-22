@@ -39,6 +39,8 @@ class AnalyzeResponse(BaseModel):
         default=None, alias="metricRecallPromptCatalogCount"
     )
     semantic_prompt_chars: int | None = Field(default=None, alias="semanticPromptChars")
+    synthesis_error_code: str | None = Field(default=None, alias="synthesisErrorCode")
+    synthesis_error_reason: str | None = Field(default=None, alias="synthesisErrorReason")
     catalog_version: str | None = Field(default=None, alias="catalogVersion")
     lineage_hash: str | None = Field(default=None, alias="lineageHash")
     metric_catalog_hash: str | None = Field(default=None, alias="metricCatalogHash")

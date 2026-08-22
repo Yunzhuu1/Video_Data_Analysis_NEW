@@ -54,6 +54,8 @@ class AgentControllerTest {
                 15,
                 5,
                 1234,
+                "SYNTHESIS_ERROR",
+                "unsupported combination",
                 "catalog-v1", "lineage-h", "metric-h", "schema-h",
                 List.of(Map.of("planId", "p1")), List.of(), "p1", "AUTO_SINGLE",
                 null, null, Map.of("verdict", "PASS"), 0, List.of("play_content"),
@@ -94,6 +96,8 @@ class AgentControllerTest {
         assertThat(report.getDebug()).containsEntry("metricRecallFullCatalogCount", 15);
         assertThat(report.getDebug()).containsEntry("metricRecallPromptCatalogCount", 5);
         assertThat(report.getDebug()).containsEntry("semanticPromptChars", 1234);
+        assertThat(report.getDebug()).containsEntry("synthesisErrorCode", "SYNTHESIS_ERROR");
+        assertThat(report.getDebug()).containsEntry("synthesisErrorReason", "unsupported combination");
         assertThat(report.getDebug()).containsEntry("catalogVersion", "catalog-v1");
         assertThat(report.getDebug()).containsEntry("selectedPlanId", "p1");
         assertThat(report.getDebug()).containsEntry("planSelectionSource", "AUTO_SINGLE");
@@ -123,6 +127,7 @@ class AgentControllerTest {
                 15,
                 5,
                 null,
+                null, null,
                 null, null, null, null, null, null, null, null,
                 null, null, null, null, null, null, null, null
         );

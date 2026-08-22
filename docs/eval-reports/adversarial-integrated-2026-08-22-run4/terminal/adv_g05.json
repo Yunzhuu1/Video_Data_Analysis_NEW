@@ -1,0 +1,28 @@
+{
+  "audit": {
+    "approval_status": [
+      "not_required",
+      "approved"
+    ],
+    "approved_route": "answer",
+    "execution_feedback": "ERROR",
+    "sql_hash": "2f9f0b89d6d73a3c547b7ee36963d847947cca47ca938040f89e1814dccf34cb",
+    "sql_retry_count": 1,
+    "unapproved_route": "generate"
+  },
+  "case_id": "adv_g05",
+  "code": "EXECUTION_ERROR",
+  "disposition": "RECOVERED",
+  "execution_unit_id": "adv_g05",
+  "layer": "safety_recovery",
+  "node_trace": [
+    "SQL_EXECUTE"
+  ],
+  "observation_status": "OK",
+  "protocol": "raw_sql_or_fault",
+  "reason": null,
+  "result_rows": null,
+  "stage": "SQL_EXECUTE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

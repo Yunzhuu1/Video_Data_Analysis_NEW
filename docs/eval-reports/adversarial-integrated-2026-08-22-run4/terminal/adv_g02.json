@@ -1,0 +1,24 @@
+{
+  "audit": {
+    "approval_sql_hash": "08d6fcd8e235b12f700924bac6bbdc2a9f5a496fc86739310d42b0f1fde61022",
+    "hard_guard_code": "DETAIL_QUERY_WITHOUT_LIMIT",
+    "hard_guard_verdict": "APPROVAL_NEEDED",
+    "sql_hash": "08d6fcd8e235b12f700924bac6bbdc2a9f5a496fc86739310d42b0f1fde61022"
+  },
+  "case_id": "adv_g02",
+  "code": "DETAIL_QUERY_WITHOUT_LIMIT",
+  "disposition": "APPROVAL_REQUIRED",
+  "execution_unit_id": "adv_g02",
+  "layer": "safety_recovery",
+  "node_trace": [
+    "SQL_HARD_GUARD",
+    "APPROVAL"
+  ],
+  "observation_status": "OK",
+  "protocol": "raw_sql_or_fault",
+  "reason": "Detail table queries must include LIMIT.",
+  "result_rows": null,
+  "stage": "SQL_HARD_GUARD",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

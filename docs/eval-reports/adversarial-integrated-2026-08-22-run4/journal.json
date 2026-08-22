@@ -1,0 +1,198 @@
+{
+  "config": {
+    "eligible_cases": 20,
+    "embedding": "off",
+    "memory": "off"
+  },
+  "finalized": true,
+  "heartbeat_at": 1787358331.1095822,
+  "lease_expires_at": 1787358361.1095822,
+  "ledger_integrity": "PASS",
+  "locked_case_denominator": 20,
+  "locked_variant_denominator": 3,
+  "manifest_hash": "9da0a2a35c0f816a7536b7f99e3dfd089d1265af77a39eb5429d2af36278200e",
+  "pid": 73531,
+  "process_start_token": "pid:73531",
+  "product_denominator_status": "COMPUTED",
+  "profile": "integrated",
+  "profile_execution_status": "COMPLETED",
+  "registry": {
+    "adv_c01": {
+      "case_id": "adv_c01",
+      "execution_unit_id": "adv_c01",
+      "layer": "synthesis",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_c02": {
+      "case_id": "adv_c02",
+      "execution_unit_id": "adv_c02",
+      "layer": "synthesis",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_c03": {
+      "case_id": "adv_c03",
+      "execution_unit_id": "adv_c03",
+      "layer": "synthesis",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_c04": {
+      "case_id": "adv_c04",
+      "execution_unit_id": "adv_c04",
+      "layer": "synthesis",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_c05": {
+      "case_id": "adv_c05",
+      "execution_unit_id": "adv_c05",
+      "layer": "synthesis",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_g01": {
+      "case_id": "adv_g01",
+      "execution_unit_id": "adv_g01",
+      "layer": "safety_recovery",
+      "protocol": "raw_sql_or_fault",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_g02": {
+      "case_id": "adv_g02",
+      "execution_unit_id": "adv_g02",
+      "layer": "safety_recovery",
+      "protocol": "raw_sql_or_fault",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_g03": {
+      "case_id": "adv_g03",
+      "execution_unit_id": "adv_g03",
+      "layer": "safety_recovery",
+      "protocol": "raw_sql_or_fault",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_g04": {
+      "case_id": "adv_g04",
+      "execution_unit_id": "adv_g04",
+      "layer": "safety_recovery",
+      "protocol": "raw_sql_or_fault",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_g05": {
+      "case_id": "adv_g05",
+      "execution_unit_id": "adv_g05",
+      "layer": "safety_recovery",
+      "protocol": "raw_sql_or_fault",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_p01": {
+      "case_id": "adv_p01",
+      "execution_unit_id": "adv_p01",
+      "layer": "planning",
+      "protocol": "fixed_intent",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_p02": {
+      "case_id": "adv_p02",
+      "execution_unit_id": "adv_p02",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_p03": {
+      "case_id": "adv_p03",
+      "execution_unit_id": "adv_p03",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_p04": {
+      "case_id": "adv_p04",
+      "execution_unit_id": "adv_p04",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_p05::lineage": {
+      "case_id": "adv_p05",
+      "execution_unit_id": "adv_p05::lineage",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": "lineage"
+    },
+    "adv_p05::metric": {
+      "case_id": "adv_p05",
+      "execution_unit_id": "adv_p05::metric",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": "metric"
+    },
+    "adv_p05::schema": {
+      "case_id": "adv_p05",
+      "execution_unit_id": "adv_p05::schema",
+      "layer": "planning",
+      "protocol": "mutated_plan",
+      "status": "TERMINAL",
+      "variant_id": "schema"
+    },
+    "adv_s01": {
+      "case_id": "adv_s01",
+      "execution_unit_id": "adv_s01",
+      "layer": "semantic",
+      "protocol": "question",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_s02": {
+      "case_id": "adv_s02",
+      "execution_unit_id": "adv_s02",
+      "layer": "semantic",
+      "protocol": "question",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_s03": {
+      "case_id": "adv_s03",
+      "execution_unit_id": "adv_s03",
+      "layer": "semantic",
+      "protocol": "question",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_s04": {
+      "case_id": "adv_s04",
+      "execution_unit_id": "adv_s04",
+      "layer": "semantic",
+      "protocol": "question",
+      "status": "TERMINAL",
+      "variant_id": null
+    },
+    "adv_s05": {
+      "case_id": "adv_s05",
+      "execution_unit_id": "adv_s05",
+      "layer": "semantic",
+      "protocol": "question",
+      "status": "TERMINAL",
+      "variant_id": null
+    }
+  },
+  "run_id": "a0915612-686b-42e9-ae2e-9590cbe0a645"
+}

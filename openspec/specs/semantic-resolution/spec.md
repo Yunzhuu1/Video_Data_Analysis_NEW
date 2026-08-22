@@ -3,11 +3,9 @@
 ## Purpose
 
 语义解析与确定性合成：LLM 只做语义匹配，SQL 由确定性合成器产出，指标字典落地，长尾问题降级 raw SQL。
-
 ## Requirements
-
 ### Requirement: LLM 只做语义匹配，不写 SQL
-`SEMANTIC_RESOLVE` 节点 SHALL 输出结构化 `ResolvedIntent`（指标/维度/时间范围/过滤/排序），不得直接产出 SQL。维度抽取 SHALL 遵循：`date` 属于时间粒度而非业务维度；"各分类/按分类"类问法 → `dimensions`；"X 类视频"类限定 → `filters`。
+`SEMANTIC_RESOLVE` 节点 SHALL 输出结构化 `ResolvedIntent`（指标/维度/时间范围/过滤/排序），不得直接产出 SQL。维度抽取 SHALL 遵循：`date` 属于时间粒度而非业务维度；"各分类/按分类"类问法 → `dimensions`；"X 类视频"类限定 → `filters`。Semantic Agent SHALL 忠实保留用户明确表达的逻辑维度，不得因指标目录只列出原生表维度而静默删除；该维度是否存在可执行物理路径由后续 lineage planner 判定。
 
 #### Scenario: 解析输出结构化意图
 - **WHEN** 用户问题进入 `SEMANTIC_RESOLVE`
@@ -29,11 +27,15 @@
 - **WHEN** 用户问题用"对比/比较 A 和 B 分类"对比多个分类
 - **THEN** `dimensions` 含 `category` 且 `filters` 含 `category IN (A,B)`（区别于单分类限定的 `filters =`）
 
+#### Scenario: 逻辑维度不受原生路径限制
+- **WHEN** 用户问题明确询问“每位创作者的完播率”，而 completion_rate 的原生表维度只列 content
+- **THEN** Semantic Agent 仍输出 `dimensions=[creator]`；不得为适配当前表结构改成 content 或删除 creator
+
 ### Requirement: SQL 由确定性合成器生成
-`SQL_SYNTHESIZE` 节点 SHALL 依据 `ResolvedIntent` 与 `metric_definition`（formula/source_table）确定性合成 SQL；相同 intent SHALL 生成相同 SQL；合成 SQL SHALL 引用真实表名并声明表别名，可在真实数据库上解析执行。合成器 SHALL 支持**同源表多指标聚合**（多个指标经 `_resolve_path` 后落在同一无冲突路径时，单 FROM + 多 SELECT 表达式列，共享 group-by/time/filter），并支持**同粒度冲突多指标**（来源冲突或 eventFilter 冲突且共享维度键时，各指标独立聚合子查询 JOIN）。合成器 SHALL 支持**指标值过滤**（`filters[].field` 为指标 code 时生成 HAVING；维度过滤仍生成 WHERE）。多指标 ranking/detail、异粒度冲突多指标及“冲突多指标 + 指标值过滤”组合 SHALL 明确降级（SynthesisError → raw SQL）。`time_range.type == "relative"` 时，合成前 SHALL 以**数据末日为锚**展开为 absolute 区间（含端点），合成 SQL 含时间过滤。
+`SQL_SYNTHESIZE` 节点 SHALL 依据 `ResolvedIntent`、run 内冻结的 metric definitions 与可选的已验证血缘 QueryPlan 确定性合成 SQL；相同 intent + 组合 catalogVersion + selectedPlanId SHALL 生成相同 SQL。planning active 且 QueryPlan 验证 PASS 时，source、dimension/filter/ordering/time 与 JOIN SHALL 仅由可信 fieldRoutes/path/binding/edge ID解析，禁止编译阶段重新 BFS 或读取 plan 外更新后的 metric definition；规划未覆盖、off/shadow 或失败时 SHALL 使用既有 legacy 合成器。合成 SQL SHALL 引用真实表名并声明表别名，可在真实数据库上解析执行。合成器 SHALL 支持**同源表多指标聚合**（多个指标经 legacy `_resolve_path` 后落在同一无冲突路径时，单 FROM + 多 SELECT 表达式列，共享 group-by/time/filter），并支持**同粒度冲突多指标**（来源冲突或 eventFilter 冲突且共享维度键时，各指标独立聚合子查询 JOIN）。合成器 SHALL 支持**指标值过滤**（`filters[].field` 为指标 code 时生成 HAVING；维度过滤仍生成 WHERE）。多指标 lineage planning 不属于本 change，多指标继续走 legacy；多指标 ranking/detail、异粒度冲突多指标及“冲突多指标 + 指标值过滤”组合 SHALL 明确降级（SynthesisError → raw SQL）。`time_range.type == "relative"` 时，合成前 SHALL 以**数据末日为锚**展开为 absolute 区间（含端点），合成 SQL 含时间过滤。
 
 #### Scenario: 同意图同 SQL
-- **WHEN** 两次输入相同的 `ResolvedIntent`
+- **WHEN** 两次输入相同的 `ResolvedIntent`、catalogVersion 与 selectedPlanId（或均走相同 legacy 路径）
 - **THEN** 合成器产出完全一致的 SQL 文本
 
 #### Scenario: 合成 SQL 可复验
@@ -41,8 +43,16 @@
 - **THEN** 该 SQL 可通过 `SQL_HARD_GUARD` 校验（或返回明确校验失败信息）
 
 #### Scenario: 合成 SQL 引用真实表名
-- **WHEN** 合成器基于 `metric_definition.sourceTable` 合成 SQL
+- **WHEN** 合成器基于 validated QueryPlan 或 `metric_definition.sourceTable` 合成 SQL
 - **THEN** FROM 子句包含真实表名与别名声明（如 `FROM metric_daily md`），且该 SQL 可在真实 MySQL 上解析执行，不得出现未声明别名的 `FROM md`
+
+#### Scenario: 血缘计划驱动单指标合成
+- **WHEN** 单指标 aggregate/trend/ranking 请求在 active 模式得到验证 PASS 的 selectedPlanId
+- **THEN** source、dimension/filter/ordering/time expression 与 JOIN 仅从 selected fieldRoutes/path/binding/edge 及冻结 metric definitions 解析，禁止再次 BFS 或调用 `_resolve_path` 覆盖 Planner 选择
+
+#### Scenario: 血缘规划未覆盖走 legacy
+- **WHEN** 请求为多指标/detail、零候选、规划验证失败或 planning mode=off|shadow
+- **THEN** 调用 change 前既有 `synthesize()` 行为；只有 legacy 也抛 SynthesisError 才降级 raw SQL
 
 #### Scenario: 同源表多指标聚合
 - **WHEN** ResolvedIntent 的 metrics 经 `_resolve_path` 后全部落在 `metric_daily` 列路径（如 metric_daily 的 total_plays + total_likes），且 intent ∈ {aggregate, trend}、共享同 group-by 集
@@ -169,3 +179,26 @@
 #### Scenario: 记忆控制端点
 - **WHEN** 内部调用 `POST /internal/memory/seed`（按 namespace 预置）或 `POST /internal/memory/clear`（按 namespace 清空）
 - **THEN** 服务器记忆按 namespace 更新，端点需内部 token 校验，且 **seed 拒绝写入 `default` namespace**（生产记忆仅由写钩子沉淀）
+
+### Requirement: 语义解析消费指标候选集
+`SEMANTIC_RESOLVE` SHALL 从完整 catalog 生成指标候选，并仅将候选 catalog 提供给语义 LLM；安全回退时 SHALL 提供完整 catalog。记忆一致性与失效校验 SHALL 继续使用完整 catalog，近命中 inject 路径 SHALL 与普通解析路径消费同一候选 catalog。
+
+#### Scenario: 普通解析使用候选 catalog
+- **WHEN** 指标召回返回 `mode=topk`
+- **THEN** `SemanticResolver` Prompt 中只包含候选指标，维度清单保持完整
+
+#### Scenario: 记忆注入使用候选 catalog
+- **WHEN** 语义记忆处于 inject 波段并需要调用 LLM
+- **THEN** few-shot 示例与本次指标候选共同进入 Prompt，不重新注入完整 catalog
+
+#### Scenario: 记忆命中校验不被裁剪
+- **WHEN** 语义记忆处于 hit 波段并校验存储 intent 的 metric codes
+- **THEN** 一致性和指标失效校验使用完整 catalog，不因候选裁剪接受失效指标或拒绝有效存储指标
+
+#### Scenario: 召回回退保持旧路径
+- **WHEN** 指标召回返回 `mode=full_fallback`
+- **THEN** `SemanticResolver` 收到完整 catalog，后续 ResolvedIntent 与 SQL 合成流程不变
+
+#### Scenario: 显式完整目录基线
+- **WHEN** 指标召回配置为 `mode=full`
+- **THEN** `SemanticResolver` 收到完整 catalog，且该次运行不标记为 fallback

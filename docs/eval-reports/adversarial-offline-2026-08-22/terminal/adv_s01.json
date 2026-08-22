@@ -1,0 +1,16 @@
+{
+  "audit": {},
+  "case_id": "adv_s01",
+  "code": "OFFLINE_INELIGIBLE",
+  "disposition": null,
+  "execution_unit_id": "adv_s01",
+  "layer": "semantic",
+  "node_trace": [],
+  "observation_status": "PROFILE_INELIGIBLE",
+  "protocol": "question",
+  "reason": "requires external/graph integration",
+  "result_rows": null,
+  "stage": "PROFILE",
+  "synthetic_finalization": false,
+  "unsafe_pass": false
+}

@@ -41,6 +41,7 @@ __pycache__/
 
 ### Local logs ###
 *.log
+docs/eval-reports/**/.finalize.lock
 
 ### Local notes ###
 docs/面试准备/
